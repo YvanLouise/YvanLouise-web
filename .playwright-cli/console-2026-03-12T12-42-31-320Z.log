@@ -1,5 +1,0 @@
-Total messages: 4 (Errors: 2, Warnings: 0)
-Returning 2 messages for level "error"
-
-[ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:5173/favicon.ico:0
-The requested module '/src/pages/admin/AdminDashboardPage.tsx?t=1773318290639' does not provide an export named 'AdminDashboardPage'

@@ -1,8 +1,0 @@
-
-> yvanlouise-web@1.0.0 dev:public-site
-> npm --workspace public-site run dev
-
-
-> public-site@1.0.0 dev
-> vite
-
