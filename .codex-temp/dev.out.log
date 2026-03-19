@@ -1,0 +1,38 @@
+
+> yvanlouise-web@1.0.0 dev
+> npm-run-all --parallel dev:backend dev:frontend
+
+
+> yvanlouise-web@1.0.0 dev:backend
+> npm --workspace backend run dev
+
+
+> yvanlouise-web@1.0.0 dev:frontend
+> npm --workspace frontend run dev
+
+
+> backend@1.0.0 dev
+> tsx watch src/index.ts
+
+
+> frontend@1.0.0 dev
+> vite
+
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m275[22m[2m[0m ms[22m
+
+  [32mâžœ[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5173[22m/[39m
+  [32mâžœ[39m  [1mNetwork[22m: [36mhttp://192.168.60.1:[1m5173[22m/[39m
+  [32mâžœ[39m  [1mNetwork[22m: [36mhttp://192.168.19.1:[1m5173[22m/[39m
+  [32mâžœ[39m  [1mNetwork[22m: [36mhttp://192.168.100.199:[1m5173[22m/[39m
+Server listening on http://localhost:4000
+12:29:18 [tsx] change in ./src\app.ts Restarting...
+cServer listening on http://localhost:4000
+12:29:36 [tsx] change in ./src\middleware\error.ts Restarting...
+cServer listening on http://localhost:4000
+[2m12:29:51[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/admin/AdminDashboardPage.tsx[22m
+[2m12:30:45[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/admin/MusicClipLibraryEditor.tsx[22m
+[2m12:31:10[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/pages/admin/AdminDashboardPage.tsx[22m
+[2m12:37:21[22m [36m[1m[vite][22m[39m [32mhmr update [39m[2m/src/components/admin/MusicClipLibraryEditor.tsx[22m
+12:37:21 [tsx] change in ./src\app.ts Restarting...
+cÖÕÖ¹Åú´¦Àí²Ù×÷Âð(Y/N)? 

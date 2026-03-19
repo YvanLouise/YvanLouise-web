@@ -1,0 +1,43 @@
+databases:
+  - name: yvanlouise-db
+    databaseName: yvanlouise
+    user: yvanlouise
+
+services:
+  - type: web
+    name: yvanlouise-api
+    env: node
+    rootDir: backend
+    autoDeploy: true
+    healthCheckPath: /api/health
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ASSET_STORAGE_MODE
+        value: r2
+      - key: CORS_ORIGIN
+        value: https://www.yvanlouise.xyz,https://admin.yvanlouise.xyz
+      - key: SECURE_COOKIE
+        value: "true"
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: DATABASE_URL
+        fromDatabase:
+          name: yvanlouise-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_BUCKET
+        value: yvanlouise-media-prod
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_PUBLIC_BASE_URL
+        value: https://media.yvanlouise.xyz

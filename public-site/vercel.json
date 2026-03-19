@@ -1,0 +1,32 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "https://admin.yvanlouise.xyz",
+      "permanent": true
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://admin.yvanlouise.xyz/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "yvanlouise.xyz"
+        }
+      ],
+      "destination": "https://www.yvanlouise.xyz/:path*",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+name: Build Public Site Artifact
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-public-site:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Write public-site env
+        run: |
+          echo "VITE_SUPABASE_URL=${{ secrets.PUBLIC_SITE_SUPABASE_URL || 'https://example.supabase.co' }}" > public-site/.env.production
+          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.PUBLIC_SITE_SUPABASE_ANON_KEY || 'example-anon-key' }}" >> public-site/.env.production
+          echo "VITE_ADMIN_SITE_URL=${{ secrets.PUBLIC_SITE_ADMIN_URL || 'https://admin.yvanlouise.xyz' }}" >> public-site/.env.production
+          echo "VITE_BASE_PATH=/" >> public-site/.env.production
+
+      - name: Build public site
+        run: npm run build:public-site
+
+      - name: Upload public-site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-site-dist
+          path: public-site/dist

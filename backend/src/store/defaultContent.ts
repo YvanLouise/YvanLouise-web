@@ -1,0 +1,329 @@
+﻿import { PageContent, SiteSettings, SiteUiText, Work } from "./types.js";
+
+export const defaultSiteUiText: SiteUiText = {
+  nav: {
+    home: "首页",
+    about: "关于",
+    works: "作品",
+    commission: "委托",
+    support: "支持",
+    contact: "联系",
+    developer: "开发者站",
+    menu: "菜单",
+    backToHomeAria: "返回首页",
+    mainNavAria: "主导航",
+    mobileNavAria: "移动端导航",
+    skipToContent: "跳到主要内容"
+  },
+  footer: {
+    copyrightPrefix: "保留所有作品与展示权利",
+    afdianLabel: "爱发电",
+    afdianHint: "如果你愿意，也可以在爱发电支持我的持续创作。"
+  },
+  pageBadges: {
+    about: "关于",
+    works: "作品",
+    commission: "委托",
+    support: "支持",
+    contact: "联系"
+  },
+  home: {
+    bannerPrimaryLabel: "支持创作",
+    bannerSecondaryLabel: "浏览作品",
+    profileBadge: "创作者名片",
+    profileDescription: "音乐、软件、游戏、动画同步推进，持续把想法做成可体验、可观看、可倾听的作品。",
+    profileStatOne: "持续更新公开作品",
+    profileStatTwo: "开放委托与合作",
+    featuredTitle: "精选作品",
+    featuredDescription: "从音乐、软件、游戏到动画，所有项目都按分类整理，并提供更完整的详情页。",
+    featuredBrowseLabel: "查看全部",
+    supportTitle: "合作与支持",
+    supportPrimaryLabel: "查看委托说明",
+    supportSecondaryLabel: "发送私信"
+  },
+  works: {
+    heroTitle: "分类清晰、浏览顺手、适合深入阅读的作品展示页。",
+    heroDescription: "你可以先按分类快速浏览，再进入详情页查看长文案、图集、试玩入口或演示链接。",
+    allLabel: "全部",
+    allSummary: "查看所有已经公开的作品。",
+    musicLabel: "音乐",
+    musicTitle: "音乐作品",
+    musicSummary: "原创音乐、配乐、氛围实验与片段试听。",
+    softwareLabel: "软件",
+    softwareTitle: "软件作品",
+    softwareSummary: "Web 产品、移动工具与创作辅助应用。",
+    gameLabel: "游戏",
+    gameTitle: "游戏作品",
+    gameSummary: "独立游戏原型、玩法实验与可交互体验。",
+    animationLabel: "动画",
+    animationTitle: "动画作品",
+    animationSummary: "镜头节奏、动态设计与视觉叙事项目。",
+    categoryCountSuffix: "项",
+    listBadge: "列表展示",
+    detailButtonLabel: "查看详情",
+    demoButtonLabel: "打开演示",
+    emptyTitle: "这个分类暂时还没有公开作品。",
+    emptyDescription: "可以先看看其他分类，或者稍后再回来看看新的更新。",
+    musicPreviewBadge: "随机片段预览",
+    musicPreviewTitle: "从音乐片段库里随机试听一段",
+    musicPreviewInfoEmpty: "片段库准备好后，这里会显示当前片段的名称和时间范围。",
+    musicPreviewReadyStatus: "点击按钮，从片段库里随机播放一段音乐。",
+    musicPreviewEmptyStatus: "片段库暂时还没有可播放的内容。",
+    musicPreviewPlayingPrefix: "正在播放：",
+    musicPreviewEndedPrefix: "本次试听结束：",
+    musicPreviewPlayLabel: "随机播放",
+    musicPreviewSwitchLabel: "换一段",
+    musicPreviewStopLabel: "停止",
+    musicPreviewStoppedStatus: "播放已停止。",
+    musicPreviewWaitingLabel: "等待播放"
+  },
+  workDetail: {
+    platformLabel: "平台",
+    statusLabel: "状态",
+    galleryLabel: "图集",
+    featuresLabel: "亮点",
+    demoLabel: "打开演示",
+    repoLabel: "查看仓库",
+    featureTitle: "功能亮点",
+    interactionTitle: "交互亮点",
+    feedbackTitle: "访客反馈",
+    feedbackDescription: "评分和评论只会发送给作者本人，其他访客无法查看。",
+    notFoundTitle: "没有找到这件作品",
+    notFoundDescription: "这个链接可能已经失效，或者作品还没有公开。",
+    backToWorksLabel: "返回作品页",
+    loadingLabel: "正在加载作品内容...",
+    backgroundTabLabel: "项目背景",
+    processTabLabel: "制作过程",
+    resultTabLabel: "最终成果",
+    interactionTabLabel: "交互亮点",
+    noInteractionText: "这个项目暂时还没有填写交互亮点。"
+  },
+  contact: {
+    heroTitle: "给我发一条私信",
+    heroDescription: "你可以聊合作、委托、作品反馈，或者任何和音乐、软件、游戏、动画有关的想法。",
+    formAriaLabel: "联系表单",
+    nameLabel: "称呼",
+    contactLabel: "联系方式",
+    contactPlaceholder: "邮箱 / 社媒 / 电话",
+    subjectLabel: "主题",
+    bodyLabel: "内容",
+    submitLabel: "发送私信",
+    submittingLabel: "发送中...",
+    successMessage: "私信已发送，我会尽快查看并回复。",
+    errorMessage: "发送失败，请稍后再试。"
+  },
+  review: {
+    title: "评分与评论",
+    note: "欢迎留下你的评分和感受。为了保护隐私与反馈质量，评论内容仅作者可见。",
+    ratingLabel: "评分",
+    visitorNameLabel: "你的称呼（可选）",
+    visitorNamePlaceholder: "匿名访客",
+    commentLabel: "评论内容",
+    commentPlaceholder: "可以写下你对这件作品的真实感受。",
+    submitLabel: "提交评分与评论",
+    submittingLabel: "提交中...",
+    successMessage: "已提交，感谢你的反馈。",
+    errorMessage: "提交失败，请稍后再试。"
+  },
+  commission: {
+    cardDescription: "可根据需求明确交付范围、协作方式、排期与预算。",
+    processTitle: "合作流程",
+    processSteps: [
+      "需求沟通：明确目标、风格、交付形式与时间预期。",
+      "方案确认：梳理范围、报价、里程碑与修改次数。",
+      "执行推进：按阶段交付并同步当前进度。",
+      "收尾交付：验收、整理文件，并提供必要的后续支持。"
+    ],
+    ctaLabel: "发起委托"
+  },
+  support: {
+    methodBadgePrefix: "方式",
+    methodNotes: [
+      "适合想直接支持我持续发布新作品的访客。",
+      "适合愿意帮我传播作品、扩大曝光的人。",
+      "适合希望通过合作或委托长期参与创作推进的伙伴。"
+    ],
+    usageTitle: "你的支持会被用于这些方向",
+    primaryLabel: "联系合作",
+    secondaryLabel: "浏览作品"
+  },
+  notFound: {
+    title: "页面不存在",
+    description: "你访问的页面可能已经移动，或者暂时没有公开。",
+    buttonLabel: "返回首页"
+  }
+};
+
+export function createDefaultWorks(nowIso: string): Work[] {
+  return [
+    {
+      id: "w-music-01",
+      title: "霓虹回声",
+      type: "music",
+      summary: "一组融合城市夜景、电子颗粒和情绪推进的原创音乐作品。",
+      detailIntro: "这组作品围绕深夜街道、霓虹灯光和独自漫游的氛围展开，适合独立聆听，也适合用作影像与游戏配乐。",
+      background: "我想做一组既能独立发布，也能服务于视觉叙事项目的原创音乐，把空间感和情绪流动做得更细腻。",
+      process: "主要在 Ableton Live 中完成编曲与混音，再结合环境采样、合成器纹理和动态自动化，反复调整段落推进。",
+      result: "目前已经整理成一组可发布曲目，也能作为预告片、动画短片或游戏片段的配乐素材。",
+      featureList: ["原创旋律动机", "层次清晰的氛围铺陈", "适合切片用于影像或预告"],
+      interactionPoints: ["支持随机片段试听", "可按情绪段落拆分展示", "适合补充封面、歌词和设定图"],
+      galleryImages: [],
+      detailSections: [
+        { title: "声音设定", body: "整体音色偏冷，强调颗粒感、长尾混响和低频脉冲的推动力。" },
+        { title: "适用场景", body: "适合独立游戏预告、城市夜景剪辑、角色主题音乐与实验短片。" }
+      ],
+      platform: "Spotify / 网易云音乐 / 视频项目",
+      status: "已发布",
+      coverUrl: "",
+      demoUrl: "https://example.com/music/neon-echoes",
+      publishedAt: "2025-12-15",
+      createdAt: nowIso,
+      updatedAt: nowIso
+    },
+    {
+      id: "w-software-01",
+      title: "译林 / YiLin",
+      type: "software",
+      summary: "一个帮助创作者整理灵感、任务与素材的应用原型。",
+      detailIntro: "这个项目面向个人创作者和小团队，重点是把灵感记录、任务拆解和阶段推进放在同一条清晰的流程里。",
+      background: "我希望做一个更轻、更直观的创作管理工具，让想法不会停留在碎片阶段，而是能顺手走到执行。",
+      process: "使用 React 与 Node.js 搭建核心结构，重点打磨移动端录入、列表筛选、状态跟踪和视觉层级。",
+      result: "它既是可持续迭代的软件项目，也是我展示产品思路、交互设计和开发能力的重要作品。",
+      featureList: ["快速记录灵感", "任务列表与状态切换", "适合移动端使用的紧凑布局"],
+      interactionPoints: ["详情页支持展示功能分区", "适合放置演示视频与交互截图", "可继续扩展为正式产品"],
+      galleryImages: [],
+      detailSections: [
+        { title: "交互重点", body: "通过更清晰的层级、紧凑的信息编排和低打扰视觉，让用户在手机上也能快速完成操作。" },
+        { title: "适用对象", body: "适合独立开发者、内容团队以及需要持续推进项目的创作者。" }
+      ],
+      platform: "Web / iPhone / Android",
+      status: "持续迭代中",
+      coverUrl: "",
+      demoUrl: "https://example.com/software/yilin",
+      repoUrl: "https://github.com/example/yilin",
+      publishedAt: "2026-01-28",
+      createdAt: nowIso,
+      updatedAt: nowIso
+    },
+    {
+      id: "w-game-01",
+      title: "回声潜渊",
+      type: "game",
+      summary: "以声音反馈驱动探索和解谜节奏的独立游戏原型。",
+      detailIntro: "这个游戏原型围绕声波反馈、空间定位和轻叙事推进展开，希望用更少的提示创造更强的沉浸感。",
+      background: "我想验证一种更依赖声音和环境反馈的探索体验，让玩家在低信息密度环境里保持好奇与判断。",
+      process: "先完成纸面关卡结构，再在 Unity 中搭建核心交互，通过测试不断调整声音提示和路径选择。",
+      result: "目前已经形成一段可试玩的垂直切片，适合继续扩展成更完整的独立游戏。",
+      featureList: ["声音引导探索", "强调氛围与节奏的关卡设计", "适合继续扩展的系统原型"],
+      interactionPoints: ["适合展示玩法说明", "可补充试玩录像与交互截图", "能继续加入更完整的系统设计"],
+      galleryImages: [],
+      detailSections: [
+        { title: "玩法核心", body: "玩家需要根据不同频段的反馈来定位路线，并在关键节点做出节奏判断。" },
+        { title: "后续方向", body: "可继续加入敌人感知、非线性探索和多结局叙事。" }
+      ],
+      platform: "Windows / Web Demo",
+      status: "原型完成",
+      coverUrl: "",
+      demoUrl: "https://example.com/game/echo-dive",
+      publishedAt: "2026-02-02",
+      createdAt: nowIso,
+      updatedAt: nowIso
+    },
+    {
+      id: "w-animation-01",
+      title: "脉冲帧",
+      type: "animation",
+      summary: "围绕音乐节拍与镜头切换节奏制作的动画短片。",
+      detailIntro: "这个项目把原创音乐、画面节奏和镜头调度紧密绑定，强调视觉打击感和整体呼吸感。",
+      background: "我希望做一组更强调声音和画面同步关系的动画作品，测试镜头节奏与情绪推进的结合方式。",
+      process: "先在 Figma 中整理分镜，再在 After Effects 中按照脚本和节拍完成动态设计与镜头切换。",
+      result: "作品可以用于活动宣传、片头设计、动态海报和个人作品集展示。",
+      featureList: ["节奏明确的镜头切换", "原创音乐驱动画面变化", "适合宣传片与片头场景"],
+      interactionPoints: ["可展示关键画面图集", "适合补充创作说明与分镜草图", "便于扩展成系列短片"],
+      galleryImages: [],
+      detailSections: [
+        { title: "视觉语言", body: "通过高对比色块、发光边缘和快速位移，形成鲜明的节拍反馈。" },
+        { title: "交付方向", body: "可扩展到宣传动画、动态海报、片头片尾与演出屏幕视觉。" }
+      ],
+      platform: "短片 / 宣传视觉 / 演出屏幕",
+      status: "已完成",
+      coverUrl: "",
+      demoUrl: "https://example.com/animation/pulse-frame",
+      publishedAt: "2026-02-12",
+      createdAt: nowIso,
+      updatedAt: nowIso
+    }
+  ];
+}
+
+export function createDefaultPages(nowIso: string): PageContent[] {
+  return [
+    {
+      slug: "home",
+      title: "把能听见、能使用、能感受到的故事做出来。",
+      hero: "这里集中展示我的音乐、软件、游戏与动画作品，也开放委托、私信和支持入口。",
+      body: "如果你想快速了解我正在做什么，可以先看精选作品，再决定是否继续合作或支持。",
+      highlights: [],
+      updatedAt: nowIso
+    },
+    {
+      slug: "about",
+      title: "关于我",
+      hero: "我是一个把声音、代码和视觉叙事放在同一条创作线上推进的人。",
+      body: "我长期同时做音乐、软件、游戏与动画，希望让每个项目既有审美，也能真正落地。",
+      highlights: [
+        "跨音乐、软件、游戏、动画四条创作线",
+        "擅长从概念走到完整可展示成品",
+        "支持合作开发、定制创作与长期委托"
+      ],
+      updatedAt: nowIso
+    },
+    {
+      slug: "commission",
+      title: "委托合作",
+      hero: "我接受目标清晰、沟通顺畅、愿意一起打磨品质的委托项目。",
+      body: "常规流程包括需求沟通、范围确认、报价与排期、阶段交付、反馈修改和最终验收。",
+      highlights: [
+        "原创音乐与配乐制作",
+        "创作工具与软件原型开发",
+        "游戏玩法验证与交互设计",
+        "动画短片与动态视觉设计"
+      ],
+      updatedAt: nowIso
+    },
+    {
+      slug: "support",
+      title: "支持我的创作",
+      hero: "如果你喜欢我的作品，可以通过支持页帮助我持续发布新的音乐、软件、游戏和动画。",
+      body: "你的支持会直接转化为新的公开作品、实验项目、制作工具和更稳定的更新节奏。",
+      highlights: ["直接支持创作", "分享作品链接", "通过委托长期合作"],
+      updatedAt: nowIso
+    }
+  ];
+}
+
+export function createDefaultSettings(nowIso: string): SiteSettings {
+  return {
+    siteTitle: "Yvan Louise",
+    tagline: "音乐 / 软件 / 游戏 / 动画",
+    primaryCtaLabel: "查看作品",
+    primaryCtaHref: "/works",
+    secondaryCtaLabel: "委托合作",
+    secondaryCtaHref: "/commission",
+    bannerBadge: "个人创作站",
+    bannerHeadline: "持续发布音乐、软件、游戏与动画作品。",
+    bannerDescription: "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
+    bannerImageUrl: "",
+    avatarImageUrl: "",
+    afdianUrl: "https://afdian.com/",
+    socialLinks: [
+      { label: "GitHub", url: "https://github.com" },
+      { label: "bilibili", url: "https://www.bilibili.com" },
+      { label: "网易云音乐", url: "https://music.163.com" }
+    ],
+    musicPreviewClips: [],
+    featuredWorkIds: ["w-music-01", "w-software-01", "w-game-01"],
+    uiText: defaultSiteUiText,
+    updatedAt: nowIso
+  };
+}

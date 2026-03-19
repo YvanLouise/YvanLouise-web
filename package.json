@@ -1,0 +1,28 @@
+{
+    "name":  "yvanlouise-web",
+    "private":  true,
+    "version":  "1.0.0",
+    "workspaces":  [
+                       "public-site",
+                       "admin-site",
+                       "backend"
+                   ],
+    "scripts":  {
+                    "build":  "npm-run-all build:backend build:public-site build:admin-site",
+                    "build:admin-site":  "npm --workspace admin-site run build",
+                    "build:backend":  "npm --workspace backend run build",
+                    "build:public-site":  "npm --workspace public-site run build",
+                    "ci":  "npm run build",
+                    "dev":  "npm-run-all --parallel dev:backend dev:public-site dev:admin-site",
+                    "dev:admin-site":  "npm --workspace admin-site run dev",
+                    "dev:backend":  "npm --workspace backend run dev",
+                    "dev:developer":  "npm-run-all --parallel dev:backend dev:admin-site",
+                    "dev:public-site":  "npm --workspace public-site run dev",
+                    "dev:visitor":  "npm-run-all --parallel dev:backend dev:public-site",
+                    "migrate:production":  "npm --workspace backend run migrate:production",
+                    "start":  "npm --workspace backend run start"
+                },
+    "devDependencies":  {
+                            "npm-run-all":  "^4.1.5"
+                        }
+}

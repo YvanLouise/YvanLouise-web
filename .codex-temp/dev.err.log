@@ -1,0 +1,105 @@
+PayloadTooLargeError: request entity too large
+    at readStream (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:163:17)
+    at getRawBody (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:116:12)
+    at read (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:328:13)
+    at D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:280:10)
+    at cors (D:\MY procedure\YvanLouise web\node_modules\cors\lib\index.js:188:7) {
+  expected: 56415797,
+  length: 56415797,
+  limit: 12582912,
+  type: 'entity.too.large'
+}
+PayloadTooLargeError: request entity too large
+    at readStream (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:163:17)
+    at getRawBody (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:116:12)
+    at read (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:328:13)
+    at D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:280:10)
+    at cors (D:\MY procedure\YvanLouise web\node_modules\cors\lib\index.js:188:7) {
+  expected: 56415797,
+  length: 56415797,
+  limit: 12582912,
+  type: 'entity.too.large'
+}
+PayloadTooLargeError: request entity too large
+    at readStream (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:163:17)
+    at getRawBody (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:116:12)
+    at read (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:328:13)
+    at D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:280:10)
+    at cors (D:\MY procedure\YvanLouise web\node_modules\cors\lib\index.js:188:7) {
+  expected: 56415797,
+  length: 56415797,
+  limit: 12582912,
+  type: 'entity.too.large'
+}
+PayloadTooLargeError: request entity too large
+    at readStream (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:163:17)
+    at getRawBody (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:116:12)
+    at read (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:328:13)
+    at D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:280:10)
+    at cors (D:\MY procedure\YvanLouise web\node_modules\cors\lib\index.js:188:7) {
+  expected: 13981137,
+  length: 13981137,
+  limit: 12582912,
+  type: 'entity.too.large'
+}
+PayloadTooLargeError: request entity too large
+    at readStream (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:163:17)
+    at getRawBody (D:\MY procedure\YvanLouise web\node_modules\raw-body\index.js:116:12)
+    at read (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (D:\MY procedure\YvanLouise web\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:328:13)
+    at D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:286:9
+    at router.process_params (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\MY procedure\YvanLouise web\node_modules\express\lib\router\index.js:280:10)
+    at cors (D:\MY procedure\YvanLouise web\node_modules\cors\lib\index.js:188:7) {
+  expected: 13981137,
+  length: 13981137,
+  limit: 12582912,
+  type: 'entity.too.large'
+}
+node:events:486
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::4000
+    at Server.setupListenHandle [as _listen2] (node:net:1948:16)
+    at listenInCluster (node:net:2005:12)
+    at Server.listen (node:net:2110:7)
+    at app.listen (D:\MY procedure\YvanLouise web\node_modules\express\lib\application.js:635:24)
+    at <anonymous> (D:\MY procedure\YvanLouise web\backend\src\index.ts:6:5)
+    at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1984:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 4000
+}
+
+Node.js v24.14.0
+^C^C^C^C^C^C
