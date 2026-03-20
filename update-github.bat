@@ -28,7 +28,7 @@ echo.
 choice /M "Continue with git add, commit, and push"
 if errorlevel 2 (
   echo Cancelled.
-  pause
+  call :wait_before_close
   exit /b 0
 )
 
@@ -37,7 +37,7 @@ echo Staging all changes...
 git add -A
 if errorlevel 1 (
   echo git add failed.
-  pause
+  call :wait_before_close
   exit /b 1
 )
 
@@ -51,7 +51,7 @@ if not "%AHEAD_COUNT%"=="0" (
 )
 
 echo No staged changes found and no local commits are waiting to push.
-pause
+call :wait_before_close
 exit /b 0
 
 :commit_changes
@@ -68,7 +68,7 @@ git commit -m "%COMMIT_MESSAGE%"
 if errorlevel 1 (
   echo git commit failed.
   echo Check whether your Git username and email are configured.
-  pause
+  call :wait_before_close
   exit /b 1
 )
 
@@ -78,20 +78,20 @@ echo Pushing to origin/%CURRENT_BRANCH%...
 git push origin %CURRENT_BRANCH%
 if errorlevel 1 (
   echo git push failed.
-  pause
+  call :wait_before_close
   exit /b 1
 )
 
 echo.
 echo GitHub update completed successfully.
-pause
+call :wait_before_close
 exit /b 0
 
 :check_git
 where git >nul 2>nul
 if errorlevel 1 (
   echo Git is not installed or not available in PATH.
-  pause
+  call :wait_before_close
   exit /b 1
 )
 exit /b 0
@@ -100,7 +100,7 @@ exit /b 0
 git rev-parse --is-inside-work-tree >nul 2>nul
 if errorlevel 1 (
   echo This folder is not a Git repository.
-  pause
+  call :wait_before_close
   exit /b 1
 )
 exit /b 0
@@ -109,7 +109,7 @@ exit /b 0
 git remote get-url origin >nul 2>nul
 if errorlevel 1 (
   echo Remote "origin" was not found.
-  pause
+  call :wait_before_close
   exit /b 1
 )
 exit /b 0
@@ -119,7 +119,7 @@ for /f "usebackq delims=" %%i in (`git branch --show-current`) do set "CURRENT_B
 if not defined CURRENT_BRANCH (
   echo Could not determine the current Git branch.
   echo Please switch to a normal branch before pushing.
-  pause
+  call :wait_before_close
   exit /b 1
 )
 exit /b 0
@@ -128,4 +128,10 @@ exit /b 0
 set "AHEAD_COUNT=0"
 for /f "usebackq delims=" %%i in (`git rev-list --count origin/%CURRENT_BRANCH%..HEAD 2^>nul`) do set "AHEAD_COUNT=%%i"
 if not defined AHEAD_COUNT set "AHEAD_COUNT=0"
+exit /b 0
+
+:wait_before_close
+echo.
+choice /C X /N /M "Press X to close this window..."
+echo.
 exit /b 0
