@@ -183,7 +183,7 @@ async function legacyRequest<T>(path: string, options: RequestInit = {}, fallbac
 
     if (!response.ok) {
       const body = (await response.json().catch(() => ({}))) as { message?: string };
-      throw new ApiError(body.message ?? "请求失败。", response.status);
+      throw new ApiError(body.message ?? "Request failed.", response.status);
     }
 
     if (response.status === 204) {
@@ -212,7 +212,7 @@ async function adminFunctionRequest<T>(path: string, options: RequestInit = {}):
 
   if (!response.ok) {
     const text = await response.text();
-    let message = "后台请求失败。";
+    let message = `Admin function ${path} failed (${response.status}). Check Netlify Functions and environment variables.`;
 
     try {
       const body = JSON.parse(text) as { message?: string };
@@ -246,7 +246,7 @@ async function publicFunctionRequest<T>(path: string, options: RequestInit = {})
 
   if (!response.ok) {
     const text = await response.text();
-    let message = "提交失败，请稍后再试。";
+    let message = "Submit failed. Please try again later.";
 
     try {
       const body = JSON.parse(text) as { message?: string };
@@ -296,7 +296,7 @@ async function saveAdminContent(snapshot: SiteContentSnapshot, message: string):
 function createWorkFromPayload(payload: Partial<Work>): Work {
   return {
     id: payload.id?.trim() || generateId("work"),
-    title: payload.title?.trim() || "未命名作品",
+    title: payload.title?.trim() || "Untitled Work",
     type: payload.type ?? "software",
     summary: payload.summary?.trim() ?? "",
     detailIntro: payload.detailIntro?.trim() ?? "",
@@ -319,7 +319,7 @@ function createWorkFromPayload(payload: Partial<Work>): Work {
 function mergeWork(existing: Work, patch: Partial<Work>): Work {
   return {
     ...existing,
-    title: patch.title !== undefined ? patch.title.trim() || "未命名作品" : existing.title,
+    title: patch.title !== undefined ? patch.title.trim() || "Untitled Work" : existing.title,
     type: patch.type ?? existing.type,
     summary: patch.summary !== undefined ? patch.summary.trim() : existing.summary,
     detailIntro: patch.detailIntro !== undefined ? patch.detailIntro.trim() : existing.detailIntro,
@@ -343,8 +343,8 @@ function ensureUploadWithinLimit(file: File): void {
   const maxBytes = file.type.startsWith("audio/") ? AUDIO_MAX_UPLOAD_BYTES : IMAGE_MAX_UPLOAD_BYTES;
   if (file.size > maxBytes) {
     const maxMb = Math.round(maxBytes / 1024 / 1024);
-    const kind = file.type.startsWith("audio/") ? "音频" : "图片";
-    throw new Error(`${kind}文件过大，请控制在 ${maxMb}MB 以内。`);
+    const kind = file.type.startsWith("audio/") ? "audio" : "image";
+    throw new Error(`${kind} file is too large. Please keep it within ${maxMb}MB.`);
   }
 }
 
@@ -406,7 +406,7 @@ export async function getWorkById(workId: string): Promise<Work> {
 
       const found = sampleWorks.find((item) => item.id === workId);
       if (!found) {
-        throw new Error("未找到这件作品。");
+        throw new Error("Work not found.");
       }
 
       return found;
@@ -416,7 +416,7 @@ export async function getWorkById(workId: string): Promise<Work> {
   try {
     const work = buildStaticWorkList().find((item) => item.id === workId);
     if (!work) {
-      throw new Error("未找到这件作品。");
+      throw new Error("Work not found.");
     }
     mergeCachedWork(work);
     return work;
@@ -428,7 +428,7 @@ export async function getWorkById(workId: string): Promise<Work> {
 
     const found = sampleWorks.find((item) => item.id === workId);
     if (!found) {
-      throw new Error("未找到这件作品。");
+      throw new Error("Work not found.");
     }
 
     return found;
@@ -443,7 +443,7 @@ export async function submitReview(workId: string, payload: ReviewInput): Promis
         method: "POST",
         body: JSON.stringify(payload)
       },
-      () => ({ message: "评分已提交（演示模式）。" })
+      () => ({ message: "Review submitted (demo mode)." })
     );
   }
 
@@ -466,7 +466,7 @@ export async function submitMessage(payload: MessageInput): Promise<{ message: s
         method: "POST",
         body: JSON.stringify(payload)
       },
-      () => ({ message: "私信已发送（演示模式）。" })
+      () => ({ message: "Message sent (demo mode)." })
     );
   }
 
@@ -616,7 +616,7 @@ export async function updateAdminWork(workId: string, payload: Partial<Work>): P
   const snapshot = await loadAdminContent();
   const current = snapshot.works.find((item) => item.id === workId);
   if (!current) {
-    throw new ApiError("要更新的作品不存在。", 404);
+    throw new ApiError("The work to update does not exist.", 404);
   }
 
   const updatedWork = mergeWork(current, payload);
@@ -639,7 +639,7 @@ export async function deleteAdminWork(workId: string): Promise<void> {
   const snapshot = await loadAdminContent();
   const work = snapshot.works.find((item) => item.id === workId);
   if (!work) {
-    throw new ApiError("要删除的作品不存在。", 404);
+    throw new ApiError("The work to delete does not exist.", 404);
   }
 
   const nextSnapshot: SiteContentSnapshot = {
@@ -739,13 +739,13 @@ export async function uploadAdminAsset(file: File, slot: string): Promise<{ url:
       reader.onload = () => {
         const result = reader.result;
         if (typeof result !== "string") {
-          reject(new Error("读取文件失败。"));
+          reject(new Error("Failed to read file."));
           return;
         }
         const [, base64 = ""] = result.split(",");
         resolve(base64);
       };
-      reader.onerror = () => reject(new Error("读取文件失败。"));
+      reader.onerror = () => reject(new Error("Failed to read file."));
       reader.readAsDataURL(file);
     });
 
@@ -794,7 +794,7 @@ export async function uploadAdminAsset(file: File, slot: string): Promise<{ url:
 
   const uploadBody = (await uploadResponse.json().catch(() => ({}))) as { secure_url?: string; original_filename?: string; error?: { message?: string } };
   if (!uploadResponse.ok || !uploadBody.secure_url) {
-    throw new ApiError(uploadBody.error?.message ?? "上传媒体失败。", uploadResponse.status || 500);
+    throw new ApiError(uploadBody.error?.message ?? "Media upload failed.", uploadResponse.status || 500);
   }
 
   return {
@@ -804,4 +804,3 @@ export async function uploadAdminAsset(file: File, slot: string): Promise<{ url:
 }
 
 export { ApiError };
-

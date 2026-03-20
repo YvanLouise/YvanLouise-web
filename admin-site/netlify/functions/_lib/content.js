@@ -3,6 +3,10 @@ import { readFile, writeFile } from "node:fs/promises";
 
 const localContentPath = fileURLToPath(new URL("../../../../content/site-content.json", import.meta.url));
 
+function isNetlifyRuntime() {
+  return Boolean(process.env.NETLIFY || process.env.CONTEXT || process.env.DEPLOY_ID || process.env.URL);
+}
+
 function getGithubConfig() {
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
@@ -41,7 +45,8 @@ async function readGithubContent(config) {
   });
 
   if (!response.ok) {
-    throw new Error(`读取 GitHub 内容文件失败（${response.status}）。`);
+    const text = await response.text().catch(() => "");
+    throw new Error(text || `GitHub content read failed (${response.status}).`);
   }
 
   const body = await response.json();
@@ -69,8 +74,8 @@ async function writeGithubContent(config, content, message) {
   });
 
   if (!response.ok) {
-    const text = await response.text();
-    throw new Error(text || `写入 GitHub 内容文件失败（${response.status}）。`);
+    const text = await response.text().catch(() => "");
+    throw new Error(text || `GitHub content write failed (${response.status}).`);
   }
 }
 
@@ -99,6 +104,12 @@ export async function writeSiteContentSource(content, message) {
 
   const githubConfig = getGithubConfig();
   if (!githubConfig) {
+    if (isNetlifyRuntime()) {
+      throw new Error(
+        "Netlify admin save is not fully configured yet. Please set GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH, and CONTENT_FILE_PATH in the admin-site environment variables."
+      );
+    }
+
     await writeLocalContent(nextContent);
     return {
       source: "local",
