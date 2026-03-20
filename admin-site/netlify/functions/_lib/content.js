@@ -1,7 +1,9 @@
-import { fileURLToPath } from "node:url";
+import path from "node:path";
 import { readFile, writeFile } from "node:fs/promises";
 
-const localContentPath = fileURLToPath(new URL("../../../../content/site-content.json", import.meta.url));
+function getLocalContentPath() {
+  return path.resolve(process.cwd(), "..", "content", "site-content.json");
+}
 
 function isNetlifyRuntime() {
   return Boolean(process.env.NETLIFY || process.env.CONTEXT || process.env.DEPLOY_ID || process.env.URL);
@@ -12,13 +14,13 @@ function getGithubConfig() {
   const repo = process.env.GITHUB_REPO;
   const branch = process.env.GITHUB_BRANCH || "main";
   const token = process.env.GITHUB_TOKEN;
-  const path = process.env.CONTENT_FILE_PATH || "content/site-content.json";
+  const filePath = process.env.CONTENT_FILE_PATH || "content/site-content.json";
 
   if (!owner || !repo || !token) {
     return null;
   }
 
-  return { owner, repo, branch, token, path };
+  return { owner, repo, branch, token, path: filePath };
 }
 
 function serializeContent(content) {
@@ -26,12 +28,12 @@ function serializeContent(content) {
 }
 
 async function readLocalContent() {
-  const raw = await readFile(localContentPath, "utf8");
+  const raw = await readFile(getLocalContentPath(), "utf8");
   return JSON.parse(raw);
 }
 
 async function writeLocalContent(content) {
-  await writeFile(localContentPath, serializeContent(content), "utf8");
+  await writeFile(getLocalContentPath(), serializeContent(content), "utf8");
 }
 
 async function readGithubContent(config) {
