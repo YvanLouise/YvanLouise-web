@@ -6,10 +6,16 @@ cd /d "%ROOT%"
 
 title YvanLouise GitHub Updater
 
-call :check_git || exit /b 1
-call :check_repo || exit /b 1
-call :check_origin || exit /b 1
-call :get_branch || exit /b 1
+call :check_git
+if errorlevel 1 exit /b 1
+call :check_repo
+if errorlevel 1 exit /b 1
+call :check_origin
+if errorlevel 1 exit /b 1
+call :get_branch
+if errorlevel 1 exit /b 1
+call :get_ahead_count
+if errorlevel 1 exit /b 1
 
 echo Repository: %ROOT%
 echo Remote:     origin
@@ -36,12 +42,19 @@ if errorlevel 1 (
 )
 
 git diff --cached --quiet
-if not errorlevel 1 (
-  echo No staged changes found. Nothing to push.
-  pause
-  exit /b 0
+if errorlevel 1 goto commit_changes
+
+if not "%AHEAD_COUNT%"=="0" (
+  echo No new file changes to commit.
+  echo Found %AHEAD_COUNT% local commit(s) waiting to be pushed.
+  goto push_branch
 )
 
+echo No staged changes found and no local commits are waiting to push.
+pause
+exit /b 0
+
+:commit_changes
 set "COMMIT_MESSAGE="
 set /p COMMIT_MESSAGE=Commit message (leave blank to use timestamp): 
 if not defined COMMIT_MESSAGE (
@@ -59,6 +72,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
+:push_branch
 echo.
 echo Pushing to origin/%CURRENT_BRANCH%...
 git push origin %CURRENT_BRANCH%
@@ -108,4 +122,10 @@ if not defined CURRENT_BRANCH (
   pause
   exit /b 1
 )
+exit /b 0
+
+:get_ahead_count
+set "AHEAD_COUNT=0"
+for /f "usebackq delims=" %%i in (`git rev-list --count origin/%CURRENT_BRANCH%..HEAD 2^>nul`) do set "AHEAD_COUNT=%%i"
+if not defined AHEAD_COUNT set "AHEAD_COUNT=0"
 exit /b 0
