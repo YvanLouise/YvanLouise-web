@@ -29,10 +29,12 @@ const LEGACY_API_BASE = resolveLegacyApiBase();
 const LEGACY_BACKEND_MODE = Boolean(import.meta.env.VITE_API_BASE_URL);
 const ADMIN_FUNCTION_BASE = resolveAdminFunctionBase();
 const PUBLIC_INTERACTION_BASE = resolvePublicInteractionBase();
+const PUBLIC_CONTENT_BASE = resolvePublicContentBase();
 const IMAGE_MAX_UPLOAD_BYTES = 6 * 1024 * 1024;
 const AUDIO_MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 
 let adminContentCache: SiteContentSnapshot | null = null;
+let publicContentCache: SiteContentSnapshot | null = null;
 
 class ApiError extends Error {
   status: number;
@@ -95,10 +97,19 @@ function resolvePublicInteractionBase(): string {
 
   return "/.netlify/functions";
 }
+function resolvePublicContentBase(): string {
+  const configured = (import.meta.env.VITE_PUBLIC_CONTENT_BASE as string | undefined)?.trim();
+  if (configured) {
+    return configured.replace(/\/$/, "");
+  }
+
+  return PUBLIC_INTERACTION_BASE;
+}
 
 function nowIso(): string {
   return new Date().toISOString();
 }
+
 
 function todayDate(): string {
   return nowIso().slice(0, 10);
@@ -265,6 +276,28 @@ async function publicFunctionRequest<T>(path: string, options: RequestInit = {})
   return (await response.json()) as T;
 }
 
+async function fetchPublicContentSnapshot(): Promise<SiteContentSnapshot> {
+  const response = await fetch(`${PUBLIC_CONTENT_BASE}/public-content`);
+  if (!response.ok) {
+    const text = await response.text();
+    throw new ApiError(text || `Public content request failed (${response.status}).`, response.status);
+  }
+
+  const body = (await response.json()) as { content?: unknown };
+  return normalizeSiteContent((body.content ?? {}) as ReturnType<typeof toSiteContentFile>);
+}
+
+async function loadPublicContent(force = false): Promise<SiteContentSnapshot> {
+  if (publicContentCache && !force) {
+    return cloneSiteContent(publicContentCache);
+  }
+
+  const snapshot = await fetchPublicContentSnapshot();
+  publicContentCache = cloneSiteContent(snapshot);
+  syncSnapshotCaches(snapshot);
+  return cloneSiteContent(snapshot);
+}
+
 async function loadAdminContent(force = false): Promise<SiteContentSnapshot> {
   if (adminContentCache && !force) {
     return cloneSiteContent(adminContentCache);
@@ -274,6 +307,7 @@ async function loadAdminContent(force = false): Promise<SiteContentSnapshot> {
   const snapshot = normalizeSiteContent(response.content as ReturnType<typeof toSiteContentFile>);
   return updateAdminContentCache(snapshot);
 }
+
 
 async function saveAdminContent(snapshot: SiteContentSnapshot, message: string): Promise<SiteContentSnapshot> {
   const payload = {
@@ -374,7 +408,8 @@ export async function getWorks(type?: WorkType): Promise<Work[]> {
   }
 
   try {
-    const works = buildStaticWorkList(type);
+    const snapshot = await loadPublicContent();
+    const works = type ? snapshot.works.filter((work) => work.type === type) : snapshot.works;
     if (type) {
       const current = readCachedWorks() ?? [];
       const next = [...current.filter((work) => work.type !== type), ...works];
@@ -412,9 +447,9 @@ export async function getWorkById(workId: string): Promise<Work> {
       return found;
     }
   }
-
   try {
-    const work = buildStaticWorkList().find((item) => item.id === workId);
+    const snapshot = await loadPublicContent();
+    const work = snapshot.works.find((item) => item.id === workId);
     if (!work) {
       throw new Error("Work not found.");
     }
@@ -434,7 +469,6 @@ export async function getWorkById(workId: string): Promise<Work> {
     return found;
   }
 }
-
 export async function submitReview(workId: string, payload: ReviewInput): Promise<{ message: string }> {
   if (LEGACY_BACKEND_MODE) {
     return legacyRequest<{ message: string }>(
@@ -488,14 +522,14 @@ export async function getPage(slug: string): Promise<PageContent> {
   }
 
   try {
-    const page = getStaticPage(slug);
+    const snapshot = await loadPublicContent();
+    const page = snapshot.pages.find((item) => item.slug === slug) ?? getSamplePage(slug);
     writeCachedPage(page);
     return page;
   } catch {
     return readCachedPage(slug) ?? getSamplePage(slug);
   }
 }
-
 export async function getSiteSettings(): Promise<SiteSettings> {
   if (LEGACY_BACKEND_MODE) {
     try {
@@ -508,7 +542,8 @@ export async function getSiteSettings(): Promise<SiteSettings> {
   }
 
   try {
-    const settings = getStaticSiteSettings();
+    const snapshot = await loadPublicContent();
+    const settings = snapshot.siteSettings;
     writeCachedSiteSettings(settings);
     return settings;
   } catch {

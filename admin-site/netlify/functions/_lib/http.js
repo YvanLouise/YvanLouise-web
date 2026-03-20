@@ -31,22 +31,22 @@ export function parseJsonBody(event) {
   }
 }
 
-export function getPublicCorsHeaders(event) {
+export function getPublicCorsHeaders(event, methods = "GET, POST, OPTIONS") {
   const allowedOrigin = process.env.PUBLIC_SITE_ORIGIN || "https://www.yvanlouise.xyz";
   const requestOrigin = event.headers?.origin || event.headers?.Origin;
   const origin = requestOrigin && requestOrigin === allowedOrigin ? requestOrigin : allowedOrigin;
 
   return {
     "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Methods": methods,
     "Access-Control-Allow-Headers": "Content-Type",
     Vary: "Origin"
   };
 }
 
-export function handlePublicCors(event) {
+export function handlePublicCors(event, methods = "GET, POST, OPTIONS") {
   if (event.httpMethod === "OPTIONS") {
-    return noContent(getPublicCorsHeaders(event));
+    return noContent(getPublicCorsHeaders(event, methods));
   }
 
   return null;
