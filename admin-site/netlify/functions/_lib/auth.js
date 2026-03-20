@@ -1,5 +1,4 @@
 import crypto from "node:crypto";
-import bcrypt from "bcryptjs";
 import { jsonResponse } from "./http.js";
 
 const SESSION_COOKIE_NAME = "yvanlouise_admin_session";
@@ -46,6 +45,7 @@ export async function verifyAdminCredentials(username, password) {
     return false;
   }
 
+  const bcrypt = await import("bcryptjs");
   return bcrypt.compare(password, passwordHash);
 }
 
@@ -129,6 +129,6 @@ export function requireAdmin(event) {
   return username;
 }
 
-export function unauthorized(message = "请先登录开发者后台。") {
+export function unauthorized(message = "Please log in to the admin site first.") {
   return jsonResponse(401, { message });
 }
