@@ -1,35 +1,37 @@
-﻿# YvanLouise Web
+# YvanLouise Web
 
-一个基于双站点结构的个人网站项目：
-- `public-site/`：访客站
-- `admin-site/`：开发者后台
-- `shared/`：共享类型、组件与 Supabase 访问层
-- `backend/`：本地旧后端与生产迁移脚本载体
-- `supabase/`：Supabase 表结构、RLS 与存储说明
+一个双站点的个人网站仓库：
+- `public-site/`：访客站，部署到 Netlify，面向公开访问
+- `admin-site/`：开发者后台，部署到 Netlify，同时承载后台函数入口
+- `shared/`：共享类型、组件、内容快照与数据访问封装
+- `content/`：公开内容快照，作为访客站的静态内容源
+- `backend/`：本地旧后端与辅助迁移脚本载体，不再是默认线上服务
+- `supabase/`：旧方案历史参考，不是当前默认生产路径
 
-当前默认上线方案是：`GitHub + Netlify + Supabase`。
+当前默认上线方案：`GitHub + Netlify + GitHub 内容文件 + Netlify Functions/Blobs + Cloudinary`
 
-## 当前架构
-- `https://www.yvanlouise.xyz`：访客站，部署到 Netlify 的 `public-site`
-- `https://admin.yvanlouise.xyz`：开发者站，部署到 Netlify 的 `admin-site`
-- `https://yvanlouise.xyz`：在 Dynadot 中做 301 跳转到 `https://www.yvanlouise.xyz`
-- 登录、数据库、评论、私信、图片与音频上传：由 Supabase 提供
+## 当前生产分工
+- `https://www.yvanlouise.xyz`：访客站，Netlify `public-site`
+- `https://admin.yvanlouise.xyz`：开发者站，Netlify `admin-site`
+- `https://yvanlouise.xyz`：Dynadot 301 跳转到 `https://www.yvanlouise.xyz`
+- 公开内容：仓库内 `content/site-content.json`
+- 管理后台接口：`admin-site/netlify/functions`
+- 私信 / 评论：Netlify Blobs
+- 图片 / 音频上传：Cloudinary
 
-GitHub 在这套方案里的职责是：
-- 托管源码仓库
-- 管理提交历史、分支与 PR
+GitHub 在这套方案里的职责：
+- 托管源码和公开内容文件
+- 作为 Netlify 自动部署来源
+- 承担内容发布的 commit 历史
 - 运行 GitHub Actions 构建检查
-- 作为 Netlify 自动部署的代码来源
 
 ## 仓库结构
 - `public-site/`：访客站 Vite 应用
-- `admin-site/`：开发者后台 Vite 应用
-- `shared/`：共享类型、UI 片段、数据访问封装
-- `backend/`：本地开发参考后端与 `migrate:production` 迁移脚本
-- `supabase/`：Supabase SQL 与说明文档
+- `admin-site/`：开发者后台 Vite 应用 + Netlify Functions
+- `shared/`：共享类型、UI 片段、内容快照和 API 封装
+- `content/`：公开内容文件
+- `backend/`：本地旧后端和历史迁移工具
 - `.github/workflows/`：CI 与手动构建工作流
-
-说明：旧的单前端 `frontend/` 已从主仓库结构中移除，不再是当前正式源码的一部分。
 
 ## 本地开发
 ### 1. 安装依赖
@@ -43,8 +45,8 @@ npm install
 - `public-site/.env.production.example`
 - `admin-site/.env.example`
 - `admin-site/.env.production.example`
+- `admin-site/.env.netlify.functions.example`
 - `backend/.env.example`
-- `backend/.env.production.example`
 
 ### 3. 常用命令
 ```bash
@@ -53,26 +55,28 @@ npm run dev:visitor      # 后端 + 访客站
 npm run dev:developer    # 后端 + 开发者站
 npm run build            # 构建整个 monorepo
 npm run ci               # 与 GitHub Actions 一致的构建检查
-npm run migrate:production
 ```
 
-### 4. 一键更新 GitHub
-- 双击运行：`update-github.bat`
-- 脚本会自动：
-  - 检查 Git、仓库和 `origin`
-  - 显示当前改动
-  - 执行 `git add -A`
-  - 让你输入 commit message
-  - 提交并推送到当前分支
+说明：
+- 本地仍可通过 `VITE_API_BASE_URL=http://localhost:4000` 走旧 backend fallback
+- 生产环境默认不依赖 backend，而是依赖 Netlify Functions
 
-## 上线方式
-默认生产路线：`GitHub + Netlify + Supabase`
-- `public-site` 连接 Netlify，绑定 `www.yvanlouise.xyz`
-- `admin-site` 连接 Netlify，绑定 `admin.yvanlouise.xyz`
-- `Supabase` 负责 Auth、Postgres 与 Storage
-- `Dynadot` 负责域名解析和根域名跳转
+## 内容发布方式
+- 访客站构建时直接读取 `content/site-content.json`
+- 开发者站保存页面、作品、站点设置时，会通过 Netlify Function 把内容写回 GitHub 仓库中的同一个内容文件
+- GitHub 新 commit 会触发 Netlify 自动重新部署
+- 访客站在重新部署后拿到最新静态内容
 
-详细步骤见：[DEPLOY.md](./DEPLOY.md)
+## 动态数据
+- 私信与评论不会写入公开内容文件
+- 它们由 `admin-site` 的 Netlify Functions 写入 Netlify Blobs
+- 只有后台登录后才能读取这些记录
+
+## 上传媒体
+- 图片和音频不走仓库文件
+- 管理站通过 Netlify Function 获取 Cloudinary 上传签名
+- 浏览器直接上传到 Cloudinary
+- 上传成功后，媒体 URL 会写回 `content/site-content.json`
 
 ## GitHub Actions
 - `.github/workflows/ci.yml`
@@ -83,13 +87,20 @@ npm run migrate:production
 - `.github/workflows/build-admin-site.yml`
   - 手动构建开发者站产物
 
-说明：当前默认部署平台是 Netlify，这两个手动工作流用于构建产物检查，不直接承担正式上线。
+## 一键更新 GitHub
+- 双击运行：`update-github.bat`
+- 脚本会自动：
+  - 检查 Git、仓库和 `origin`
+  - 显示当前改动
+  - 执行 `git add -A`
+  - 让你输入 commit message
+  - 提交并推送到当前分支
 
-## 仓库公开前约定
-- 不提交真实 `.env` 文件，只提交 `*.example`
-- 不提交真实上传媒体、日志、调试缓存和本地数据
+## 安全与仓库约定
+- 不提交真实 `.env` 文件，只提交模板
+- 不提交真实上传媒体、日志、调试缓存和本地私有数据
 - 评论与私信属于后台私有内容，不应导出到公开仓库
-- 生产运行时默认以 `GitHub + Netlify + Supabase` 为准；旧的 Render / Vercel / R2 相关文件仅保留作历史参考
+- `content/site-content.json` 只保存公开内容，不保存访客隐私数据
 
 ## 许可证
 本仓库默认采用 MIT License，详见：[LICENSE](./LICENSE)

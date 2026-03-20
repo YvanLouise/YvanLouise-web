@@ -1,96 +1,100 @@
-﻿# yvanlouise.xyz 上线指南（GitHub + Netlify + Supabase）
+# yvanlouise.xyz 上线指南（GitHub + Netlify + GitHub 内容文件 + Cloudinary）
 
 ## 1. 目标拓扑
 - `https://yvanlouise.xyz`：Dynadot 301 跳转到 `https://www.yvanlouise.xyz`
 - `https://www.yvanlouise.xyz`：Netlify 上的访客站
 - `https://admin.yvanlouise.xyz`：Netlify 上的开发者站
-- 数据库、登录、评论、私信、媒体上传：Supabase
-
-当前免费优先方案不启用：
-- `api.yvanlouise.xyz`
-- `media.yvanlouise.xyz`
+- 公开内容：GitHub 仓库内 `content/site-content.json`
+- 后台接口：`admin-site/netlify/functions`
+- 评论与私信：Netlify Blobs
+- 图片与音频：Cloudinary
 
 ## 2. GitHub 负责什么
-GitHub 在当前方案中的角色是：
+GitHub 在当前方案中的角色：
 - 托管源码仓库
+- 托管公开内容文件 `content/site-content.json`
 - 作为 Netlify 自动部署来源
-- 运行构建检查工作流
-- 管理协作、PR 与版本历史
+- 保存后台每次内容发布的 commit 历史
+- 运行 GitHub Actions 构建检查
 
-GitHub 不承担生产运行时后端。
+GitHub 不承担运行时 API，但会承载公开内容的事实源。
 
-## 3. 先配置 Supabase
-1. 在 Supabase 创建项目。
-2. 打开 SQL Editor，执行 `supabase/schema.sql`。
-3. 在 `Authentication -> Users` 中创建唯一管理员邮箱和密码。
-4. 在 `Project Settings -> API` 记录：
-   - `Project URL`
-   - `anon public key`
-   - `service_role key`
-5. Storage 使用公共 bucket：`site-media`。
+## 3. 准备 GitHub 内容写回
+在 GitHub 创建一个具备 repo 写权限的 Personal Access Token，并在 Netlify 的 `admin-site` 中配置：
+- `GITHUB_TOKEN`
+- `GITHUB_OWNER=YvanLouise`
+- `GITHUB_REPO=YvanLouise-web`
+- `GITHUB_BRANCH=main`
+- `CONTENT_FILE_PATH=content/site-content.json`
 
-## 4. 迁移现有本地内容
-迁移源：
-- `backend/data/local-store.json`
-- `backend/uploads`
+后台保存公开内容时，会通过 GitHub Contents API 更新这个文件。
 
-迁移前准备环境变量，参考：
-- `backend/.env.production.example`
+## 4. 准备 Cloudinary
+1. 注册 Cloudinary 免费账户。
+2. 记录以下信息：
+   - `CLOUDINARY_CLOUD_NAME`
+   - `CLOUDINARY_API_KEY`
+   - `CLOUDINARY_API_SECRET`
+3. 在 Netlify `admin-site` 环境变量中填写这三个值。
 
-至少需要：
-```env
-SUPABASE_URL=https://your-project-ref.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
-SUPABASE_MEDIA_BUCKET=site-media
-```
-
-迁移命令：
-```bash
-npm run migrate:production
-```
-
-迁移脚本会：
-- 校验被引用的本地图片和音频是否存在
-- 上传媒体到 Supabase Storage 的 `site-media`
-- 将旧的本地媒体 URL 改写为公开 Storage URL
-- upsert 导入 `works / pages / site_settings / reviews / messages`
-- 保留 `featuredWorkIds` 顺序
+说明：
+- 管理站不会把高权限密钥暴露给浏览器
+- 浏览器会先向后台函数拿签名，再直传 Cloudinary
 
 ## 5. 配置 Netlify 访客站
 1. 在 Netlify 新建站点并连接当前 GitHub 仓库。
-2. Base directory 设为：`public-site`
+2. Base directory：`public-site`
 3. Build command：`npm install && npm run build`
 4. Publish directory：`dist`
 5. 环境变量参考：`public-site/.env.production.example`
 
 需要填写：
 ```env
-VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
-VITE_SUPABASE_ANON_KEY=<your anon key>
 VITE_ADMIN_SITE_URL=https://admin.yvanlouise.xyz
+VITE_PUBLIC_INTERACTION_BASE=https://admin.yvanlouise.xyz/.netlify/functions
 VITE_BASE_PATH=/
 ```
 
-仓库里已包含：`public-site/netlify.toml`
-
 ## 6. 配置 Netlify 开发者站
 1. 再创建一个 Netlify 站点，连接同一个 GitHub 仓库。
-2. Base directory 设为：`admin-site`
+2. Base directory：`admin-site`
 3. Build command：`npm install && npm run build`
 4. Publish directory：`dist`
-5. 环境变量参考：`admin-site/.env.production.example`
+5. 环境变量参考：
+   - `admin-site/.env.production.example`
+   - `admin-site/.env.netlify.functions.example`
 
-需要填写：
+前端环境变量：
 ```env
-VITE_SUPABASE_URL=https://<your-project-ref>.supabase.co
-VITE_SUPABASE_ANON_KEY=<your anon key>
 VITE_PUBLIC_SITE_URL=https://www.yvanlouise.xyz
 VITE_BASE_PATH=/
 ```
 
-仓库里已包含：`admin-site/netlify.toml`
+函数环境变量至少需要：
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD_HASH=<bcrypt hash>
+ADMIN_SESSION_SECRET=<long random string>
+PUBLIC_SITE_ORIGIN=https://www.yvanlouise.xyz
+GITHUB_TOKEN=<github PAT>
+GITHUB_OWNER=YvanLouise
+GITHUB_REPO=YvanLouise-web
+GITHUB_BRANCH=main
+CONTENT_FILE_PATH=content/site-content.json
+CLOUDINARY_CLOUD_NAME=<cloudinary cloud>
+CLOUDINARY_API_KEY=<cloudinary key>
+CLOUDINARY_API_SECRET=<cloudinary secret>
+```
 
-## 7. 在 Dynadot 绑定域名
+## 7. 生成管理员密码哈希
+先安装依赖，然后运行：
+```bash
+node admin-site/scripts/hash-admin-password.mjs 你的后台密码
+```
+
+把输出结果填到 `ADMIN_PASSWORD_HASH`。
+
+## 8. 在 Dynadot 绑定域名
 Dynadot 继续负责域名注册和 DNS。
 
 建议配置：
@@ -102,19 +106,36 @@ Dynadot 继续负责域名注册和 DNS。
 - 不要手写猜测值，直接使用 Netlify 面板给出的目标地址
 - 等 DNS 生效后再做最终联调
 
-## 8. GitHub Actions 怎么用
+## 9. 内容与交互如何工作
+### 公开内容
+- 访客站构建时读取 `content/site-content.json`
+- 后台保存公开内容时，管理站函数更新该文件并提交到 GitHub
+- GitHub 新 commit 触发 Netlify 自动重新部署
+- 访客站刷新后即可看到最新部署内容
+
+### 私信与评论
+- 访客站会把私信和评论 POST 到 `admin.yvanlouise.xyz/.netlify/functions/...`
+- 后台函数把它们存进 Netlify Blobs
+- 只有管理员登录后可以读取
+
+### 图片与音频
+- 管理站通过签名上传到 Cloudinary
+- 返回的媒体 URL 会写回公开内容文件
+- 访客站下一次部署后会使用新的资源地址
+
+## 10. GitHub Actions 怎么用
 当前仓库包含三类工作流：
 - `ci.yml`：默认 CI，在 `push` 和 `pull_request` 时构建整个 monorepo
 - `deploy-frontend.yml`：手动构建访客站产物
 - `build-admin-site.yml`：手动构建开发者站产物
 
-日常流程建议：
-1. 本地开发和自测
+推荐流程：
+1. 本地修改代码并测试
 2. `git push` 到 GitHub
-3. GitHub Actions 自动运行构建检查
-4. Netlify 从 GitHub 拉取最新代码并重新部署
+3. GitHub Actions 自动跑构建检查
+4. Netlify 自动拉取并重新部署两个站点
 
-## 9. 上线验收清单
+## 11. 上线验收清单
 ### 访客站
 - `https://www.yvanlouise.xyz` 能打开首页、关于、作品、委托、支持、联系
 - 首页精选作品顺序与后台一致
@@ -122,9 +143,9 @@ Dynadot 继续负责域名注册和 DNS。
 - 旧 `/admin` 路径会跳转到 `https://admin.yvanlouise.xyz`
 
 ### 开发者站
-- `https://admin.yvanlouise.xyz` 能正常登录
-- 修改页面内容后，主站刷新可见
-- 修改精选作品后，首页展示顺序同步变化
+- `https://admin.yvanlouise.xyz` 能用用户名/密码登录
+- 修改页面内容后，GitHub 仓库中 `content/site-content.json` 产生新 commit
+- Netlify 自动重新部署后，主站能看到最新内容
 - 图片和音频上传正常
 
 ### 访客交互
@@ -132,24 +153,10 @@ Dynadot 继续负责域名注册和 DNS。
 - 评论可以提交
 - 评论仍然只在后台可见
 
-## 10. 上线后的更新方式
-### 改内容
-- 登录 `https://admin.yvanlouise.xyz`
-- 保存页面、作品、图片、音频等内容
-- 数据会直接写入 Supabase
-- 不需要重新部署
+## 12. 旧方案如何理解
+仓库中仍保留这些历史参考：
+- `backend/`
+- `supabase/`
+- 早期 Render / Vercel / R2 相关文件
 
-### 改代码
-- 本地修改代码
-- 提交并推送到 GitHub
-- GitHub Actions 自动构建检查
-- Netlify 自动重新部署 `public-site` 和 `admin-site`
-
-## 11. 旧方案文件如何理解
-仓库中仍然保留这些历史参考文件：
-- `render.yaml`
-- `public-site/vercel.json`
-- `admin-site/vercel.json`
-- 旧的 Render / Vercel / R2 相关代码和说明
-
-它们不再是当前默认上线路径。当前请以 `GitHub + Netlify + Supabase` 为准。
+它们不再是当前默认生产路径。现在请以 `GitHub + Netlify + GitHub 内容文件 + Netlify Functions/Blobs + Cloudinary` 为准。

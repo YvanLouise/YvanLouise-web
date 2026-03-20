@@ -1,7 +1,7 @@
-﻿import { sampleSettings } from "../data/sampleData";
+import { sampleSettings } from "../data/sampleData";
 import { PageContent, SiteSettings, Work } from "../types";
 
-const CACHE_VERSION = "v4";
+const CACHE_VERSION = "v5";
 const SETTINGS_KEY = `yvanlouise:public:site-settings:${CACHE_VERSION}`;
 const WORKS_KEY = `yvanlouise:public:works:${CACHE_VERSION}`;
 const PAGES_KEY = `yvanlouise:public:pages:${CACHE_VERSION}`;
@@ -110,4 +110,5 @@ export function writeCachedPage(page: PageContent): void {
   pages[page.slug] = page;
   writeJson(PAGES_KEY, pages);
 }
+
 

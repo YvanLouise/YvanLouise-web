@@ -112,7 +112,7 @@ export function MusicClipLibraryEditor({
       }));
       setStatus(`已上传音频：${file.name}`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "音频上传失败。");
+      setStatus(error instanceof Error ? error.message : "音频上传失败。" );
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -202,7 +202,7 @@ export function MusicClipLibraryEditor({
       setClipDraft(normalizedClip);
       setStatus(`片段库已保存：${normalizedClip.label}`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "片段库保存失败。");
+      setStatus(error instanceof Error ? error.message : "片段库保存失败。" );
     }
   }
 
@@ -217,7 +217,7 @@ export function MusicClipLibraryEditor({
       }
       setStatus("已从片段库移除该片段。");
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "删除片段失败。");
+      setStatus(error instanceof Error ? error.message : "删除片段失败。" );
     }
   }
 
@@ -226,7 +226,9 @@ export function MusicClipLibraryEditor({
       <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
         <div className="stack" style={{ gap: "0.35rem" }}>
           <h3 style={{ margin: 0 }}>音乐片段库</h3>
-          <p className="meta" style={{ margin: 0 }}>上传本地音乐后，可以一边试听一边截取起止时间，前台会从这里随机抽取片段播放。</p>
+          <p className="meta" style={{ margin: 0 }}>
+            上传本地音乐后，可以一边试听一边截取开始与结束时间，前台会从这里随机抽取片段播放。
+          </p>
         </div>
         <div className="cta-row">
           <button type="button" className="btn btn-secondary" onClick={() => fileInputRef.current?.click()} disabled={uploading}>
@@ -353,6 +355,3 @@ export function MusicClipLibraryEditor({
     </section>
   );
 }
-
-
-

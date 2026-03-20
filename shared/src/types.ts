@@ -248,6 +248,23 @@ export interface SiteSettings {
 }
 
 export interface AdminCredentials {
-  email: string;
+  username: string;
   password: string;
 }
+
+export interface SiteContentFile {
+  generatedAt?: string;
+  works?: Work[];
+  pages?: PageContent[];
+  siteSettings?: Partial<SiteSettings>;
+  featuredWorkIds?: string[];
+  uiText?: SiteUiText;
+}
+
+export interface SiteContentSnapshot {
+  generatedAt?: string;
+  works: Work[];
+  pages: PageContent[];
+  siteSettings: SiteSettings;
+}
+

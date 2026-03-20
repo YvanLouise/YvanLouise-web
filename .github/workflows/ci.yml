@@ -27,16 +27,13 @@ jobs:
 
       - name: Write public-site env
         run: |
-          echo "VITE_SUPABASE_URL=${{ secrets.PUBLIC_SITE_SUPABASE_URL || 'https://example.supabase.co' }}" > public-site/.env.production
-          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.PUBLIC_SITE_SUPABASE_ANON_KEY || 'example-anon-key' }}" >> public-site/.env.production
-          echo "VITE_ADMIN_SITE_URL=${{ secrets.PUBLIC_SITE_ADMIN_URL || 'https://admin.yvanlouise.xyz' }}" >> public-site/.env.production
+          echo "VITE_ADMIN_SITE_URL=${{ secrets.PUBLIC_SITE_ADMIN_URL || 'https://admin.yvanlouise.xyz' }}" > public-site/.env.production
+          echo "VITE_PUBLIC_INTERACTION_BASE=${{ secrets.PUBLIC_SITE_INTERACTION_BASE || 'https://admin.yvanlouise.xyz/.netlify/functions' }}" >> public-site/.env.production
           echo "VITE_BASE_PATH=/" >> public-site/.env.production
 
       - name: Write admin-site env
         run: |
-          echo "VITE_SUPABASE_URL=${{ secrets.ADMIN_SITE_SUPABASE_URL || 'https://example.supabase.co' }}" > admin-site/.env.production
-          echo "VITE_SUPABASE_ANON_KEY=${{ secrets.ADMIN_SITE_SUPABASE_ANON_KEY || 'example-anon-key' }}" >> admin-site/.env.production
-          echo "VITE_PUBLIC_SITE_URL=${{ secrets.ADMIN_SITE_PUBLIC_URL || 'https://www.yvanlouise.xyz' }}" >> admin-site/.env.production
+          echo "VITE_PUBLIC_SITE_URL=${{ secrets.ADMIN_SITE_PUBLIC_URL || 'https://www.yvanlouise.xyz' }}" > admin-site/.env.production
           echo "VITE_BASE_PATH=/" >> admin-site/.env.production
 
       - name: Build monorepo
