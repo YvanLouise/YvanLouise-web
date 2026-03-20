@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T17:43:09.323Z",
+  "generatedAt": "2026-03-20T18:02:34.012Z",
   "works": [
     {
       "id": "w-music-01",
@@ -201,7 +201,7 @@
     "bannerBadge": "个人创作站",
     "bannerHeadline": "持续发布音乐、软件、游戏与动画作品。",
     "bannerDescription": "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
-    "bannerImageUrl": "",
+    "bannerImageUrl": "https://res.cloudinary.com/da0qt73sb/image/upload/v1774029611/yvanlouise/site-banner/1000182084-1774029596447.png",
     "avatarImageUrl": "https://res.cloudinary.com/da0qt73sb/image/upload/v1774028438/yvanlouise/site-avatar/1000184256-1774028436334.jpg",
     "afdianUrl": "https://afdian.com/",
     "socialLinks": [
