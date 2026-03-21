@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:39:18.900Z",
+  "generatedAt": "2026-03-21T16:39:28.022Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -285,6 +285,14 @@
     ],
     "musicPreviewClips": [
       {
+        "id": "1f75b6ec-8cda-417d-994b-57db021572b6",
+        "label": "YvanLouise - 夜下残影",
+        "sourceUrl": "uploads/music-preview-1774111164079-6adeaa98-0702-46a2-80f2-028ff0634531.flac",
+        "sourceName": "YvanLouise - 夜下残影.flac",
+        "startTime": 0,
+        "endTime": 15
+      },
+      {
         "id": "01b9d13d-1d58-4431-ae5e-d5f9e8296af6",
         "label": "射杀恋人之日中文特别版",
         "sourceUrl": "uploads/music-preview-1774110550677-b81d2b68-e7df-49f5-89f6-88c367a4bd36.flac",
@@ -461,6 +469,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:39:18.900Z"
+    "updatedAt": "2026-03-21T16:39:28.022Z"
   }
 }
