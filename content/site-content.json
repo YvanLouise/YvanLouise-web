@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:07:50.111Z",
+  "generatedAt": "2026-03-21T17:09:11.023Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -233,6 +233,14 @@
       }
     ],
     "musicPreviewClips": [
+      {
+        "id": "c21f970c-f8b4-4a23-8d26-f65f7f2d2bbe",
+        "label": "萨拉曼德拉的舞女/サラマンドラの踊り子",
+        "sourceUrl": "uploads/music-preview-1774112876989-ed9d9d83-9970-41a6-961d-1d12931614b2.flac",
+        "sourceName": "YvanLouise - 萨拉曼德拉的舞女 サラマンドラの踊り子中文版.flac",
+        "startTime": 146,
+        "endTime": 202
+      },
       {
         "id": "975dae46-2878-4ccc-a91c-1f2f4669cc17",
         "label": "魔笛哈梅林 HAMELN中文版",
@@ -506,6 +514,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:07:50.111Z"
+    "updatedAt": "2026-03-21T17:09:11.023Z"
   }
 }
