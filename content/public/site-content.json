@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:43:53.928Z",
+  "generatedAt": "2026-03-21T16:45:22.522Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -285,6 +285,14 @@
     ],
     "musicPreviewClips": [
       {
+        "id": "f1efc8ea-d8b4-4e60-8ef2-31aa76972797",
+        "label": "系在蝴蝶上的红线/蝶に結いた赤い糸",
+        "sourceUrl": "uploads/music-preview-1774111440776-b57f7d6d-9b4c-458e-b24c-ba63441cc854.flac",
+        "sourceName": "YvanLouise - 系在蝴蝶上的红线 蝶に結いた赤い糸中文版.flac",
+        "startTime": 44,
+        "endTime": 71
+      },
+      {
         "id": "f0967cc3-6334-49dc-9583-b30f595113f4",
         "label": "少女と黄金竜の物語 中文版",
         "sourceUrl": "uploads/music-preview-1774111373620-eab656cd-ba5a-43c2-8b09-6fa956ba3d9d.flac",
@@ -469,6 +477,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:43:53.927Z"
+    "updatedAt": "2026-03-21T16:45:22.521Z"
   }
 }
