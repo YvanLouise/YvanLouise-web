@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:10:23.546Z",
+  "generatedAt": "2026-03-21T17:12:30.942Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -42,45 +42,6 @@
       "publishedAt": "2026-03-21",
       "createdAt": "2026-03-21T13:06:50.270Z",
       "updatedAt": "2026-03-21T13:07:15.581Z"
-    },
-    {
-      "id": "w-software-01",
-      "title": "译林 / YiLin",
-      "type": "software",
-      "summary": "一个帮助创作者整理灵感、任务与素材的应用原型。",
-      "detailIntro": "这个项目面向个人创作者和小团队，重点是把灵感记录、任务拆解和阶段推进放在同一条清晰的流程里。",
-      "background": "我希望做一个更轻、更直观的创作管理工具，让想法不会停留在碎片阶段，而是能顺手走到执行。",
-      "process": "使用 React 与 Node.js 搭建核心结构，重点打磨移动端录入、列表筛选、状态跟踪和视觉层级。",
-      "result": "它既是可持续迭代的软件项目，也是我展示产品思路、交互设计和开发能力的重要作品。",
-      "featureList": [
-        "快速记录灵感",
-        "任务列表与状态切换",
-        "适合移动端使用的紧凑布局"
-      ],
-      "interactionPoints": [
-        "详情页支持展示功能分区",
-        "适合放置演示视频与交互截图",
-        "可继续扩展为正式产品"
-      ],
-      "galleryImages": [],
-      "detailSections": [
-        {
-          "title": "交互重点",
-          "body": "通过更清晰的层级、紧凑的信息编排和低打扰视觉，让用户在手机上也能快速完成操作。"
-        },
-        {
-          "title": "适用对象",
-          "body": "适合独立开发者、内容团队以及需要持续推进项目的创作者。"
-        }
-      ],
-      "platform": "Web / iPhone / Android",
-      "status": "持续迭代中",
-      "coverUrl": "uploads/work-cover-w-software-01-1774098299229-4266fc42-18c7-4890-a471-b97e4d728aed.png",
-      "demoUrl": "https://example.com/software/yilin",
-      "repoUrl": "https://github.com/example/yilin",
-      "publishedAt": "2026-01-28",
-      "createdAt": "2026-03-21T12:39:02.767Z",
-      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "id": "w-music-01",
