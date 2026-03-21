@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:45:22.522Z",
+  "generatedAt": "2026-03-21T16:46:20.696Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -285,6 +285,14 @@
     ],
     "musicPreviewClips": [
       {
+        "id": "619bdadb-686e-408a-a3eb-31f76b127117",
+        "label": "审判终焉/最後の審判",
+        "sourceUrl": "uploads/music-preview-1774111528283-d265dc92-2d7c-4d0f-8857-1bc9562c89a8.flac",
+        "sourceName": "YvanLouise - 审判终焉 最後の審判 中文版.flac",
+        "startTime": 131,
+        "endTime": 160
+      },
+      {
         "id": "f1efc8ea-d8b4-4e60-8ef2-31aa76972797",
         "label": "系在蝴蝶上的红线/蝶に結いた赤い糸",
         "sourceUrl": "uploads/music-preview-1774111440776-b57f7d6d-9b4c-458e-b24c-ba63441cc854.flac",
@@ -477,6 +485,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:45:22.521Z"
+    "updatedAt": "2026-03-21T16:46:20.695Z"
   }
 }
