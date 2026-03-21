@@ -1,6 +1,26 @@
 {
-  "generatedAt": "2026-03-21T12:51:35.848Z",
+  "generatedAt": "2026-03-21T13:14:06.937Z",
   "works": [
+    {
+      "id": "f73368c6-1ed0-46bd-be6d-44109047948f",
+      "title": "少女与黄金龙的故事",
+      "type": "animation",
+      "summary": "",
+      "detailIntro": "",
+      "background": "",
+      "process": "",
+      "result": "",
+      "featureList": [],
+      "interactionPoints": [],
+      "galleryImages": [],
+      "detailSections": [],
+      "status": "更新至第零集",
+      "coverUrl": "uploads/work-cover-f73368c6-1ed0-46bd-be6d-44109047948f-1774098430057-1a5bbb9a-673a-4aec-a65d-f94df22e2cd0.jpg",
+      "demoUrl": "https://www.bilibili.com/video/BV14PPMz4E58/?spm_id_from=333.1387.upload.video_card.click&vd_source=7d3435e0340d9a6f3be31ee2d51ad629",
+      "publishedAt": "2026-03-21",
+      "createdAt": "2026-03-21T13:06:50.270Z",
+      "updatedAt": "2026-03-21T13:07:15.581Z"
+    },
     {
       "id": "w-software-01",
       "title": "译林 / YiLin",
@@ -33,12 +53,88 @@
       ],
       "platform": "Web / iPhone / Android",
       "status": "持续迭代中",
-      "coverUrl": "",
+      "coverUrl": "uploads/work-cover-w-software-01-1774098299229-4266fc42-18c7-4890-a471-b97e4d728aed.png",
       "demoUrl": "https://example.com/software/yilin",
       "repoUrl": "https://github.com/example/yilin",
       "publishedAt": "2026-01-28",
       "createdAt": "2026-03-21T12:39:02.767Z",
-      "updatedAt": "2026-03-21T12:42:17.570Z"
+      "updatedAt": "2026-03-21T13:14:06.879Z"
+    },
+    {
+      "id": "w-music-01",
+      "title": "霓虹回声",
+      "type": "music",
+      "summary": "一组融合城市夜景、电子颗粒和情绪推进的原创音乐作品。",
+      "detailIntro": "这组作品围绕深夜街道、霓虹灯光和独自漫游的氛围展开，适合独立聆听，也适合用作影像与游戏配乐。",
+      "background": "我想做一组既能独立发布，也能服务于视觉叙事项目的原创音乐，把空间感和情绪流动做得更细腻。",
+      "process": "主要在 Ableton Live 中完成编曲与混音，再结合环境采样、合成器纹理和动态自动化，反复调整段落推进。",
+      "result": "目前已经整理成一组可发布曲目，也能作为预告片、动画短片或游戏片段的配乐素材。",
+      "featureList": [
+        "原创旋律动机",
+        "层次清晰的氛围铺陈",
+        "适合切片用于影像或预告"
+      ],
+      "interactionPoints": [
+        "支持随机片段试听",
+        "可按情绪段落拆分展示",
+        "适合补充封面、歌词和设定图"
+      ],
+      "galleryImages": [],
+      "detailSections": [
+        {
+          "title": "声音设定",
+          "body": "整体音色偏冷，强调颗粒感、长尾混响和低频脉冲的推动力。"
+        },
+        {
+          "title": "适用场景",
+          "body": "适合独立游戏预告、城市夜景剪辑、角色主题音乐与实验短片。"
+        }
+      ],
+      "platform": "Spotify / 网易云音乐 / 视频项目",
+      "status": "已发布",
+      "coverUrl": "",
+      "demoUrl": "https://example.com/music/neon-echoes",
+      "publishedAt": "2025-12-15",
+      "createdAt": "2026-03-21T13:12:36.389Z",
+      "updatedAt": "2026-03-21T13:14:06.879Z"
+    },
+    {
+      "id": "w-game-01",
+      "title": "回声潜渊",
+      "type": "game",
+      "summary": "以声音反馈驱动探索和解谜节奏的独立游戏原型。",
+      "detailIntro": "这个游戏原型围绕声波反馈、空间定位和轻叙事推进展开，希望用更少的提示创造更强的沉浸感。",
+      "background": "我想验证一种更依赖声音和环境反馈的探索体验，让玩家在低信息密度环境里保持好奇与判断。",
+      "process": "先完成纸面关卡结构，再在 Unity 中搭建核心交互，通过测试不断调整声音提示和路径选择。",
+      "result": "目前已经形成一段可试玩的垂直切片，适合继续扩展成更完整的独立游戏。",
+      "featureList": [
+        "声音引导探索",
+        "强调氛围与节奏的关卡设计",
+        "适合继续扩展的系统原型"
+      ],
+      "interactionPoints": [
+        "适合展示玩法说明",
+        "可补充试玩录像与交互截图",
+        "能继续加入更完整的系统设计"
+      ],
+      "galleryImages": [],
+      "detailSections": [
+        {
+          "title": "玩法核心",
+          "body": "玩家需要根据不同频段的反馈来定位路线，并在关键节点做出节奏判断。"
+        },
+        {
+          "title": "后续方向",
+          "body": "可继续加入敌人感知、非线性探索和多结局叙事。"
+        }
+      ],
+      "platform": "Windows / Web Demo",
+      "status": "原型完成",
+      "coverUrl": "",
+      "demoUrl": "https://example.com/game/echo-dive",
+      "publishedAt": "2026-02-02",
+      "createdAt": "2026-03-21T13:12:36.389Z",
+      "updatedAt": "2026-03-21T13:14:06.879Z"
     },
     {
       "id": "w-animation-01",
@@ -75,8 +171,8 @@
       "coverUrl": "",
       "demoUrl": "https://example.com/animation/pulse-frame",
       "publishedAt": "2026-02-12",
-      "createdAt": "2026-03-21T12:39:02.767Z",
-      "updatedAt": "2026-03-21T12:42:17.570Z"
+      "createdAt": "2026-03-21T13:12:36.389Z",
+      "updatedAt": "2026-03-21T13:14:06.879Z"
     }
   ],
   "pages": [
@@ -86,7 +182,7 @@
       "hero": "这里集中展示我的音乐、软件、游戏与动画作品，也开放委托、私信和支持入口。",
       "body": "如果你想快速了解我正在做什么，可以先看精选作品，再决定是否继续合作或支持。",
       "highlights": [],
-      "updatedAt": "2026-03-21T12:51:35.843Z"
+      "updatedAt": "2026-03-21T13:14:06.879Z"
     },
     {
       "slug": "about",
@@ -98,7 +194,7 @@
         "擅长从概念走到完整可展示成品",
         "支持合作开发、定制创作与长期委托"
       ],
-      "updatedAt": "2026-03-21T12:42:17.570Z"
+      "updatedAt": "2026-03-21T13:14:06.879Z"
     },
     {
       "slug": "commission",
@@ -111,7 +207,7 @@
         "游戏玩法验证与交互设计",
         "动画短片与动态视觉设计"
       ],
-      "updatedAt": "2026-03-21T12:42:17.570Z"
+      "updatedAt": "2026-03-21T13:14:06.879Z"
     },
     {
       "slug": "support",
@@ -123,7 +219,7 @@
         "分享作品链接",
         "通过委托长期合作"
       ],
-      "updatedAt": "2026-03-21T12:42:17.570Z"
+      "updatedAt": "2026-03-21T13:14:06.879Z"
     }
   ],
   "siteSettings": {
@@ -137,7 +233,7 @@
     "bannerHeadline": "持续发布音乐、软件、游戏与动画作品。",
     "bannerDescription": "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
     "bannerImageUrl": "uploads/site-banner-1774097478963-85b64f15-375e-4530-93be-ef247e8b6f69.png",
-    "avatarImageUrl": "uploads/site-avatar-1774097475830-3e0ecf3f-a79b-46f5-9097-7c06a21d2ba0.jpg",
+    "avatarImageUrl": "uploads/site-avatar-1774098189269-a32368d5-28ab-4cd6-b21c-5a0f7757db6c.png",
     "afdianUrl": "https://afdian.com/",
     "socialLinks": [
       {
@@ -155,7 +251,9 @@
     ],
     "musicPreviewClips": [],
     "featuredWorkIds": [
-      "w-software-01"
+      "w-music-01",
+      "w-software-01",
+      "w-game-01"
     ],
     "uiText": {
       "nav": {
@@ -310,6 +408,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T12:51:35.848Z"
+    "updatedAt": "2026-03-21T13:14:06.879Z"
   }
 }
