@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:17:22.866Z",
+  "generatedAt": "2026-03-21T16:18:35.773Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -267,7 +267,7 @@
         "bannerPrimaryLabel": "支持创作",
         "bannerSecondaryLabel": "浏览作品",
         "profileBadge": "创作者名片",
-        "profileDescription": "在新时代立志打造个人IP",
+        "profileDescription": "在这个时代，用自己的方式慢慢建立一个属于自己的个人IP。",
         "profileStatOne": "持续更新公开作品",
         "profileStatTwo": "开放委托与合作",
         "featuredTitle": "精选作品",
@@ -390,6 +390,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:17:22.866Z"
+    "updatedAt": "2026-03-21T16:18:35.773Z"
   }
 }
