@@ -1,16 +1,33 @@
-﻿import { defineConfig, loadEnv } from "vite";
+﻿import { defineConfig, loadEnv, Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
+import fs from "node:fs";
+import path from "node:path";
 
 const sharedSrc = fileURLToPath(new URL("../shared/src", import.meta.url));
 const contentDir = fileURLToPath(new URL("../content", import.meta.url));
 const sharedPublicDir = fileURLToPath(new URL("../content/public", import.meta.url));
+const appPublicDir = fileURLToPath(new URL("./public", import.meta.url));
+
+function copyAppPublicFiles(): Plugin {
+  return {
+    name: "copy-app-public-files",
+    closeBundle() {
+      if (!fs.existsSync(appPublicDir)) {
+        return;
+      }
+
+      const outDir = path.resolve(process.cwd(), "dist");
+      fs.cpSync(appPublicDir, outDir, { recursive: true, force: true });
+    }
+  };
+}
 
 export default defineConfig(({ mode }) => {
   loadEnv(mode, process.cwd(), "");
 
   return {
-    plugins: [react()],
+    plugins: [react(), copyAppPublicFiles()],
     resolve: {
       alias: {
         "@shared": sharedSrc,
