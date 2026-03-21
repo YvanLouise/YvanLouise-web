@@ -1,45 +1,51 @@
 # YvanLouise Web
 
-一个双站点的个人网站仓库：
-- `public-site/`：访客站，部署到 Netlify，面向公开访问
-- `admin-site/`：开发者后台，部署到 Netlify，同时承载后台函数入口
-- `shared/`：共享类型、组件、内容快照与数据访问封装
-- `content/`：公开内容快照，作为访客站的静态内容源
-- `backend/`：本地旧后端与辅助迁移脚本载体，不再是默认线上服务
-- `supabase/`：旧方案历史参考，不是当前默认生产路径
+Yvan Louise 的个人网站源码仓库。
 
+这个仓库当前主要服务两个目标：
+- 发布一个可公开访问的静态访客站
+- 保留一套本地使用的内容编辑与实验工具，方便持续更新作品、页面文案和站点配置
 
-## 当前生产分工
-- `https://www.yvanlouise.xyz`：访客站，Netlify `public-site`
-- `https://admin.yvanlouise.xyz`：开发者站，Netlify `admin-site`
-- `https://yvanlouise.xyz`：Dynadot 301 跳转到 `https://www.yvanlouise.xyz`
-- 公开内容：仓库内 `content/site-content.json`
-- 管理后台接口：`admin-site/netlify/functions`
-- 私信 / 评论：Netlify Blobs
-- 图片 / 音频上传：Cloudinary
+## 当前推荐使用方式
 
-GitHub 在这套方案里的职责：
-- 托管源码和公开内容文件
-- 作为 Netlify 自动部署来源
-- 承担内容发布的 commit 历史
-- 运行 GitHub Actions 构建检查
+### 公开访客站
+- 目录：`public-site/`
+- 类型：纯静态 Vite 站点
+- 推荐部署：GitHub Pages
+- 域名：`https://www.yvanlouise.xyz`
+
+### 本地管理与内容维护
+- 目录：`admin-site/`
+- 用途：本地编辑内容、预览页面、整理作品信息
+- 说明：当前不要求把管理站一起公开部署；如果你只是想维护公开网站，优先保证 `public-site` 的静态发布即可
 
 ## 仓库结构
-- `public-site/`：访客站 Vite 应用
-- `admin-site/`：开发者后台 Vite 应用 + Netlify Functions
-- `shared/`：共享类型、UI 片段、内容快照和 API 封装
-- `content/`：公开内容文件
-- `backend/`：本地旧后端和历史迁移工具
-- `.github/workflows/`：CI 与手动构建工作流
+- `public-site/`：公开访客站
+- `admin-site/`：本地内容管理与实验性后台能力
+- `shared/`：共享类型、样式、组件和数据访问封装
+- `content/`：公开站内容文件，当前核心内容源是 `content/site-content.json`
+- `backend/`：历史本地后端与迁移脚本载体，默认不参与当前公开站部署
+- `supabase/`：旧方案参考文件，默认不作为当前上线主路径
+- `.github/workflows/`：CI 与 GitHub Pages 自动部署工作流
 
 ## 本地开发
-### 1. 安装依赖
+
+### 安装依赖
 ```bash
 npm install
 ```
 
-### 2. 准备环境变量
-按需复制模板文件：
+### 常用命令
+```bash
+npm run dev
+npm run dev:visitor
+npm run dev:developer
+npm run build
+npm run ci
+```
+
+### 环境变量模板
+按需复制以下模板文件，再填写你自己的值：
 - `public-site/.env.example`
 - `public-site/.env.production.example`
 - `admin-site/.env.example`
@@ -47,46 +53,51 @@ npm install
 - `admin-site/.env.netlify.functions.example`
 - `backend/.env.example`
 
-## 内容发布方式
-- 访客站构建时直接读取 `content/site-content.json`
-- 开发者站保存页面、作品、站点设置时，会通过 Netlify Function 把内容写回 GitHub 仓库中的同一个内容文件
-- GitHub 新 commit 会触发 Netlify 自动重新部署
-- 访客站在重新部署后拿到最新静态内容
+## 当前公开站部署方式
 
-## 动态数据
-- 私信与评论不会写入公开内容文件
-- 它们由 `admin-site` 的 Netlify Functions 写入 Netlify Blobs
-- 只有后台登录后才能读取这些记录
+当前公开站已经按纯静态站思路整理，推荐部署到 GitHub Pages。
 
-## 上传媒体
-- 图片和音频不走仓库文件
-- 管理站通过 Netlify Function 获取 Cloudinary 上传签名
-- 浏览器直接上传到 Cloudinary
-- 上传成功后，媒体 URL 会写回 `content/site-content.json`
+相关文件：
+- GitHub Pages 工作流：`.github/workflows/deploy-frontend.yml`
+- Pages 路由回退：`public-site/public/404.html`
+- 部署说明：`GITHUB_PAGES_DEPLOY.md`
 
-## GitHub Actions
-- `.github/workflows/ci.yml`
-  - 在 `push` 和 `pull_request` 时运行
-  - 安装依赖并构建整个 monorepo
-- `.github/workflows/deploy-frontend.yml`
-  - 手动构建访客站产物
-- `.github/workflows/build-admin-site.yml`
-  - 手动构建开发者站产物
+如果你只想让网站公开可访问，而不想继续维护线上动态后台，这就是最省事的路径。
 
-## 一键更新 GitHub
-- 双击运行：`update-github.bat`
-- 脚本会自动：
-  - 检查 Git、仓库和 `origin`
-  - 显示当前改动
-  - 执行 `git add -A`
-  - 让你输入 commit message
-  - 提交并推送到当前分支
+## 内容更新方式
 
-## 安全与仓库约定
-- 不提交真实 `.env` 文件，只提交模板
-- 不提交真实上传媒体、日志、调试缓存和本地私有数据
-- 评论与私信属于后台私有内容，不应导出到公开仓库
-- `content/site-content.json` 只保存公开内容，不保存访客隐私数据
+当前公开站使用仓库内的静态内容文件：
+- `content/site-content.json`
 
-## 许可证
-本仓库默认采用 MIT License，详见：[LICENSE](./LICENSE)
+也就是说，更新公开内容的最稳流程是：
+1. 本地修改内容或页面代码
+2. 提交到 GitHub
+3. 由 GitHub Actions 自动重新部署公开站
+
+## 项目状态说明
+
+这个仓库保留了一些历史路线和实验性模块，例如：
+- 早期的后端接口尝试
+- 管理站的本地编辑逻辑
+- 旧的第三方平台接入草案
+
+它们会继续作为开发参考保留，但不代表当前公开站一定依赖这些模块上线。
+
+## 开源说明
+
+本仓库以 MIT License 公开。
+
+这意味着你可以：
+- 学习项目结构
+- 参考实现方式
+- 在遵守许可证的前提下复用代码
+
+但请注意：
+- 不要把仓库中出现的个人品牌、作品内容、图片、音频和身份信息默认视为可自由再分发素材
+- 不要提交真实密钥、生产配置、私有消息或访客数据
+
+## 相关文档
+- 贡献说明：`CONTRIBUTING.md`
+- 安全说明：`SECURITY.md`
+- 许可证：`LICENSE`
+- GitHub Pages 部署说明：`GITHUB_PAGES_DEPLOY.md`
