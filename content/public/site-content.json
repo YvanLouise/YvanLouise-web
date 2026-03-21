@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:25:43.991Z",
+  "generatedAt": "2026-03-21T16:27:50.786Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -232,11 +232,11 @@
     "musicPreviewClips": [
       {
         "id": "ad6aad69-b484-4a56-9833-bf626e7901fd",
-        "label": "YvanLouise - 射杀恋人之日中文特别版 (1)",
-        "sourceUrl": "uploads/music-preview-1774110279157-79cc309f-f7bf-4441-b15c-2bd48f080046.flac",
-        "sourceName": "YvanLouise - 射杀恋人之日中文特别版 (1).flac",
-        "startTime": 66,
-        "endTime": 85
+        "label": "射杀恋人之日中文特别版",
+        "sourceUrl": "uploads/music-preview-1774110354622-38759ed7-3797-48db-a267-69be337b436b.flac",
+        "sourceName": "YvanLouise - 幽灵般的毕业 GHOST×GRADUATI特别中文版.flac",
+        "startTime": 84,
+        "endTime": 115
       }
     ],
     "featuredWorkIds": [
@@ -399,6 +399,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:25:43.990Z"
+    "updatedAt": "2026-03-21T16:27:50.786Z"
   }
 }
