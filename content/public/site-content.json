@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:05:39.703Z",
+  "generatedAt": "2026-03-21T17:06:21.742Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -233,6 +233,14 @@
       }
     ],
     "musicPreviewClips": [
+      {
+        "id": "75d1068a-5aa9-480d-97f5-c502bc0b65d8",
+        "label": "杏花 あんずの花",
+        "sourceUrl": "uploads/music-preview-1774112760392-c22f0171-9afe-44bd-ba9f-25f80fcfcf95.flac",
+        "sourceName": "YvanLouise - 杏花 あんずの花.flac",
+        "startTime": 0,
+        "endTime": 23
+      },
       {
         "id": "9ac2d525-f514-4519-bb4e-54cb6114860b",
         "label": "碎月~生命~",
@@ -490,6 +498,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:05:39.703Z"
+    "updatedAt": "2026-03-21T17:06:21.741Z"
   }
 }
