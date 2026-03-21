@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T15:02:40.001Z",
+  "generatedAt": "2026-03-21T15:06:04.081Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -215,19 +215,19 @@
     "bannerDescription": "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
     "bannerImageUrl": "uploads/site-banner-1774097478963-85b64f15-375e-4530-93be-ef247e8b6f69.png",
     "avatarImageUrl": "uploads/site-avatar-1774098189269-a32368d5-28ab-4cd6-b21c-5a0f7757db6c.png",
-    "afdianUrl": "https://afdian.com/",
+    "afdianUrl": "https://afdian.com/a/Yvanlouiseks",
     "socialLinks": [
       {
         "label": "GitHub",
-        "url": "https://github.com"
+        "url": "https://github.com/YvanLouise"
       },
       {
         "label": "bilibili",
-        "url": "https://www.bilibili.com"
+        "url": "https://space.bilibili.com/190749586"
       },
       {
         "label": "网易云音乐",
-        "url": "https://music.163.com"
+        "url": "https://music.163.com/#/artist?id=99021524"
       }
     ],
     "musicPreviewClips": [],
@@ -391,6 +391,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T14:50:29.568Z"
+    "updatedAt": "2026-03-21T15:06:04.081Z"
   }
 }
