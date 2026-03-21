@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T14:08:07.641Z",
+  "generatedAt": "2026-03-21T14:10:38.385Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -105,7 +105,7 @@
     },
     {
       "id": "w-game-01",
-      "title": "回声潜渊",
+      "title": "【射杀恋人之日 中文特别版】",
       "type": "music",
       "summary": "",
       "detailIntro": "",
@@ -122,7 +122,7 @@
       "demoUrl": "https://www.bilibili.com/video/BV1XzcAzjEnm/?spm_id_from=333.1387.upload.video_card.click",
       "publishedAt": "2026-02-02",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T13:59:02.344Z"
+      "updatedAt": "2026-03-21T14:09:45.030Z"
     },
     {
       "id": "w-animation-01",
@@ -153,7 +153,7 @@
       "hero": "这里集中展示我的音乐、软件、游戏与动画作品，也开放委托、私信和支持入口。",
       "body": "如果你想快速了解我正在做什么，可以先看精选作品，再决定是否继续合作或支持。",
       "highlights": [],
-      "updatedAt": "2026-03-21T14:08:07.635Z"
+      "updatedAt": "2026-03-21T14:10:38.379Z"
     },
     {
       "slug": "about",
@@ -223,9 +223,9 @@
     "musicPreviewClips": [],
     "featuredWorkIds": [
       "f73368c6-1ed0-46bd-be6d-44109047948f",
-      "w-game-01",
       "w-music-01",
-      "w-animation-01"
+      "w-animation-01",
+      "w-game-01"
     ],
     "uiText": {
       "nav": {
@@ -380,6 +380,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T14:08:07.641Z"
+    "updatedAt": "2026-03-21T14:10:38.385Z"
   }
 }
