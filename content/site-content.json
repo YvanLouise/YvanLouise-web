@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:22:45.818Z",
+  "generatedAt": "2026-03-21T16:25:43.991Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -229,7 +229,16 @@
         "url": "https://music.163.com/#/artist?id=99021524"
       }
     ],
-    "musicPreviewClips": [],
+    "musicPreviewClips": [
+      {
+        "id": "ad6aad69-b484-4a56-9833-bf626e7901fd",
+        "label": "YvanLouise - 射杀恋人之日中文特别版 (1)",
+        "sourceUrl": "uploads/music-preview-1774110279157-79cc309f-f7bf-4441-b15c-2bd48f080046.flac",
+        "sourceName": "YvanLouise - 射杀恋人之日中文特别版 (1).flac",
+        "startTime": 66,
+        "endTime": 85
+      }
+    ],
     "featuredWorkIds": [
       "w-music-01",
       "w-game-01",
@@ -390,6 +399,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:22:45.817Z"
+    "updatedAt": "2026-03-21T16:25:43.990Z"
   }
 }
