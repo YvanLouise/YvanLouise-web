@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -6,8 +6,19 @@
     <title>跳转中...</title>
     <script>
       (function () {
-        var target = window.location.pathname + window.location.search + window.location.hash;
-        window.location.replace(window.location.origin + "/?p=" + encodeURIComponent(target));
+        var basePath = "%VITE_BASE_PATH%" || "/";
+        if (basePath.charAt(0) !== "/") {
+          basePath = "/" + basePath;
+        }
+        if (basePath.charAt(basePath.length - 1) !== "/") {
+          basePath += "/";
+        }
+
+        var pathname = window.location.pathname;
+        var route = pathname.indexOf(basePath) === 0 ? pathname.slice(basePath.length - 1) : pathname;
+        var target = route + window.location.search + window.location.hash;
+
+        window.location.replace(window.location.origin + basePath + "?p=" + encodeURIComponent(target));
       })();
     </script>
   </head>
