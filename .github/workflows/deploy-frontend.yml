@@ -1,4 +1,4 @@
-﻿name: Deploy Public Site to GitHub Pages
+name: Deploy Public Site to GitHub Pages
 
 on:
   push:
@@ -43,22 +43,16 @@ jobs:
       - name: Write public-site env
         env:
           PUBLIC_SITE_ADMIN_URL: ${{ secrets.PUBLIC_SITE_ADMIN_URL }}
-          PUBLIC_SITE_CUSTOM_DOMAIN: ${{ secrets.PUBLIC_SITE_CUSTOM_DOMAIN }}
           REPO_NAME: ${{ github.event.repository.name }}
         run: |
-          if [ -n "$PUBLIC_SITE_CUSTOM_DOMAIN" ]; then
-            BASE_PATH="/"
-          else
-            BASE_PATH="/$REPO_NAME/"
-          fi
-
           echo "VITE_SITE_RUNTIME=public" > public-site/.env.production
           if [ -n "$PUBLIC_SITE_ADMIN_URL" ]; then
             echo "VITE_ADMIN_SITE_URL=$PUBLIC_SITE_ADMIN_URL" >> public-site/.env.production
           else
             echo "VITE_ADMIN_SITE_URL=https://yl-a-side.netlify.app" >> public-site/.env.production
           fi
-          echo "VITE_BASE_PATH=$BASE_PATH" >> public-site/.env.production
+          echo "VITE_REPOSITORY_BASE=/$REPO_NAME/" >> public-site/.env.production
+          echo "VITE_BASE_PATH=/" >> public-site/.env.production
 
       - name: Build public site
         run: npm run build:public-site

@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
@@ -14,13 +14,24 @@
           return;
         }
 
-        var basePath = "%VITE_BASE_PATH%" || "/";
-        if (basePath.charAt(0) !== "/") {
-          basePath = "/" + basePath;
+        function normalizeBasePath(value) {
+          var next = value || "/";
+          if (next.charAt(0) !== "/") {
+            next = "/" + next;
+          }
+          if (next.charAt(next.length - 1) !== "/") {
+            next += "/";
+          }
+          return next;
         }
-        if (basePath.charAt(basePath.length - 1) !== "/") {
-          basePath += "/";
+
+        var rawRepoBase = "%VITE_REPOSITORY_BASE%";
+        if (!rawRepoBase || rawRepoBase.indexOf("%VITE_") === 0) {
+          rawRepoBase = "/YvanLouise-web/";
         }
+
+        var repoBase = normalizeBasePath(rawRepoBase);
+        var basePath = /\.github\.io$/i.test(window.location.hostname) ? repoBase : "/";
 
         if (redirect.charAt(0) !== "/") {
           redirect = "/" + redirect;
