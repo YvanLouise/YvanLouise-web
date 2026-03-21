@@ -19,6 +19,22 @@ export default defineConfig(({ mode }) => {
     },
     publicDir: sharedPublicDir,
     base: "./",
+    build: {
+      cssCodeSplit: false,
+      rollupOptions: {
+        output: {
+          entryFileNames: "assets/public-site.js",
+          chunkFileNames: "assets/[name].js",
+          assetFileNames: (assetInfo) => {
+            if (assetInfo.name?.endsWith(".css")) {
+              return "assets/public-site.css";
+            }
+
+            return "assets/[name][extname]";
+          }
+        }
+      }
+    },
     server: {
       host: "0.0.0.0",
       port: 5173,
