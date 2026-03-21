@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T18:00:29.083Z",
+  "generatedAt": "2026-03-21T18:00:42.045Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -102,9 +102,9 @@
       "status": "已发布",
       "coverUrl": "uploads/work-cover-w-animation-01-1774101643370-ebe9e15d-9894-4226-8d9d-011ee925204e.png",
       "demoUrl": "https://www.bilibili.com/video/BV1jikGBvExk/?spm_id_from=333.1387.upload.video_card.click",
-      "publishedAt": "2026-02-12",
+      "publishedAt": "2026-01-20",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T16:53:21.664Z"
+      "updatedAt": "2026-03-21T18:00:42.045Z"
     }
   ],
   "pages": [
