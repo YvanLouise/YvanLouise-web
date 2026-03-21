@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T13:57:59.524Z",
+  "generatedAt": "2026-03-21T13:58:09.711Z",
   "works": [
     {
       "id": "f73368c6-1ed0-46bd-be6d-44109047948f",
@@ -130,11 +130,11 @@
       ],
       "platform": "Windows / Web Demo",
       "status": "原型完成",
-      "coverUrl": "",
+      "coverUrl": "uploads/work-cover-w-game-01-1774101489700-5c9326ec-6f0d-47f0-a7cf-a1fe3d298974.png",
       "demoUrl": "https://example.com/game/echo-dive",
       "publishedAt": "2026-02-02",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T13:25:39.448Z"
+      "updatedAt": "2026-03-21T13:58:09.711Z"
     },
     {
       "id": "w-animation-01",
