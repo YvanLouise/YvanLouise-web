@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T13:25:39.512Z",
+  "generatedAt": "2026-03-21T13:57:59.524Z",
   "works": [
     {
       "id": "f73368c6-1ed0-46bd-be6d-44109047948f",
@@ -252,7 +252,6 @@
     "musicPreviewClips": [],
     "featuredWorkIds": [
       "w-music-01",
-      "w-software-01",
       "w-game-01"
     ],
     "uiText": {
@@ -408,6 +407,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T13:25:39.448Z"
+    "updatedAt": "2026-03-21T13:57:59.524Z"
   }
 }
