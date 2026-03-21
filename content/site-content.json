@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:47:59.975Z",
+  "generatedAt": "2026-03-21T16:49:50.664Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -285,6 +285,14 @@
     ],
     "musicPreviewClips": [
       {
+        "id": "7ba9c0f0-f462-457a-939c-d6db4620073f",
+        "label": "YvanLouise - 秋天的梯度中文特别版",
+        "sourceUrl": "uploads/music-preview-1774111686769-6cc0c86f-814a-4a81-b445-57be8b9315e7.flac",
+        "sourceName": "YvanLouise - 秋天的梯度中文特别版.flac",
+        "startTime": 126,
+        "endTime": 157
+      },
+      {
         "id": "0db8eace-5b1c-4236-8f7f-23f9d85dcd43",
         "label": "YvanLouise - 大地に咲く旋律中文版",
         "sourceUrl": "uploads/music-preview-1774111585914-8e559cf3-e8fa-48e1-8de5-9efd765d1187.flac",
@@ -493,6 +501,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:47:59.975Z"
+    "updatedAt": "2026-03-21T16:49:50.664Z"
   }
 }
