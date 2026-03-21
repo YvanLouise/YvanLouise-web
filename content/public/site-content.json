@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:32:50.885Z",
+  "generatedAt": "2026-03-21T16:39:18.900Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -258,29 +258,29 @@
   ],
   "siteSettings": {
     "siteTitle": "Yvan Louise",
-    "tagline": "音乐 / 软件 / 游戏 / 动画",
+    "tagline": "音乐 / 动画 / 软件 / 游戏",
     "primaryCtaLabel": "查看作品",
     "primaryCtaHref": "/works",
     "secondaryCtaLabel": "委托合作",
     "secondaryCtaHref": "/commission",
     "bannerBadge": "个人创作站",
-    "bannerHeadline": "持续发布音乐、软件、游戏与动画作品。",
+    "bannerHeadline": "目前主要发布音乐与动画作品",
     "bannerDescription": "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
     "bannerImageUrl": "uploads/site-banner-1774097478963-85b64f15-375e-4530-93be-ef247e8b6f69.png",
     "avatarImageUrl": "uploads/site-avatar-1774098189269-a32368d5-28ab-4cd6-b21c-5a0f7757db6c.png",
-    "afdianUrl": "https://afdian.com/",
+    "afdianUrl": "https://afdian.com/a/Yvanlouiseks",
     "socialLinks": [
       {
         "label": "GitHub",
-        "url": "https://github.com"
+        "url": "https://github.com/YvanLouise"
       },
       {
         "label": "bilibili",
-        "url": "https://www.bilibili.com"
+        "url": "https://space.bilibili.com/190749586"
       },
       {
         "label": "网易云音乐",
-        "url": "https://music.163.com"
+        "url": "https://music.163.com/#/artist?id=99021524"
       }
     ],
     "musicPreviewClips": [
@@ -303,8 +303,9 @@
     ],
     "featuredWorkIds": [
       "w-music-01",
-      "w-software-01",
-      "w-game-01"
+      "w-game-01",
+      "f73368c6-1ed0-46bd-be6d-44109047948f",
+      "w-animation-01"
     ],
     "uiText": {
       "nav": {
@@ -324,7 +325,7 @@
       "footer": {
         "copyrightPrefix": "保留所有作品与展示权利",
         "afdianLabel": "爱发电",
-        "afdianHint": "如果你愿意，也可以在爱发电支持我的持续创作。"
+        "afdianHint": "如果你愿意，也可以在爱发电进行投喂。"
       },
       "pageBadges": {
         "about": "关于",
@@ -337,7 +338,7 @@
         "bannerPrimaryLabel": "支持创作",
         "bannerSecondaryLabel": "浏览作品",
         "profileBadge": "创作者名片",
-        "profileDescription": "音乐、软件、游戏、动画同步推进，持续把想法做成可体验、可观看、可倾听的作品。",
+        "profileDescription": "在这个时代，用自己的方式慢慢建立一个属于自己的个人IP。",
         "profileStatOne": "持续更新公开作品",
         "profileStatTwo": "开放委托与合作",
         "featuredTitle": "精选作品",
@@ -351,7 +352,7 @@
         "heroTitle": "分类清晰、浏览顺手、适合深入阅读的作品展示页。",
         "heroDescription": "你可以先按分类快速浏览，再进入详情页查看长文案、图集、试玩入口或演示链接。",
         "allLabel": "全部",
-        "allSummary": "查看所有已经公开的作品。",
+        "allSummary": "查看部分已经公开的作品。",
         "musicLabel": "音乐",
         "musicTitle": "音乐作品",
         "musicSummary": "原创音乐、配乐、氛围实验与片段试听。",
@@ -436,10 +437,10 @@
         "cardDescription": "可根据需求明确交付范围、协作方式、排期与预算。",
         "processTitle": "合作流程",
         "processSteps": [
-          "需求沟通：明确目标、风格、交付形式与时间预期。",
-          "方案确认：梳理范围、报价、里程碑与修改次数。",
-          "执行推进：按阶段交付并同步当前进度。",
-          "收尾交付：验收、整理文件，并提供必要的后续支持。"
+          "需求沟通：明确合作的内容与形式。",
+          "方案确认：确定范围、周期与费用。",
+          "执行推进：分阶段完成并同步进度。",
+          "收尾交付：完成验收并提供后续支持。"
         ],
         "ctaLabel": "发起委托"
       },
@@ -460,6 +461,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:32:50.824Z"
+    "updatedAt": "2026-03-21T16:39:18.900Z"
   }
 }
