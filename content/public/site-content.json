@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:06:21.742Z",
+  "generatedAt": "2026-03-21T17:07:50.111Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -233,6 +233,14 @@
       }
     ],
     "musicPreviewClips": [
+      {
+        "id": "975dae46-2878-4ccc-a91c-1f2f4669cc17",
+        "label": "魔笛哈梅林 HAMELN中文版",
+        "sourceUrl": "uploads/music-preview-1774112787984-59bb429b-bb91-4265-bffc-ec4f18683eed.flac",
+        "sourceName": "YvanLouise - 魔笛哈梅林 HAMELN中文版.flac",
+        "startTime": 145,
+        "endTime": 196
+      },
       {
         "id": "75d1068a-5aa9-480d-97f5-c502bc0b65d8",
         "label": "杏花 あんずの花",
@@ -498,6 +506,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:06:21.741Z"
+    "updatedAt": "2026-03-21T17:07:50.111Z"
   }
 }
