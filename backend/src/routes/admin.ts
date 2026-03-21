@@ -163,6 +163,14 @@ export function createAdminRouter(store: SiteStore): Router {
         protocol: req.protocol,
         host: req.get("host") ?? "localhost"
       });
+
+      if (storedAsset.storage === "local") {
+        schedulePublicSitePublish({
+          paths: [getPublicAssetRepoRelativePath(storedAsset.key)],
+          reason: "Sync public site asset"
+        });
+      }
+
       res.status(201).json({ url: storedAsset.url, fileName: storedAsset.fileName });
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -306,6 +314,7 @@ export function createAdminRouter(store: SiteStore): Router {
 
   return router;
 }
+
 
 
 

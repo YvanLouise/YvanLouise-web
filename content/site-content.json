@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:29:41.487Z",
+  "generatedAt": "2026-03-21T16:32:50.884Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -80,70 +80,121 @@
       "repoUrl": "https://github.com/example/yilin",
       "publishedAt": "2026-01-28",
       "createdAt": "2026-03-21T12:39:02.767Z",
-      "updatedAt": "2026-03-21T14:40:42.826Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "id": "w-music-01",
-      "title": "夜下残影",
+      "title": "霓虹回声",
       "type": "music",
-      "summary": "一组融合城市夜景、情绪推进的原创音乐作品。",
-      "detailIntro": "",
-      "background": "",
-      "process": "",
-      "result": "",
-      "featureList": [],
-      "interactionPoints": [],
+      "summary": "一组融合城市夜景、电子颗粒和情绪推进的原创音乐作品。",
+      "detailIntro": "这组作品围绕深夜街道、霓虹灯光和独自漫游的氛围展开，适合独立聆听，也适合用作影像与游戏配乐。",
+      "background": "我想做一组既能独立发布，也能服务于视觉叙事项目的原创音乐，把空间感和情绪流动做得更细腻。",
+      "process": "主要在 Ableton Live 中完成编曲与混音，再结合环境采样、合成器纹理和动态自动化，反复调整段落推进。",
+      "result": "目前已经整理成一组可发布曲目，也能作为预告片、动画短片或游戏片段的配乐素材。",
+      "featureList": [
+        "原创旋律动机",
+        "层次清晰的氛围铺陈",
+        "适合切片用于影像或预告"
+      ],
+      "interactionPoints": [
+        "支持随机片段试听",
+        "可按情绪段落拆分展示",
+        "适合补充封面、歌词和设定图"
+      ],
       "galleryImages": [],
-      "detailSections": [],
-      "platform": "网易云音乐 / bilibili",
+      "detailSections": [
+        {
+          "title": "声音设定",
+          "body": "整体音色偏冷，强调颗粒感、长尾混响和低频脉冲的推动力。"
+        },
+        {
+          "title": "适用场景",
+          "body": "适合独立游戏预告、城市夜景剪辑、角色主题音乐与实验短片。"
+        }
+      ],
+      "platform": "Spotify / 网易云音乐 / 视频项目",
       "status": "已发布",
       "coverUrl": "uploads/work-cover-w-music-01-1774099153595-477a8308-d8ce-4b43-8668-6dcdc5ee956f.png",
-      "demoUrl": "https://www.bilibili.com/video/BV1ZR6HBxEuG/?spm_id_from=333.1387.upload.video_card.click",
+      "demoUrl": "https://example.com/music/neon-echoes",
       "publishedAt": "2025-12-15",
       "createdAt": "2026-03-21T13:12:36.389Z",
-      "updatedAt": "2026-03-21T14:47:35.434Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "id": "w-game-01",
-      "title": "射杀恋人之日 中文特别版",
-      "type": "music",
-      "summary": "",
-      "detailIntro": "",
-      "background": "",
-      "process": "",
-      "result": "",
-      "featureList": [],
-      "interactionPoints": [],
+      "title": "回声潜渊",
+      "type": "game",
+      "summary": "以声音反馈驱动探索和解谜节奏的独立游戏原型。",
+      "detailIntro": "这个游戏原型围绕声波反馈、空间定位和轻叙事推进展开，希望用更少的提示创造更强的沉浸感。",
+      "background": "我想验证一种更依赖声音和环境反馈的探索体验，让玩家在低信息密度环境里保持好奇与判断。",
+      "process": "先完成纸面关卡结构，再在 Unity 中搭建核心交互，通过测试不断调整声音提示和路径选择。",
+      "result": "目前已经形成一段可试玩的垂直切片，适合继续扩展成更完整的独立游戏。",
+      "featureList": [
+        "声音引导探索",
+        "强调氛围与节奏的关卡设计",
+        "适合继续扩展的系统原型"
+      ],
+      "interactionPoints": [
+        "适合展示玩法说明",
+        "可补充试玩录像与交互截图",
+        "能继续加入更完整的系统设计"
+      ],
       "galleryImages": [],
-      "detailSections": [],
+      "detailSections": [
+        {
+          "title": "玩法核心",
+          "body": "玩家需要根据不同频段的反馈来定位路线，并在关键节点做出节奏判断。"
+        },
+        {
+          "title": "后续方向",
+          "body": "可继续加入敌人感知、非线性探索和多结局叙事。"
+        }
+      ],
       "platform": "Windows / Web Demo",
-      "status": "公开版已发布",
+      "status": "原型完成",
       "coverUrl": "uploads/work-cover-w-game-01-1774101489700-5c9326ec-6f0d-47f0-a7cf-a1fe3d298974.png",
-      "demoUrl": "https://www.bilibili.com/video/BV1XzcAzjEnm/?spm_id_from=333.1387.upload.video_card.click&vd_source=7d3435e0340d9a6f3be31ee2d51ad629",
+      "demoUrl": "https://example.com/game/echo-dive",
       "publishedAt": "2026-02-02",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T14:50:14.974Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "id": "w-animation-01",
-      "title": "秋天的梯度中文特别版",
-      "type": "music",
-      "summary": "",
-      "detailIntro": "",
-      "background": "",
-      "process": "",
-      "result": "",
-      "featureList": [],
-      "interactionPoints": [],
+      "title": "脉冲帧",
+      "type": "animation",
+      "summary": "围绕音乐节拍与镜头切换节奏制作的动画短片。",
+      "detailIntro": "这个项目把原创音乐、画面节奏和镜头调度紧密绑定，强调视觉打击感和整体呼吸感。",
+      "background": "我希望做一组更强调声音和画面同步关系的动画作品，测试镜头节奏与情绪推进的结合方式。",
+      "process": "先在 Figma 中整理分镜，再在 After Effects 中按照脚本和节拍完成动态设计与镜头切换。",
+      "result": "作品可以用于活动宣传、片头设计、动态海报和个人作品集展示。",
+      "featureList": [
+        "节奏明确的镜头切换",
+        "原创音乐驱动画面变化",
+        "适合宣传片与片头场景"
+      ],
+      "interactionPoints": [
+        "可展示关键画面图集",
+        "适合补充创作说明与分镜草图",
+        "便于扩展成系列短片"
+      ],
       "galleryImages": [],
-      "detailSections": [],
+      "detailSections": [
+        {
+          "title": "视觉语言",
+          "body": "通过高对比色块、发光边缘和快速位移，形成鲜明的节拍反馈。"
+        },
+        {
+          "title": "交付方向",
+          "body": "可扩展到宣传动画、动态海报、片头片尾与演出屏幕视觉。"
+        }
+      ],
       "platform": "短片 / 宣传视觉 / 演出屏幕",
-      "status": "公开版发布",
+      "status": "已完成",
       "coverUrl": "uploads/work-cover-w-animation-01-1774101643370-ebe9e15d-9894-4226-8d9d-011ee925204e.png",
-      "demoUrl": "https://www.bilibili.com/video/BV1jikGBvExk/?spm_id_from=333.1387.upload.video_card.click&vd_source=7d3435e0340d9a6f3be31ee2d51ad629",
+      "demoUrl": "https://example.com/animation/pulse-frame",
       "publishedAt": "2026-02-12",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T14:49:34.628Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     }
   ],
   "pages": [
@@ -153,18 +204,19 @@
       "hero": "这里集中展示我的音乐、软件、游戏与动画作品，也开放委托、私信和支持入口。",
       "body": "如果你想快速了解我正在做什么，可以先看精选作品，再决定是否继续合作或支持。",
       "highlights": [],
-      "updatedAt": "2026-03-21T14:50:29.562Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "slug": "about",
       "title": "关于我",
-      "hero": "立志成为一个全能型创作者(其实是因为干什么都得自己做)",
-      "body": "还是要多尝试一些新的东西。\n如果做成了，那就是多掌握了一项新的技能；\n就算没做成，也不会是白费——\n至少你会了解这一领域的基本信息，积累一些经验。\n这些东西看起来当下可能用不上，\n但说不定在未来某一件事上，它们就会突然派上用场。\n而不是等到真正需要的时候，才发现自己一无所知。\n做个人项目的话，其实不用想太多，\n做你真正感兴趣的就够了。\n\n我一开始也是从很零散的东西慢慢做起来的——\n写词、虚拟歌姬翻唱、剪辑、AI、动画……\n每一步看起来都不完全相关，但其实都在互相提供帮助。\n很多后来用到的能力，都是之前无意中积累下来的。\n现在我在研究 AI 相关的软件开发，\n如果顺利的话，不久之后也会正式开始做游戏开发。\n回头看，其实就是一条不断尝试、不断叠加的过程。",
+      "hero": "我是一个把声音、代码和视觉叙事放在同一条创作线上推进的人。",
+      "body": "我长期同时做音乐、软件、游戏与动画，希望让每个项目既有审美，也能真正落地。",
       "highlights": [
-        "跨音乐、动画、软件、游戏四条创作线",
+        "跨音乐、软件、游戏、动画四条创作线",
+        "擅长从概念走到完整可展示成品",
         "支持合作开发、定制创作与长期委托"
       ],
-      "updatedAt": "2026-03-21T16:15:50.484Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "slug": "commission",
@@ -172,12 +224,12 @@
       "hero": "我接受目标清晰、沟通顺畅、愿意一起打磨品质的委托项目。",
       "body": "常规流程包括需求沟通、范围确认、报价与排期、阶段交付、反馈修改和最终验收。",
       "highlights": [
-        "原创作词与歌曲填词",
-        "小型软件原型开发",
-        "动画短片制作",
-        "游戏策划与设计"
+        "原创音乐与配乐制作",
+        "创作工具与软件原型开发",
+        "游戏玩法验证与交互设计",
+        "动画短片与动态视觉设计"
       ],
-      "updatedAt": "2026-03-21T14:55:03.627Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "slug": "support",
@@ -189,44 +241,46 @@
         "分享作品链接",
         "通过委托长期合作"
       ],
-      "updatedAt": "2026-03-21T14:40:42.826Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     },
     {
       "slug": "contact",
-      "title": "如何联系我？",
-      "hero": "如果你对我的作品感兴趣，  \n或者有合作、交流、甚至只是一些想说的话，  \n都可以通过下面的方式找到我。",
-      "body": "无论是合作、交流，还是只是想说点什么，都可以通过下面的方式找到我。\n我会尽量认真地看到每一条信息，并在合适的时候回复。",
+      "title": "???",
+      "hero": "????????????????????????????????????????",
+      "body": "????????????????????????????????????????????????????",
       "highlights": [
-        "合作 / 项目交流：可以直接通过 B 站私信联系我"
+        "??????????",
+        "??????????",
+        "???????????"
       ],
-      "updatedAt": "2026-03-21T15:02:40.001Z"
+      "updatedAt": "2026-03-21T16:32:50.824Z"
     }
   ],
   "siteSettings": {
     "siteTitle": "Yvan Louise",
-    "tagline": "音乐 / 动画 / 软件 / 游戏",
+    "tagline": "音乐 / 软件 / 游戏 / 动画",
     "primaryCtaLabel": "查看作品",
     "primaryCtaHref": "/works",
     "secondaryCtaLabel": "委托合作",
     "secondaryCtaHref": "/commission",
     "bannerBadge": "个人创作站",
-    "bannerHeadline": "目前主要发布音乐与动画作品",
+    "bannerHeadline": "持续发布音乐、软件、游戏与动画作品。",
     "bannerDescription": "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
     "bannerImageUrl": "uploads/site-banner-1774097478963-85b64f15-375e-4530-93be-ef247e8b6f69.png",
     "avatarImageUrl": "uploads/site-avatar-1774098189269-a32368d5-28ab-4cd6-b21c-5a0f7757db6c.png",
-    "afdianUrl": "https://afdian.com/a/Yvanlouiseks",
+    "afdianUrl": "https://afdian.com/",
     "socialLinks": [
       {
         "label": "GitHub",
-        "url": "https://github.com/YvanLouise"
+        "url": "https://github.com"
       },
       {
         "label": "bilibili",
-        "url": "https://space.bilibili.com/190749586"
+        "url": "https://www.bilibili.com"
       },
       {
         "label": "网易云音乐",
-        "url": "https://music.163.com/#/artist?id=99021524"
+        "url": "https://music.163.com"
       }
     ],
     "musicPreviewClips": [
@@ -249,9 +303,8 @@
     ],
     "featuredWorkIds": [
       "w-music-01",
-      "w-game-01",
-      "f73368c6-1ed0-46bd-be6d-44109047948f",
-      "w-animation-01"
+      "w-software-01",
+      "w-game-01"
     ],
     "uiText": {
       "nav": {
@@ -271,7 +324,7 @@
       "footer": {
         "copyrightPrefix": "保留所有作品与展示权利",
         "afdianLabel": "爱发电",
-        "afdianHint": "如果你愿意，也可以在爱发电进行投喂。"
+        "afdianHint": "如果你愿意，也可以在爱发电支持我的持续创作。"
       },
       "pageBadges": {
         "about": "关于",
@@ -284,7 +337,7 @@
         "bannerPrimaryLabel": "支持创作",
         "bannerSecondaryLabel": "浏览作品",
         "profileBadge": "创作者名片",
-        "profileDescription": "在这个时代，用自己的方式慢慢建立一个属于自己的个人IP。",
+        "profileDescription": "音乐、软件、游戏、动画同步推进，持续把想法做成可体验、可观看、可倾听的作品。",
         "profileStatOne": "持续更新公开作品",
         "profileStatTwo": "开放委托与合作",
         "featuredTitle": "精选作品",
@@ -383,10 +436,10 @@
         "cardDescription": "可根据需求明确交付范围、协作方式、排期与预算。",
         "processTitle": "合作流程",
         "processSteps": [
-          "需求沟通：明确合作的内容与形式。",
-          "方案确认：确定范围、周期与费用。",
-          "执行推进：分阶段完成并同步进度。",
-          "收尾交付：完成验收并提供后续支持。"
+          "需求沟通：明确目标、风格、交付形式与时间预期。",
+          "方案确认：梳理范围、报价、里程碑与修改次数。",
+          "执行推进：按阶段交付并同步当前进度。",
+          "收尾交付：验收、整理文件，并提供必要的后续支持。"
         ],
         "ctaLabel": "发起委托"
       },
@@ -407,6 +460,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:29:41.487Z"
+    "updatedAt": "2026-03-21T16:32:50.824Z"
   }
 }
