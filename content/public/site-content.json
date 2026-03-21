@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:09:11.023Z",
+  "generatedAt": "2026-03-21T17:10:23.546Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -233,6 +233,14 @@
       }
     ],
     "musicPreviewClips": [
+      {
+        "id": "59dcc02f-123a-49fc-acd1-174f039ba676",
+        "label": "大好き中文版",
+        "sourceUrl": "uploads/music-preview-1774112963049-70f21c92-32b2-4dee-aa66-6af8bca71b2d.flac",
+        "sourceName": "YvanLouise - 大好き中文版.flac",
+        "startTime": 52,
+        "endTime": 77
+      },
       {
         "id": "c21f970c-f8b4-4a23-8d26-f65f7f2d2bbe",
         "label": "萨拉曼德拉的舞女/サラマンドラの踊り子",
@@ -514,6 +522,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:09:11.023Z"
+    "updatedAt": "2026-03-21T17:10:23.546Z"
   }
 }
