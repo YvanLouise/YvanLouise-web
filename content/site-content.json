@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:15:50.484Z",
+  "generatedAt": "2026-03-21T16:16:31.108Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -254,7 +254,7 @@
       "footer": {
         "copyrightPrefix": "保留所有作品与展示权利",
         "afdianLabel": "爱发电",
-        "afdianHint": "如果你愿意，也可以在爱发电支持我的持续创作。"
+        "afdianHint": "如果你愿意，也可以在爱发电进行投喂。"
       },
       "pageBadges": {
         "about": "关于",
@@ -390,6 +390,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T15:06:04.081Z"
+    "updatedAt": "2026-03-21T16:16:31.108Z"
   }
 }
