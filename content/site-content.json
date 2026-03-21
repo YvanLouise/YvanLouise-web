@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T14:47:40.828Z",
+  "generatedAt": "2026-03-21T14:48:40.870Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -105,41 +105,24 @@
     },
     {
       "id": "w-game-01",
-      "title": "回声潜渊",
-      "type": "game",
-      "summary": "以声音反馈驱动探索和解谜节奏的独立游戏原型。",
-      "detailIntro": "这个游戏原型围绕声波反馈、空间定位和轻叙事推进展开，希望用更少的提示创造更强的沉浸感。",
-      "background": "我想验证一种更依赖声音和环境反馈的探索体验，让玩家在低信息密度环境里保持好奇与判断。",
-      "process": "先完成纸面关卡结构，再在 Unity 中搭建核心交互，通过测试不断调整声音提示和路径选择。",
-      "result": "目前已经形成一段可试玩的垂直切片，适合继续扩展成更完整的独立游戏。",
-      "featureList": [
-        "声音引导探索",
-        "强调氛围与节奏的关卡设计",
-        "适合继续扩展的系统原型"
-      ],
-      "interactionPoints": [
-        "适合展示玩法说明",
-        "可补充试玩录像与交互截图",
-        "能继续加入更完整的系统设计"
-      ],
+      "title": "【射杀恋人之日 中文特别版】",
+      "type": "music",
+      "summary": "",
+      "detailIntro": "",
+      "background": "",
+      "process": "",
+      "result": "",
+      "featureList": [],
+      "interactionPoints": [],
       "galleryImages": [],
-      "detailSections": [
-        {
-          "title": "玩法核心",
-          "body": "玩家需要根据不同频段的反馈来定位路线，并在关键节点做出节奏判断。"
-        },
-        {
-          "title": "后续方向",
-          "body": "可继续加入敌人感知、非线性探索和多结局叙事。"
-        }
-      ],
+      "detailSections": [],
       "platform": "Windows / Web Demo",
-      "status": "原型完成",
+      "status": "公开版已发布",
       "coverUrl": "uploads/work-cover-w-game-01-1774101489700-5c9326ec-6f0d-47f0-a7cf-a1fe3d298974.png",
-      "demoUrl": "https://example.com/game/echo-dive",
+      "demoUrl": "https://www.bilibili.com/video/BV1XzcAzjEnm/?spm_id_from=333.1387.upload.video_card.click&vd_source=7d3435e0340d9a6f3be31ee2d51ad629",
       "publishedAt": "2026-02-02",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T14:40:42.826Z"
+      "updatedAt": "2026-03-21T14:48:40.870Z"
     },
     {
       "id": "w-animation-01",
