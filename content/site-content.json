@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:02:03.040Z",
+  "generatedAt": "2026-03-21T17:03:35.879Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -234,6 +234,14 @@
     ],
     "musicPreviewClips": [
       {
+        "id": "aaf0c7b3-c658-4abe-9838-2ea0d1c11e22",
+        "label": "YvanLouise - 夜下残影",
+        "sourceUrl": "uploads/music-preview-1774112542149-611ea564-c02a-4b1b-8777-34ae4a3cae49.flac",
+        "sourceName": "YvanLouise - 夜下残影.flac",
+        "startTime": 72,
+        "endTime": 113
+      },
+      {
         "id": "11dfe7fd-8b90-4172-938e-b933c9993d8d",
         "label": "风雅",
         "sourceUrl": "uploads/music-preview-1774112394855-b5b20baa-3ca9-47ef-8da1-7a99d07e8ec1.flac",
@@ -466,6 +474,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:02:03.040Z"
+    "updatedAt": "2026-03-21T17:03:35.879Z"
   }
 }
