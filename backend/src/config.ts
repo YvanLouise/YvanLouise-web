@@ -12,6 +12,11 @@ function boolEnv(value: string | undefined, fallback: boolean): boolean {
   return value === "true" || value === "1";
 }
 
+function numberEnv(value: string | undefined, fallback: number): number {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 function normalizeOptionalString(value: string | undefined): string | undefined {
   const trimmed = value?.trim();
   return trimmed ? trimmed : undefined;
@@ -52,6 +57,10 @@ export const config = {
   adminPassword: process.env.ADMIN_PASSWORD ?? "change-me-now",
   secureCookie: boolEnv(process.env.SECURE_COOKIE, false),
   assetStorageMode: resolveAssetStorageMode(process.env.ASSET_STORAGE_MODE, isProduction),
+  autoPublishPublicSite: boolEnv(process.env.AUTO_PUBLISH_PUBLIC_SITE, !isProduction),
+  autoPublishBranch: process.env.AUTO_PUBLISH_BRANCH?.trim() || "main",
+  autoPublishRemote: process.env.AUTO_PUBLISH_REMOTE?.trim() || "origin",
+  autoPublishDebounceMs: numberEnv(process.env.AUTO_PUBLISH_DEBOUNCE_MS, 2500),
   r2: {
     accountId: normalizeOptionalString(process.env.R2_ACCOUNT_ID),
     bucket: normalizeOptionalString(process.env.R2_BUCKET),

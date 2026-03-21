@@ -4,6 +4,7 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { fileURLToPath } from "url";
 import { config } from "../config.js";
+import { schedulePublicSitePublish } from "../lib/publicSitePublisher.js";
 import { createDefaultPages, createDefaultSettings, createDefaultWorks, defaultSiteUiText } from "./defaultContent.js";
 import {
   AdminUser,
@@ -48,6 +49,7 @@ interface ContentFilePayload {
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const storeFilePath = path.resolve(moduleDir, "../../data/local-store.json");
 const contentFilePath = path.resolve(moduleDir, "../../../content/site-content.json");
+const publicContentFilePath = path.resolve(moduleDir, "../../../content/public/site-content.json");
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -137,6 +139,7 @@ function ensureStoreDir(): void {
 
 function ensureContentDir(): void {
   fs.mkdirSync(path.dirname(contentFilePath), { recursive: true });
+  fs.mkdirSync(path.dirname(publicContentFilePath), { recursive: true });
 }
 
 function normalizeStringList(value: unknown): string[] {
@@ -513,17 +516,23 @@ export class MemorySiteStore implements SiteStore {
       createdAt: nowIso()
     };
 
-    this.persistState();
+    this.persistPrivateState();
+    this.persistPublicContent(false);
   }
 
-  private persistState(): void {
+  private persistPrivateState(): void {
     ensureStoreDir();
-    ensureContentDir();
 
     const privatePayload: PersistedState = {
       reviews: this.reviews.map(cloneReview),
       messages: this.messages.map(cloneMessage)
     };
+
+    fs.writeFileSync(storeFilePath, JSON.stringify(privatePayload, null, 2), "utf8");
+  }
+
+  private persistPublicContent(shouldPublish = true): void {
+    ensureContentDir();
 
     const contentPayload: ContentFilePayload = {
       generatedAt: nowIso(),
@@ -532,8 +541,15 @@ export class MemorySiteStore implements SiteStore {
       siteSettings: cloneSettings(this.settings)
     };
 
-    fs.writeFileSync(storeFilePath, JSON.stringify(privatePayload, null, 2), "utf8");
     fs.writeFileSync(contentFilePath, JSON.stringify(contentPayload, null, 2), "utf8");
+    fs.writeFileSync(publicContentFilePath, JSON.stringify(contentPayload, null, 2), "utf8");
+
+    if (shouldPublish) {
+      schedulePublicSitePublish({
+        paths: ["content/site-content.json", "content/public/site-content.json"],
+        reason: "Sync public site content"
+      });
+    }
   }
 
   async getWorks(type?: WorkType): Promise<Work[]> {
@@ -571,7 +587,7 @@ export class MemorySiteStore implements SiteStore {
     };
 
     this.works = [work, ...this.works];
-    this.persistState();
+    this.persistPublicContent();
     return cloneWork(work);
   }
 
@@ -595,7 +611,7 @@ export class MemorySiteStore implements SiteStore {
     };
 
     this.works[index] = updated;
-    this.persistState();
+    this.persistPublicContent();
     return cloneWork(updated);
   }
 
@@ -605,7 +621,7 @@ export class MemorySiteStore implements SiteStore {
     const deleted = this.works.length < original;
 
     if (deleted) {
-      this.persistState();
+      this.persistPublicContent();
     }
 
     return deleted;
@@ -619,7 +635,7 @@ export class MemorySiteStore implements SiteStore {
     };
 
     this.reviews = [review, ...this.reviews];
-    this.persistState();
+    this.persistPrivateState();
     return cloneReview(review);
   }
 
@@ -636,7 +652,7 @@ export class MemorySiteStore implements SiteStore {
     };
 
     this.messages = [message, ...this.messages];
-    this.persistState();
+    this.persistPrivateState();
     return cloneMessage(message);
   }
 
@@ -667,7 +683,7 @@ export class MemorySiteStore implements SiteStore {
       };
 
       this.pages = [created, ...this.pages];
-      this.persistState();
+      this.persistPublicContent();
       return clonePage(created);
     }
 
@@ -680,7 +696,7 @@ export class MemorySiteStore implements SiteStore {
     };
 
     this.pages = this.pages.map((page) => (page.slug === slug ? updated : page));
-    this.persistState();
+    this.persistPublicContent();
     return clonePage(updated);
   }
 
@@ -698,7 +714,7 @@ export class MemorySiteStore implements SiteStore {
       updatedAt: nowIso()
     };
 
-    this.persistState();
+    this.persistPublicContent();
     return cloneSettings(this.settings);
   }
 
@@ -706,3 +722,8 @@ export class MemorySiteStore implements SiteStore {
     return this.admin.username === username ? { ...this.admin } : null;
   }
 }
+
+
+
+
+

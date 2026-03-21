@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T13:25:09.734Z",
+  "generatedAt": "2026-03-21T13:25:39.512Z",
   "works": [
     {
       "id": "f73368c6-1ed0-46bd-be6d-44109047948f",
@@ -58,7 +58,7 @@
       "repoUrl": "https://github.com/example/yilin",
       "publishedAt": "2026-01-28",
       "createdAt": "2026-03-21T12:39:02.767Z",
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     },
     {
       "id": "w-music-01",
@@ -96,7 +96,7 @@
       "demoUrl": "https://example.com/music/neon-echoes",
       "publishedAt": "2025-12-15",
       "createdAt": "2026-03-21T13:12:36.389Z",
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     },
     {
       "id": "w-game-01",
@@ -134,7 +134,7 @@
       "demoUrl": "https://example.com/game/echo-dive",
       "publishedAt": "2026-02-02",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     },
     {
       "id": "w-animation-01",
@@ -172,7 +172,7 @@
       "demoUrl": "https://example.com/animation/pulse-frame",
       "publishedAt": "2026-02-12",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     }
   ],
   "pages": [
@@ -182,7 +182,7 @@
       "hero": "这里集中展示我的音乐、软件、游戏与动画作品，也开放委托、私信和支持入口。",
       "body": "如果你想快速了解我正在做什么，可以先看精选作品，再决定是否继续合作或支持。",
       "highlights": [],
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     },
     {
       "slug": "about",
@@ -194,7 +194,7 @@
         "擅长从概念走到完整可展示成品",
         "支持合作开发、定制创作与长期委托"
       ],
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     },
     {
       "slug": "commission",
@@ -207,7 +207,7 @@
         "游戏玩法验证与交互设计",
         "动画短片与动态视觉设计"
       ],
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     },
     {
       "slug": "support",
@@ -219,7 +219,7 @@
         "分享作品链接",
         "通过委托长期合作"
       ],
-      "updatedAt": "2026-03-21T13:25:09.673Z"
+      "updatedAt": "2026-03-21T13:25:39.448Z"
     }
   ],
   "siteSettings": {
@@ -408,6 +408,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T13:25:09.673Z"
+    "updatedAt": "2026-03-21T13:25:39.448Z"
   }
 }

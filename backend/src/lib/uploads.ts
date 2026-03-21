@@ -30,7 +30,9 @@ const EXTENSION_MIME_MAP: Record<string, string> = Object.fromEntries(
   Object.entries(MIME_EXTENSION_MAP).map(([mimeType, extension]) => [extension, mimeType])
 );
 
-const uploadsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../content/public/uploads");
+const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+const uploadsDir = path.resolve(moduleDir, "../../../content/public/uploads");
+const repoRootDir = path.resolve(moduleDir, "../../..");
 
 export interface UploadedAssetPayload {
   fileName: string;
@@ -116,6 +118,11 @@ export function ensureUploadsDir(): string {
 
 export function getUploadsDir(): string {
   return ensureUploadsDir();
+}
+
+export function getPublicAssetRepoRelativePath(key: string): string {
+  const assetPath = path.join(ensureUploadsDir(), key);
+  return path.relative(repoRootDir, assetPath).split(path.sep).join("/");
 }
 
 function decodeBase64Content(contentBase64: string): Buffer {

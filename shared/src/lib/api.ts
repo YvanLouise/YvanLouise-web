@@ -1,4 +1,4 @@
-import {
+﻿import {
   AdminCredentials,
   Message,
   MessageInput,
@@ -32,6 +32,7 @@ const STATIC_PUBLIC_SITE_MODE = !LEGACY_BACKEND_MODE && SITE_RUNTIME === "public
 const ADMIN_FUNCTION_BASE = resolveAdminFunctionBase();
 const PUBLIC_INTERACTION_BASE = resolvePublicInteractionBase();
 const PUBLIC_CONTENT_BASE = resolvePublicContentBase();
+const STATIC_CONTENT_URL = resolveStaticContentUrl();
 const IMAGE_MAX_UPLOAD_BYTES = 6 * 1024 * 1024;
 const AUDIO_MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 
@@ -115,6 +116,46 @@ function resolvePublicContentBase(): string {
   }
 
   return PUBLIC_INTERACTION_BASE;
+}
+
+function normalizeBasePath(value: string): string {
+  if (!value) {
+    return "/";
+  }
+
+  let next = value.trim();
+  if (!next.startsWith("/")) {
+    next = `/${next}`;
+  }
+  if (!next.endsWith("/")) {
+    next += "/";
+  }
+  return next;
+}
+
+function resolveRuntimePublicBasePath(): string {
+  if (typeof window === "undefined") {
+    return "/";
+  }
+
+  const repoBase = normalizeBasePath((import.meta.env.VITE_REPOSITORY_BASE as string | undefined) || "/YvanLouise-web/");
+  const onGithubPagesHost = /\.github\.io$/i.test(window.location.hostname);
+  if (!onGithubPagesHost) {
+    return "/";
+  }
+
+  const currentPath = normalizeBasePath(window.location.pathname);
+  return currentPath.startsWith(repoBase) ? repoBase : "/";
+}
+
+function resolveStaticContentUrl(): string {
+  if (typeof window === "undefined") {
+    return "/site-content.json";
+  }
+
+  const basePath = resolveRuntimePublicBasePath();
+  const normalizedBase = basePath === "/" ? window.location.origin : `${window.location.origin}${basePath.replace(/\/$/, "")}`;
+  return `${normalizedBase}/site-content.json`;
 }
 
 function nowIso(): string {
@@ -288,6 +329,16 @@ async function publicFunctionRequest<T>(path: string, options: RequestInit = {})
 }
 
 async function fetchPublicContentSnapshot(): Promise<SiteContentSnapshot> {
+  if (STATIC_PUBLIC_SITE_MODE) {
+    const response = await fetch(`${STATIC_CONTENT_URL}?t=${Date.now()}`, { cache: "no-store" });
+    if (!response.ok) {
+      throw new ApiError(`Static content request failed (${response.status}).`, response.status);
+    }
+
+    const body = (await response.json()) as ReturnType<typeof toSiteContentFile>;
+    return normalizeSiteContent(body);
+  }
+
   const response = await fetch(`${PUBLIC_CONTENT_BASE}/public-content`);
   if (!response.ok) {
     const text = await response.text();
@@ -299,14 +350,25 @@ async function fetchPublicContentSnapshot(): Promise<SiteContentSnapshot> {
 }
 
 async function loadPublicContent(force = false): Promise<SiteContentSnapshot> {
-  if (publicContentCache && !force) {
+  if (publicContentCache && !force && !STATIC_PUBLIC_SITE_MODE) {
     return cloneSiteContent(publicContentCache);
   }
 
-  const snapshot = STATIC_PUBLIC_SITE_MODE ? getStaticContentSnapshot() : await fetchPublicContentSnapshot();
-  publicContentCache = cloneSiteContent(snapshot);
-  syncSnapshotCaches(snapshot);
-  return cloneSiteContent(snapshot);
+  try {
+    const snapshot = await fetchPublicContentSnapshot();
+    publicContentCache = cloneSiteContent(snapshot);
+    syncSnapshotCaches(snapshot);
+    return cloneSiteContent(snapshot);
+  } catch (error) {
+    if (publicContentCache) {
+      return cloneSiteContent(publicContentCache);
+    }
+
+    const fallback = getStaticContentSnapshot();
+    publicContentCache = cloneSiteContent(fallback);
+    syncSnapshotCaches(fallback);
+    return cloneSiteContent(fallback);
+  }
 }
 
 async function loadAdminContent(force = false): Promise<SiteContentSnapshot> {
@@ -850,3 +912,4 @@ export async function uploadAdminAsset(file: File, slot: string): Promise<{ url:
 }
 
 export { ApiError };
+
