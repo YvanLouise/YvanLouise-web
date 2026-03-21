@@ -496,19 +496,16 @@ export class MemorySiteStore implements SiteStore {
 
   constructor() {
     const persisted = readPersistedState() ?? createDefaultPrivateState();
-    const fileContent = readContentState() ?? createDefaultContentState();
-    const legacyContent = readLegacyContentState();
-    const mergedContent: ContentState = {
-      works: mergeWorkCollections(fileContent.works, legacyContent?.works),
-      pages: mergePageCollections(fileContent.pages, legacyContent?.pages),
-      settings: mergeSettingsSources(fileContent.settings, legacyContent?.settings)
-    };
+    const contentState =
+      readContentState() ??
+      readLegacyContentState() ??
+      createDefaultContentState();
 
-    this.works = mergedContent.works.map(cloneWork);
+    this.works = contentState.works.map(cloneWork);
     this.reviews = persisted.reviews.map(cloneReview);
     this.messages = persisted.messages.map(cloneMessage);
-    this.pages = mergedContent.pages.map(clonePage);
-    this.settings = cloneSettings(mergedContent.settings);
+    this.pages = contentState.pages.map(clonePage);
+    this.settings = cloneSettings(contentState.settings);
     this.admin = {
       id: randomUUID(),
       username: config.adminUsername,
@@ -722,6 +719,7 @@ export class MemorySiteStore implements SiteStore {
     return this.admin.username === username ? { ...this.admin } : null;
   }
 }
+
 
 
 
