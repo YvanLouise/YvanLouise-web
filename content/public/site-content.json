@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:29:41.483Z",
+  "generatedAt": "2026-03-21T17:31:17.662Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -414,7 +414,7 @@
         "featureTitle": "功能亮点",
         "interactionTitle": "交互亮点",
         "feedbackTitle": "访客反馈",
-        "feedbackDescription": "评分和评论只会发送给作者本人，其他访客无法查看。",
+        "feedbackDescription": "评论发送给作者本人。",
         "notFoundTitle": "没有找到这件作品",
         "notFoundDescription": "这个链接可能已经失效，或者作品还没有公开。",
         "backToWorksLabel": "返回作品页",
@@ -481,6 +481,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:28:42.719Z"
+    "updatedAt": "2026-03-21T17:31:17.661Z"
   }
 }
