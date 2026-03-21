@@ -8,7 +8,6 @@
 - `backend/`：本地旧后端与辅助迁移脚本载体，不再是默认线上服务
 - `supabase/`：旧方案历史参考，不是当前默认生产路径
 
-当前默认上线方案：`GitHub + Netlify + GitHub 内容文件 + Netlify Functions/Blobs + Cloudinary`
 
 ## 当前生产分工
 - `https://www.yvanlouise.xyz`：访客站，Netlify `public-site`
@@ -47,19 +46,6 @@ npm install
 - `admin-site/.env.production.example`
 - `admin-site/.env.netlify.functions.example`
 - `backend/.env.example`
-
-### 3. 常用命令
-```bash
-npm run dev              # 后端 + 访客站 + 开发者站
-npm run dev:visitor      # 后端 + 访客站
-npm run dev:developer    # 后端 + 开发者站
-npm run build            # 构建整个 monorepo
-npm run ci               # 与 GitHub Actions 一致的构建检查
-```
-
-说明：
-- 本地仍可通过 `VITE_API_BASE_URL=http://localhost:4000` 走旧 backend fallback
-- 生产环境默认不依赖 backend，而是依赖 Netlify Functions
 
 ## 内容发布方式
 - 访客站构建时直接读取 `content/site-content.json`
