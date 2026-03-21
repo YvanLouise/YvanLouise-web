@@ -21,14 +21,33 @@ import {
 } from "./types.js";
 
 interface PersistedState {
-  works: Work[];
   reviews: Review[];
   messages: Message[];
+}
+
+interface LegacyPersistedState extends PersistedState {
+  works?: Work[];
+  pages?: PageContent[];
+  settings?: Partial<SiteSettings>;
+  siteSettings?: Partial<SiteSettings>;
+}
+
+interface ContentState {
+  works: Work[];
   pages: PageContent[];
   settings: SiteSettings;
 }
 
-const storeFilePath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../data/local-store.json");
+interface ContentFilePayload {
+  generatedAt: string;
+  works?: Work[];
+  pages?: PageContent[];
+  siteSettings?: Partial<SiteSettings>;
+}
+
+const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+const storeFilePath = path.resolve(moduleDir, "../../data/local-store.json");
+const contentFilePath = path.resolve(moduleDir, "../../../content/site-content.json");
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -97,11 +116,16 @@ function createSeedSettings(): SiteSettings {
   return createDefaultSettings(nowIso());
 }
 
-function createDefaultState(): PersistedState {
+function createDefaultPrivateState(): PersistedState {
+  return {
+    reviews: [],
+    messages: []
+  };
+}
+
+function createDefaultContentState(): ContentState {
   return {
     works: createSeedWorks(),
-    reviews: [],
-    messages: [],
     pages: createSeedPages(),
     settings: createSeedSettings()
   };
@@ -109,6 +133,10 @@ function createDefaultState(): PersistedState {
 
 function ensureStoreDir(): void {
   fs.mkdirSync(path.dirname(storeFilePath), { recursive: true });
+}
+
+function ensureContentDir(): void {
+  fs.mkdirSync(path.dirname(contentFilePath), { recursive: true });
 }
 
 function normalizeStringList(value: unknown): string[] {
@@ -287,6 +315,154 @@ function mergeWorks(storedWorks: Work[] | undefined): Work[] {
   });
 }
 
+function mergeWorkCollections(primary: Work[], secondary: Work[] = []): Work[] {
+  const merged = new Map<string, Work>();
+
+  primary.forEach((work) => {
+    merged.set(work.id, cloneWork(work));
+  });
+
+  secondary.forEach((work) => {
+    const current = merged.get(work.id);
+    if (!current) {
+      merged.set(work.id, cloneWork(work));
+      return;
+    }
+
+    merged.set(
+      work.id,
+      cloneWork({
+        ...current,
+        ...work,
+        title: work.title?.trim() || current.title,
+        type: work.type ?? current.type,
+        summary: work.summary?.trim() || current.summary,
+        detailIntro: work.detailIntro?.trim() || current.detailIntro,
+        background: work.background?.trim() || current.background,
+        process: work.process?.trim() || current.process,
+        result: work.result?.trim() || current.result,
+        featureList: work.featureList?.length ? [...work.featureList] : [...current.featureList],
+        interactionPoints: work.interactionPoints?.length ? [...work.interactionPoints] : [...current.interactionPoints],
+        galleryImages: work.galleryImages?.length ? [...work.galleryImages] : [...current.galleryImages],
+        detailSections: work.detailSections?.length ? cloneDetailSections(work.detailSections) : cloneDetailSections(current.detailSections),
+        platform: work.platform?.trim() || current.platform,
+        status: work.status?.trim() || current.status,
+        coverUrl: work.coverUrl?.trim() || current.coverUrl,
+        demoUrl: work.demoUrl?.trim() || current.demoUrl,
+        repoUrl: work.repoUrl?.trim() || current.repoUrl,
+        publishedAt: work.publishedAt?.trim() || current.publishedAt,
+        createdAt: current.createdAt,
+        updatedAt: work.updatedAt?.trim() || current.updatedAt
+      })
+    );
+  });
+
+  return Array.from(merged.values());
+}
+
+function mergePageCollections(primary: PageContent[], secondary: PageContent[] = []): PageContent[] {
+  const merged = new Map<string, PageContent>();
+
+  primary.forEach((page) => {
+    merged.set(page.slug, clonePage(page));
+  });
+
+  secondary.forEach((page) => {
+    const current = merged.get(page.slug);
+    if (!current) {
+      merged.set(page.slug, clonePage(page));
+      return;
+    }
+
+    merged.set(
+      page.slug,
+      clonePage({
+        ...current,
+        ...page,
+        title: page.title?.trim() || current.title,
+        hero: page.hero?.trim() || current.hero,
+        body: page.body?.trim() || current.body,
+        highlights: page.highlights?.length ? [...page.highlights] : [...current.highlights],
+        updatedAt: page.updatedAt?.trim() || current.updatedAt
+      })
+    );
+  });
+
+  return Array.from(merged.values());
+}
+
+function mergeSettingsSources(primary: SiteSettings, secondary?: SiteSettings | null): SiteSettings {
+  if (!secondary) {
+    return cloneSettings(primary);
+  }
+
+  return cloneSettings({
+    ...primary,
+    ...secondary,
+    siteTitle: secondary.siteTitle?.trim() || primary.siteTitle,
+    tagline: secondary.tagline?.trim() || primary.tagline,
+    primaryCtaLabel: secondary.primaryCtaLabel?.trim() || primary.primaryCtaLabel,
+    primaryCtaHref: secondary.primaryCtaHref?.trim() || primary.primaryCtaHref,
+    secondaryCtaLabel: secondary.secondaryCtaLabel?.trim() || primary.secondaryCtaLabel,
+    secondaryCtaHref: secondary.secondaryCtaHref?.trim() || primary.secondaryCtaHref,
+    bannerBadge: secondary.bannerBadge?.trim() || primary.bannerBadge,
+    bannerHeadline: secondary.bannerHeadline?.trim() || primary.bannerHeadline,
+    bannerDescription: secondary.bannerDescription?.trim() || primary.bannerDescription,
+    bannerImageUrl: secondary.bannerImageUrl?.trim() || primary.bannerImageUrl,
+    avatarImageUrl: secondary.avatarImageUrl?.trim() || primary.avatarImageUrl,
+    afdianUrl: secondary.afdianUrl?.trim() || primary.afdianUrl,
+    socialLinks: secondary.socialLinks?.length ? cloneSocialLinks(secondary.socialLinks) : cloneSocialLinks(primary.socialLinks),
+    musicPreviewClips: secondary.musicPreviewClips?.length
+      ? cloneMusicPreviewClips(secondary.musicPreviewClips)
+      : cloneMusicPreviewClips(primary.musicPreviewClips),
+    featuredWorkIds: secondary.featuredWorkIds?.length ? [...secondary.featuredWorkIds] : [...primary.featuredWorkIds],
+    uiText: secondary.uiText ? mergeUiText(secondary.uiText) : cloneUiText(primary.uiText),
+    updatedAt: secondary.updatedAt?.trim() || primary.updatedAt
+  });
+}
+
+function readContentState(): ContentState | null {
+  ensureContentDir();
+
+  if (!fs.existsSync(contentFilePath)) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(fs.readFileSync(contentFilePath, "utf8")) as ContentFilePayload;
+
+    return {
+      works: mergeWorks(parsed.works),
+      pages: mergePages(parsed.pages),
+      settings: mergeSettings(parsed.siteSettings)
+    };
+  } catch (error) {
+    console.warn("Failed to read content snapshot, falling back to defaults.", error);
+    return null;
+  }
+}
+
+function readLegacyContentState(): ContentState | null {
+  ensureStoreDir();
+
+  if (!fs.existsSync(storeFilePath)) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(fs.readFileSync(storeFilePath, "utf8")) as Partial<LegacyPersistedState>;
+
+    return {
+      works: mergeWorks(parsed.works),
+      pages: mergePages(parsed.pages),
+      settings: mergeSettings(parsed.settings ?? parsed.siteSettings)
+    };
+  } catch (error) {
+    console.warn("Failed to read legacy content from local store.", error);
+    return null;
+  }
+}
+
 function readPersistedState(): PersistedState | null {
   ensureStoreDir();
 
@@ -295,17 +471,14 @@ function readPersistedState(): PersistedState | null {
   }
 
   try {
-    const parsed = JSON.parse(fs.readFileSync(storeFilePath, "utf8")) as Partial<PersistedState>;
+    const parsed = JSON.parse(fs.readFileSync(storeFilePath, "utf8")) as Partial<LegacyPersistedState>;
 
     return {
-      works: mergeWorks(parsed.works),
       reviews: Array.isArray(parsed.reviews) ? parsed.reviews.map((review) => ({ ...review })) : [],
-      messages: Array.isArray(parsed.messages) ? parsed.messages.map((message) => ({ ...message })) : [],
-      pages: mergePages(parsed.pages),
-      settings: mergeSettings(parsed.settings)
+      messages: Array.isArray(parsed.messages) ? parsed.messages.map((message) => ({ ...message })) : []
     };
   } catch (error) {
-    console.warn("Failed to read local store, falling back to defaults.", error);
+    console.warn("Failed to read local private store, falling back to defaults.", error);
     return null;
   }
 }
@@ -319,13 +492,20 @@ export class MemorySiteStore implements SiteStore {
   private admin: AdminUser;
 
   constructor() {
-    const persisted = readPersistedState() ?? createDefaultState();
+    const persisted = readPersistedState() ?? createDefaultPrivateState();
+    const fileContent = readContentState() ?? createDefaultContentState();
+    const legacyContent = readLegacyContentState();
+    const mergedContent: ContentState = {
+      works: mergeWorkCollections(fileContent.works, legacyContent?.works),
+      pages: mergePageCollections(fileContent.pages, legacyContent?.pages),
+      settings: mergeSettingsSources(fileContent.settings, legacyContent?.settings)
+    };
 
-    this.works = persisted.works.map(cloneWork);
+    this.works = mergedContent.works.map(cloneWork);
     this.reviews = persisted.reviews.map(cloneReview);
     this.messages = persisted.messages.map(cloneMessage);
-    this.pages = persisted.pages.map(clonePage);
-    this.settings = cloneSettings(persisted.settings);
+    this.pages = mergedContent.pages.map(clonePage);
+    this.settings = cloneSettings(mergedContent.settings);
     this.admin = {
       id: randomUUID(),
       username: config.adminUsername,
@@ -338,15 +518,22 @@ export class MemorySiteStore implements SiteStore {
 
   private persistState(): void {
     ensureStoreDir();
-    const payload: PersistedState = {
-      works: this.works.map(cloneWork),
+    ensureContentDir();
+
+    const privatePayload: PersistedState = {
       reviews: this.reviews.map(cloneReview),
-      messages: this.messages.map(cloneMessage),
-      pages: this.pages.map(clonePage),
-      settings: cloneSettings(this.settings)
+      messages: this.messages.map(cloneMessage)
     };
 
-    fs.writeFileSync(storeFilePath, JSON.stringify(payload, null, 2), "utf8");
+    const contentPayload: ContentFilePayload = {
+      generatedAt: nowIso(),
+      works: this.works.map(cloneWork),
+      pages: this.pages.map(clonePage),
+      siteSettings: cloneSettings(this.settings)
+    };
+
+    fs.writeFileSync(storeFilePath, JSON.stringify(privatePayload, null, 2), "utf8");
+    fs.writeFileSync(contentFilePath, JSON.stringify(contentPayload, null, 2), "utf8");
   }
 
   async getWorks(type?: WorkType): Promise<Work[]> {
