@@ -1,4 +1,4 @@
-import fs from "fs";
+﻿import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import { promises as fsp } from "fs";
@@ -30,7 +30,7 @@ const EXTENSION_MIME_MAP: Record<string, string> = Object.fromEntries(
   Object.entries(MIME_EXTENSION_MAP).map(([mimeType, extension]) => [extension, mimeType])
 );
 
-const uploadsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../uploads");
+const uploadsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../content/public/uploads");
 
 export interface UploadedAssetPayload {
   fileName: string;
@@ -141,15 +141,14 @@ function createObjectKey(fileName: string, mimeType: string, slot?: string): str
   return `${prefix}-${Date.now()}-${randomUUID()}${extension}`;
 }
 
-export function buildPublicAssetUrl(baseUrl: string, key: string): string {
-  const normalizedBase = baseUrl.replace(/\/+$/, "");
+export function buildPublicAssetUrl(_baseUrl: string, key: string): string {
   const normalizedKey = key
     .replace(/^\/+/, "")
     .split("/")
     .map((segment) => encodeURIComponent(segment))
     .join("/");
 
-  return `${normalizedBase}/${normalizedKey}`;
+  return `uploads/${normalizedKey}`;
 }
 
 export function prepareUploadedAsset(payload: UploadedAssetPayload): PreparedAssetPayload {
@@ -179,4 +178,3 @@ export async function saveLocalPreparedAsset(
     storage: "local"
   };
 }
-

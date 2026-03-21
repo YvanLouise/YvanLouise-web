@@ -4,7 +4,7 @@ import { ReviewForm } from "../components/shared/ReviewForm";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import { sampleWorks } from "../data/sampleData";
 import { getWorkById } from "../lib/api";
-import { hasText, resolveWorkCoverUrl } from "../lib/workMedia";
+import { hasText, resolveMediaUrl, resolveWorkCoverUrl } from "../lib/workMedia";
 import { getWorkTypeLabel } from "../lib/workLabels";
 import { Work } from "../types";
 
@@ -247,3 +247,4 @@ export function WorkDetailPage(): JSX.Element {
     </>
   );
 }
+

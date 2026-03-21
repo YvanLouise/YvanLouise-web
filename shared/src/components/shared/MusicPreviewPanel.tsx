@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useRef, useState } from "react";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
+import { resolveMediaUrl } from "../../lib/workMedia";
 import { MusicPreviewClip } from "../../types";
 
 const BASE_FADE_SECONDS = 0.8;
@@ -146,7 +147,7 @@ export function MusicPreviewPanel({ clips }: MusicPreviewPanelProps): JSX.Elemen
     setActiveClip(clip);
     setStatus(`${copy.musicPreviewPlayingPrefix}${clip.label}`);
 
-    await ensureAudioReady(audio, clip.sourceUrl);
+    await ensureAudioReady(audio, resolveMediaUrl(clip.sourceUrl));
     const safeStart = clamp(clip.startTime, 0, Number.isFinite(audio.duration) ? audio.duration : clip.startTime);
     const safeEnd = clamp(Math.max(clip.endTime, safeStart + 0.5), safeStart + 0.5, Number.isFinite(audio.duration) ? audio.duration : clip.endTime);
     const duration = safeEnd - safeStart;
@@ -232,3 +233,5 @@ export function MusicPreviewPanel({ clips }: MusicPreviewPanelProps): JSX.Elemen
     </section>
   );
 }
+
+

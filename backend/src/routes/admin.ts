@@ -14,7 +14,7 @@ const mediaUrlSchema = z
   .string()
   .trim()
   .max(2048)
-  .refine((value) => !value || /^https?:\/\/\S+$/i.test(value), "请输入有效的媒体链接");
+  .refine((value) => !value || /^https?:\/\/\S+$/i.test(value) || /^\/?uploads\/\S+$/i.test(value), "请输入有效的媒体链接");
 
 const linkUrlSchema = z
   .string()
@@ -304,6 +304,9 @@ export function createAdminRouter(store: SiteStore): Router {
 
   return router;
 }
+
+
+
 
 
 

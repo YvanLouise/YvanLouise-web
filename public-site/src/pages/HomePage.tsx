@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { WorkCard } from "@shared/components/shared/WorkCard";
@@ -7,6 +7,7 @@ import { getSamplePage } from "@shared/data/sampleData";
 import { getPage, getWorks } from "@shared/lib/api";
 import { resolveFeaturedWorks } from "@shared/lib/featuredWorks";
 import { readCachedPage, readCachedWorks } from "@shared/lib/siteCache";
+import { resolveMediaUrl } from "@shared/lib/workMedia";
 import { PageContent, Work } from "@shared/types";
 
 export function HomePage(): JSX.Element {
@@ -31,14 +32,16 @@ export function HomePage(): JSX.Element {
 
   const featured = useMemo(() => resolveFeaturedWorks(allWorks, settings.featuredWorkIds), [allWorks, settings.featuredWorkIds]);
   const uiText = settings.uiText.home;
-  const showBannerImage = Boolean(settings.bannerImageUrl) && !bannerFailed;
-  const showAvatarImage = Boolean(settings.avatarImageUrl) && !avatarFailed;
+  const bannerImageUrl = resolveMediaUrl(settings.bannerImageUrl);
+  const avatarImageUrl = resolveMediaUrl(settings.avatarImageUrl);
+  const showBannerImage = Boolean(bannerImageUrl) && !bannerFailed;
+  const showAvatarImage = Boolean(avatarImageUrl) && !avatarFailed;
 
   return (
     <>
       <section className="hero-banner panel">
         {showBannerImage ? (
-          <img className="hero-banner-media" src={settings.bannerImageUrl} alt="首页横幅图" onError={() => setBannerFailed(true)} />
+          <img className="hero-banner-media" src={bannerImageUrl} alt="首页横幅图" onError={() => setBannerFailed(true)} />
         ) : (
           <div className="hero-banner-media hero-banner-placeholder" aria-hidden="true" />
         )}
@@ -73,7 +76,7 @@ export function HomePage(): JSX.Element {
         <aside className="profile-card panel compact-profile-card">
           <div className="profile-banner-surface">
             {showBannerImage ? (
-              <img className="profile-banner-image" src={settings.bannerImageUrl} alt="个人名片横幅图" onError={() => setBannerFailed(true)} />
+              <img className="profile-banner-image" src={bannerImageUrl} alt="个人名片横幅图" onError={() => setBannerFailed(true)} />
             ) : (
               <div className="editable-image-placeholder" aria-hidden="true" />
             )}
@@ -82,7 +85,7 @@ export function HomePage(): JSX.Element {
 
           <div className={`profile-avatar ${showAvatarImage ? "profile-avatar-has-image" : ""}`}>
             {showAvatarImage ? (
-              <img className="profile-avatar-image" src={settings.avatarImageUrl} alt={`${settings.siteTitle} 的头像`} onError={() => setAvatarFailed(true)} />
+              <img className="profile-avatar-image" src={avatarImageUrl} alt={`${settings.siteTitle} 的头像`} onError={() => setAvatarFailed(true)} />
             ) : (
               <span className="profile-avatar-fallback" aria-hidden="true" />
             )}

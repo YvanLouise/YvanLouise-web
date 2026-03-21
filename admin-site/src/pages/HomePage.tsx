@@ -5,6 +5,7 @@ import { EditableImage } from "../components/admin/EditableImage";
 import { InlineEditableText } from "../components/admin/InlineEditable";
 import { WorkCard } from "../components/shared/WorkCard";
 import { getSamplePage, sampleSettings } from "../data/sampleData";
+import { resolveMediaUrl } from "../lib/workMedia";
 import { getPage, getSiteSettings, getWorks } from "../lib/api";
 import { PageContent, SiteSettings, Work } from "../types";
 import { resolveFeaturedWorks } from "@shared/lib/featuredWorks";
@@ -91,7 +92,7 @@ export function HomePage({
             showBannerImage ? (
               <img
                 className="hero-banner-media"
-                src={currentSettings.bannerImageUrl}
+                src={resolveMediaUrl(currentSettings.bannerImageUrl)}
                 alt="首页横幅图"
                 onError={() => setBannerFailed(true)}
                 onContextMenu={bindProps.onContextMenu}
@@ -195,7 +196,7 @@ export function HomePage({
             {(bindProps) => (
               <div className="profile-banner-surface" onContextMenu={bindProps.onContextMenu} title={bindProps.title}>
                 {showBannerImage ? (
-                  <img className="profile-banner-image" src={currentSettings.bannerImageUrl} alt="个人名片横幅图" onError={() => setBannerFailed(true)} />
+                  <img className="profile-banner-image" src={resolveMediaUrl(currentSettings.bannerImageUrl)} alt="个人名片横幅图" onError={() => setBannerFailed(true)} />
                 ) : (
                   <div className="editable-image-placeholder" aria-hidden="true" />
                 )}
@@ -208,7 +209,7 @@ export function HomePage({
             {(bindProps) => (
               <div className={`profile-avatar ${showAvatarImage ? "profile-avatar-has-image" : ""}`} onContextMenu={bindProps.onContextMenu} title={bindProps.title}>
                 {showAvatarImage ? (
-                  <img className="profile-avatar-image" src={currentSettings.avatarImageUrl} alt={`${currentSettings.siteTitle} 的头像`} onError={() => setAvatarFailed(true)} />
+                  <img className="profile-avatar-image" src={resolveMediaUrl(currentSettings.avatarImageUrl)} alt={`${currentSettings.siteTitle} 的头像`} onError={() => setAvatarFailed(true)} />
                 ) : (
                   <span className="profile-avatar-fallback" aria-hidden="true" />
                 )}
@@ -242,7 +243,7 @@ export function HomePage({
 
         <div className="card-grid compact-card-grid" style={{ marginTop: "1rem" }}>
           {currentWorks.map((work) => (
-            <WorkCard key={work.id} work={work} />
+            <WorkCard key={work.id} work={work} interactive={!editMode} actionLabel={editMode ? "详情预览" : undefined} />
           ))}
         </div>
       </section>
@@ -280,3 +281,6 @@ export function HomePage({
     </>
   );
 }
+
+
+

@@ -1,5 +1,6 @@
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+﻿import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { uploadAdminAsset } from "../../lib/api";
+import { resolveMediaUrl } from "../../lib/workMedia";
 import { MusicPreviewClip } from "../../types";
 
 const MAX_AUDIO_UPLOAD_BYTES = 50 * 1024 * 1024;
@@ -112,7 +113,7 @@ export function MusicClipLibraryEditor({
       }));
       setStatus(`已上传音频：${file.name}`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "音频上传失败。" );
+      setStatus(error instanceof Error ? error.message : "音频上传失败。");
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -144,7 +145,7 @@ export function MusicClipLibraryEditor({
   function previewCurrentClip(): void {
     const audio = audioRef.current;
     if (!audio || !clipDraft.sourceUrl) {
-      setStatus("请先上传一段音频，再预听截取片段。");
+      setStatus("请先上传一段音频，再试听截取片段。");
       return;
     }
 
@@ -202,7 +203,7 @@ export function MusicClipLibraryEditor({
       setClipDraft(normalizedClip);
       setStatus(`片段库已保存：${normalizedClip.label}`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "片段库保存失败。" );
+      setStatus(error instanceof Error ? error.message : "片段库保存失败。");
     }
   }
 
@@ -217,7 +218,7 @@ export function MusicClipLibraryEditor({
       }
       setStatus("已从片段库移除该片段。");
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "删除片段失败。" );
+      setStatus(error instanceof Error ? error.message : "删除片段失败。");
     }
   }
 
@@ -278,7 +279,7 @@ export function MusicClipLibraryEditor({
           <audio
             ref={audioRef}
             controls
-            src={clipDraft.sourceUrl || undefined}
+            src={clipDraft.sourceUrl ? resolveMediaUrl(clipDraft.sourceUrl) : undefined}
             preload="metadata"
             onLoadedMetadata={(event) => {
               const nextDuration = Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0;

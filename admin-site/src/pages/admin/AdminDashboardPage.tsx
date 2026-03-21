@@ -29,7 +29,11 @@ import { useAuth } from "../../context/AuthContext";
 type TabKey = "overview" | "content" | "works" | "messages" | "reviews" | "settings" | "preview";
 type EditablePageSlug = "home" | "about" | "commission" | "support";
 type SettingsImageField = "bannerImageUrl" | "avatarImageUrl";
-
+const STORAGE_KEYS = {
+  activeTab: "yl-admin-active-tab",
+  pageSlug: "yl-admin-page-slug",
+  editingWorkId: "yl-admin-editing-work-id"
+} as const;
 const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "overview", label: "总览" },
   { key: "content", label: "页内编辑" },
@@ -132,9 +136,40 @@ function getTypeLabel(type: WorkType): string {
 
 const MAX_FEATURED_WORKS = 6;
 
+function readSessionValue(key: string): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    return window.sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function writeSessionValue(key: string, value: string | null): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    if (value) {
+      window.sessionStorage.setItem(key, value);
+    } else {
+      window.sessionStorage.removeItem(key);
+    }
+  } catch {
+    // Ignore storage failures so editing can continue normally.
+  }
+}
+
 export function AdminDashboardPage(): JSX.Element {
   const { username, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<TabKey>("overview");
+  const [activeTab, setActiveTab] = useState<TabKey>(() => {
+    const stored = readSessionValue(STORAGE_KEYS.activeTab);
+    return TABS.some((tab) => tab.key === stored) ? (stored as TabKey) : "overview";
+  });
   const [loading, setLoading] = useState(true);
   const [messages, setMessages] = useState<Message[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -144,9 +179,9 @@ export function AdminDashboardPage(): JSX.Element {
   const [settings, setSettings] = useState<SiteSettings>(sampleSettings);
   const [settingsDraft, setSettingsDraft] = useState<SiteSettings>(sampleSettings);
   const [status, setStatus] = useState<string | null>(null);
-  const [pageSlug, setPageSlug] = useState<EditablePageSlug>("home");
+  const [pageSlug, setPageSlug] = useState<EditablePageSlug>(() => normalizePageSlug(readSessionValue(STORAGE_KEYS.pageSlug) ?? "home"));
   const [workDraft, setWorkDraft] = useState<Partial<Work>>(EMPTY_WORK);
-  const [editingWorkId, setEditingWorkId] = useState<string | null>(null);
+  const [editingWorkId, setEditingWorkId] = useState<string | null>(() => readSessionValue(STORAGE_KEYS.editingWorkId));
   const [socialLinksText, setSocialLinksText] = useState<string>(serializeSocialLinks(sampleSettings.socialLinks));
   const [uiTextJson, setUiTextJson] = useState<string>(JSON.stringify(sampleSettings.uiText, null, 2));
   const galleryInputRef = useRef<HTMLInputElement | null>(null);
@@ -176,6 +211,24 @@ export function AdminDashboardPage(): JSX.Element {
         setSocialLinksText(serializeSocialLinks(settingsData.socialLinks));
         setUiTextJson(JSON.stringify(settingsData.uiText, null, 2));
         setPageSlug((current) => normalizePageSlug(current));
+        if (editingWorkId) {
+          const matchedWork = worksData.find((item) => item.id === editingWorkId);
+          if (matchedWork) {
+            setWorkDraft({ ...matchedWork });
+          } else {
+            setEditingWorkId(null);
+            setWorkDraft({ ...EMPTY_WORK });
+          }
+        }
+        if (editingWorkId) {
+          const matchedWork = worksData.find((item) => item.id === editingWorkId);
+          if (matchedWork) {
+            setWorkDraft({ ...matchedWork });
+          } else {
+            setEditingWorkId(null);
+            setWorkDraft({ ...EMPTY_WORK });
+          }
+        }
       } catch {
         setStatus("当前使用的是演示数据，但编辑和预览仍然可用。");
       } finally {
@@ -185,7 +238,15 @@ export function AdminDashboardPage(): JSX.Element {
 
     void load();
   }, []);
-
+  useEffect(() => {
+    writeSessionValue(STORAGE_KEYS.activeTab, activeTab);
+  }, [activeTab]);
+  useEffect(() => {
+    writeSessionValue(STORAGE_KEYS.pageSlug, pageSlug);
+  }, [pageSlug]);
+  useEffect(() => {
+    writeSessionValue(STORAGE_KEYS.editingWorkId, editingWorkId);
+  }, [editingWorkId]);
   const featuredWorks = useMemo(
     () => resolveFeaturedWorks(works, settingsDraft.featuredWorkIds, MAX_FEATURED_WORKS),
     [works, settingsDraft.featuredWorkIds]
@@ -906,6 +967,10 @@ export function AdminDashboardPage(): JSX.Element {
     </main>
   );
 }
+
+
+
+
 
 
 

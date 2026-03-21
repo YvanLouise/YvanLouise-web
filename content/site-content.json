@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T09:34:00.135Z",
+  "generatedAt": "2026-03-21T12:42:17.627Z",
   "works": [
     {
       "id": "w-music-01",
@@ -36,8 +36,8 @@
       "coverUrl": "",
       "demoUrl": "https://example.com/music/neon-echoes",
       "publishedAt": "2025-12-15",
-      "createdAt": "2026-03-21T09:27:24.742Z",
-      "updatedAt": "2026-03-21T09:34:00.077Z"
+      "createdAt": "2026-03-21T12:39:02.767Z",
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     },
     {
       "id": "w-software-01",
@@ -71,12 +71,12 @@
       ],
       "platform": "Web / iPhone / Android",
       "status": "持续迭代中",
-      "coverUrl": "http://localhost:4000/uploads/work-cover-w-software-01-1773243065034-c974ea4b-a485-4a96-9a35-fae5633f3789.png",
+      "coverUrl": "",
       "demoUrl": "https://example.com/software/yilin",
       "repoUrl": "https://github.com/example/yilin",
       "publishedAt": "2026-01-28",
-      "createdAt": "2026-03-21T09:27:24.742Z",
-      "updatedAt": "2026-03-21T09:34:00.077Z"
+      "createdAt": "2026-03-21T12:39:02.767Z",
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     },
     {
       "id": "w-game-01",
@@ -113,8 +113,8 @@
       "coverUrl": "",
       "demoUrl": "https://example.com/game/echo-dive",
       "publishedAt": "2026-02-02",
-      "createdAt": "2026-03-21T09:27:24.742Z",
-      "updatedAt": "2026-03-21T09:34:00.077Z"
+      "createdAt": "2026-03-21T12:39:02.767Z",
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     },
     {
       "id": "w-animation-01",
@@ -148,31 +148,11 @@
       ],
       "platform": "短片 / 宣传视觉 / 演出屏幕",
       "status": "已完成",
-      "coverUrl": "http://localhost:4000/uploads/work-cover-w-animation-01-1773243990236-91d3ebf2-05d4-440c-8338-ba817084872e.jpg",
+      "coverUrl": "",
       "demoUrl": "https://example.com/animation/pulse-frame",
       "publishedAt": "2026-02-12",
-      "createdAt": "2026-03-21T09:27:24.742Z",
-      "updatedAt": "2026-03-21T09:34:00.077Z"
-    },
-    {
-      "id": "0bed867c-bf8c-40d2-92dd-da86a7454e13",
-      "title": "秋天的维度 中文特别版",
-      "type": "music",
-      "summary": "一首围绕季节氛围和旋律推进展开的原创音乐作品。",
-      "detailIntro": "目前作为单曲作品展示，后续会继续补充更完整的介绍、制作过程和试听片段。",
-      "background": "",
-      "process": "",
-      "result": "",
-      "featureList": [],
-      "interactionPoints": [],
-      "galleryImages": [],
-      "detailSections": [],
-      "platform": "音乐平台 / 私人曲库",
-      "status": "持续整理中",
-      "coverUrl": "http://localhost:4000/uploads/work-cover-0bed867c-bf8c-40d2-92dd-da86a7454e13-1773320700887-16d58635-5133-4eb0-a6b4-82414ab583ba.jpg",
-      "publishedAt": "2026-03-12",
-      "createdAt": "2026-03-12T13:04:34.889Z",
-      "updatedAt": "2026-03-13T17:35:00.000Z"
+      "createdAt": "2026-03-21T12:39:02.767Z",
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     }
   ],
   "pages": [
@@ -182,7 +162,7 @@
       "hero": "这里集中展示我的音乐、软件、游戏与动画作品，也开放委托、私信和支持入口。",
       "body": "如果你想快速了解我正在做什么，可以先看精选作品，再决定是否继续合作或支持。",
       "highlights": [],
-      "updatedAt": "2026-03-21T09:34:00.077Z"
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     },
     {
       "slug": "about",
@@ -194,7 +174,7 @@
         "擅长从概念走到完整可展示成品",
         "支持合作开发、定制创作与长期委托"
       ],
-      "updatedAt": "2026-03-21T09:34:00.077Z"
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     },
     {
       "slug": "commission",
@@ -207,7 +187,7 @@
         "游戏玩法验证与交互设计",
         "动画短片与动态视觉设计"
       ],
-      "updatedAt": "2026-03-21T09:34:00.077Z"
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     },
     {
       "slug": "support",
@@ -219,7 +199,7 @@
         "分享作品链接",
         "通过委托长期合作"
       ],
-      "updatedAt": "2026-03-21T09:34:00.077Z"
+      "updatedAt": "2026-03-21T12:42:17.570Z"
     }
   ],
   "siteSettings": {
@@ -232,8 +212,8 @@
     "bannerBadge": "个人创作站",
     "bannerHeadline": "持续发布音乐、软件、游戏与动画作品。",
     "bannerDescription": "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
-    "bannerImageUrl": "http://localhost:4000/uploads/site-banner-1773241564313-58615a6a-ce8d-436f-9198-9bae662c992d.png",
-    "avatarImageUrl": "http://localhost:4000/uploads/site-avatar-1773242896751-fcbdebb9-1017-4396-a369-e35052bed75e.png",
+    "bannerImageUrl": "",
+    "avatarImageUrl": "",
     "afdianUrl": "https://afdian.com/",
     "socialLinks": [
       {
@@ -249,24 +229,7 @@
         "url": "https://music.163.com"
       }
     ],
-    "musicPreviewClips": [
-      {
-        "id": "734e5112-1bc9-463d-b7ae-29a5974f70a1",
-        "label": "音乐片段 1",
-        "sourceUrl": "http://localhost:4000/uploads/music-preview-1773290554928-942136f5-34d3-48bf-ae77-47a9fec04039.wav",
-        "sourceName": "片段1.wav",
-        "startTime": 125,
-        "endTime": 160
-      },
-      {
-        "id": "f9690872-239d-4068-89ce-0e2a265fdc5a",
-        "label": "音乐片段 2",
-        "sourceUrl": "http://localhost:4000/uploads/music-preview-1773290336608-ecb854b5-56d5-4108-bcab-8d7bd8f55749.wav",
-        "sourceName": "片段2.wav",
-        "startTime": 30,
-        "endTime": 68
-      }
-    ],
+    "musicPreviewClips": [],
     "featuredWorkIds": [
       "w-music-01",
       "w-software-01",
@@ -425,6 +388,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T09:34:00.077Z"
+    "updatedAt": "2026-03-21T12:42:17.570Z"
   }
 }

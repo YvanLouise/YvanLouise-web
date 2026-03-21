@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSiteSettings } from "@shared/context/SiteSettingsContext";
 import { getWorkById } from "@shared/lib/api";
 import { readCachedWorkById } from "@shared/lib/siteCache";
 import { getWorkTypeLabel } from "@shared/lib/workLabels";
-import { hasText, resolveWorkCoverUrl } from "@shared/lib/workMedia";
+import { hasText, resolveMediaUrl, resolveWorkCoverUrl } from "@shared/lib/workMedia";
 import { Work } from "@shared/types";
 
 type DetailTabId = "background" | "process" | "result" | "interaction";
@@ -40,7 +40,7 @@ export function WorkDetailPage(): JSX.Element {
       return [] as string[];
     }
 
-    return Array.from(new Set([work.coverUrl, ...work.galleryImages].map((item) => item.trim()).filter(Boolean)));
+    return Array.from(new Set([work.coverUrl, ...work.galleryImages].map((item) => resolveMediaUrl(item)).filter(Boolean)));
   }, [work]);
 
   const interactionItems = useMemo(
