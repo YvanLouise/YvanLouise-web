@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:04:28.888Z",
+  "generatedAt": "2026-03-21T17:05:39.703Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -233,6 +233,14 @@
       }
     ],
     "musicPreviewClips": [
+      {
+        "id": "9ac2d525-f514-4519-bb4e-54cb6114860b",
+        "label": "碎月~生命~",
+        "sourceUrl": "uploads/music-preview-1774112676179-63ea3b70-2f38-442e-9fa4-746bdd44bfdd.flac",
+        "sourceName": "YvanLouise - 碎月~生命~ 砕月～イノチ～中文版.flac",
+        "startTime": 39.8,
+        "endTime": 121
+      },
       {
         "id": "2b3c2048-08ab-4c1a-9bed-c887c9050661",
         "label": "苍之翼 ツバサ",
@@ -482,6 +490,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:04:28.887Z"
+    "updatedAt": "2026-03-21T17:05:39.703Z"
   }
 }
