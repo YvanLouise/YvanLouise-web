@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:51:23.486Z",
+  "generatedAt": "2026-03-21T16:52:29.002Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -84,41 +84,24 @@
     },
     {
       "id": "w-music-01",
-      "title": "霓虹回声",
+      "title": "夜下残影",
       "type": "music",
-      "summary": "一组融合城市夜景、电子颗粒和情绪推进的原创音乐作品。",
-      "detailIntro": "这组作品围绕深夜街道、霓虹灯光和独自漫游的氛围展开，适合独立聆听，也适合用作影像与游戏配乐。",
-      "background": "我想做一组既能独立发布，也能服务于视觉叙事项目的原创音乐，把空间感和情绪流动做得更细腻。",
-      "process": "主要在 Ableton Live 中完成编曲与混音，再结合环境采样、合成器纹理和动态自动化，反复调整段落推进。",
-      "result": "目前已经整理成一组可发布曲目，也能作为预告片、动画短片或游戏片段的配乐素材。",
-      "featureList": [
-        "原创旋律动机",
-        "层次清晰的氛围铺陈",
-        "适合切片用于影像或预告"
-      ],
-      "interactionPoints": [
-        "支持随机片段试听",
-        "可按情绪段落拆分展示",
-        "适合补充封面、歌词和设定图"
-      ],
+      "summary": "一组融合城市夜景情绪推进的原创音乐作品。",
+      "detailIntro": "",
+      "background": "",
+      "process": "",
+      "result": "",
+      "featureList": [],
+      "interactionPoints": [],
       "galleryImages": [],
-      "detailSections": [
-        {
-          "title": "声音设定",
-          "body": "整体音色偏冷，强调颗粒感、长尾混响和低频脉冲的推动力。"
-        },
-        {
-          "title": "适用场景",
-          "body": "适合独立游戏预告、城市夜景剪辑、角色主题音乐与实验短片。"
-        }
-      ],
-      "platform": "Spotify / 网易云音乐 / 视频项目",
+      "detailSections": [],
+      "platform": "网易云音乐 / bilibli",
       "status": "已发布",
       "coverUrl": "uploads/work-cover-w-music-01-1774099153595-477a8308-d8ce-4b43-8668-6dcdc5ee956f.png",
-      "demoUrl": "https://example.com/music/neon-echoes",
+      "demoUrl": "https://www.bilibili.com/video/BV1ZR6HBxEuG/?spm_id_from=333.1387.homepage.video_card.click&vd_source=7d3435e0340d9a6f3be31ee2d51ad629",
       "publishedAt": "2025-12-15",
       "createdAt": "2026-03-21T13:12:36.389Z",
-      "updatedAt": "2026-03-21T16:32:50.824Z"
+      "updatedAt": "2026-03-21T16:52:29.002Z"
     },
     {
       "id": "w-game-01",
