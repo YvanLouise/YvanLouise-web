@@ -27,6 +27,8 @@ import { cloneSiteContent, getBundledSiteContent, normalizeSiteContent, toSiteCo
 
 const LEGACY_API_BASE = resolveLegacyApiBase();
 const LEGACY_BACKEND_MODE = Boolean(import.meta.env.VITE_API_BASE_URL);
+const SITE_RUNTIME = resolveSiteRuntime();
+const STATIC_PUBLIC_SITE_MODE = !LEGACY_BACKEND_MODE && SITE_RUNTIME === "public";
 const ADMIN_FUNCTION_BASE = resolveAdminFunctionBase();
 const PUBLIC_INTERACTION_BASE = resolvePublicInteractionBase();
 const PUBLIC_CONTENT_BASE = resolvePublicContentBase();
@@ -70,6 +72,15 @@ function resolveLegacyApiBase(): string {
   }
 
   return configured.replace(/\/$/, "");
+}
+
+function resolveSiteRuntime(): "public" | "admin" {
+  const configured = (import.meta.env.VITE_SITE_RUNTIME as string | undefined)?.trim().toLowerCase();
+  if (configured === "public" || configured === "admin") {
+    return configured;
+  }
+
+  return (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined)?.trim() ? "admin" : "public";
 }
 
 function resolveAdminFunctionBase(): string {
@@ -292,7 +303,7 @@ async function loadPublicContent(force = false): Promise<SiteContentSnapshot> {
     return cloneSiteContent(publicContentCache);
   }
 
-  const snapshot = await fetchPublicContentSnapshot();
+  const snapshot = STATIC_PUBLIC_SITE_MODE ? getStaticContentSnapshot() : await fetchPublicContentSnapshot();
   publicContentCache = cloneSiteContent(snapshot);
   syncSnapshotCaches(snapshot);
   return cloneSiteContent(snapshot);

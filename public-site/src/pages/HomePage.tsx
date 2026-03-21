@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { WorkCard } from "@shared/components/shared/WorkCard";
@@ -125,7 +125,7 @@ export function HomePage(): JSX.Element {
 
         <div className="cta-row">
           <Link to="/commission" className="btn btn-primary">{uiText.supportPrimaryLabel}</Link>
-          <Link to="/contact" className="btn btn-secondary">{uiText.supportSecondaryLabel}</Link>
+          <Link to="/contact" className="btn btn-secondary">查看联系入口</Link>
         </div>
       </section>
     </>

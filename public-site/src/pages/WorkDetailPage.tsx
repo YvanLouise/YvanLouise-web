@@ -1,6 +1,5 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ReviewForm } from "@shared/components/shared/ReviewForm";
 import { useSiteSettings } from "@shared/context/SiteSettingsContext";
 import { getWorkById } from "@shared/lib/api";
 import { readCachedWorkById } from "@shared/lib/siteCache";
@@ -236,14 +235,15 @@ export function WorkDetailPage(): JSX.Element {
           ) : null}
 
           <article className="panel stack">
-            <h2 style={{ margin: 0 }}>{copy.feedbackTitle}</h2>
-            <p className="meta" style={{ margin: 0 }}>{copy.feedbackDescription}</p>
+            <h2 style={{ margin: 0 }}>联系与反馈</h2>
+            <p className="meta" style={{ margin: 0 }}>
+              访客站当前采用静态展示模式，公开评论和站内私信已隐藏。如果你想交流作品、洽谈合作或继续支持创作，请前往联系页。
+            </p>
+            <div className="cta-row">
+              <Link className="btn btn-secondary" to="/contact">前往联系页</Link>
+            </div>
           </article>
         </aside>
-      </section>
-
-      <section className="section">
-        <ReviewForm workId={work.id} />
       </section>
     </>
   );

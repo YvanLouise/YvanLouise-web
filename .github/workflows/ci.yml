@@ -27,8 +27,8 @@ jobs:
 
       - name: Write public-site env
         run: |
-          echo "VITE_ADMIN_SITE_URL=${{ secrets.PUBLIC_SITE_ADMIN_URL || 'https://admin.yvanlouise.xyz' }}" > public-site/.env.production
-          echo "VITE_PUBLIC_INTERACTION_BASE=${{ secrets.PUBLIC_SITE_INTERACTION_BASE || 'https://admin.yvanlouise.xyz/.netlify/functions' }}" >> public-site/.env.production
+          echo "VITE_SITE_RUNTIME=public" > public-site/.env.production
+          echo "VITE_ADMIN_SITE_URL=${{ secrets.PUBLIC_SITE_ADMIN_URL || 'https://yl-a-side.netlify.app' }}" >> public-site/.env.production
           echo "VITE_BASE_PATH=/" >> public-site/.env.production
 
       - name: Write admin-site env
