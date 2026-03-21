@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T13:20:38.555Z",
+  "generatedAt": "2026-03-21T13:20:54.817Z",
   "works": [
     {
       "id": "f73368c6-1ed0-46bd-be6d-44109047948f",
@@ -89,7 +89,7 @@
       "hero": "这里集中展示我的音乐、软件、游戏与动画作品，也开放委托、私信和支持入口。",
       "body": "如果你想快速了解我正在做什么，可以先看精选作品，再决定是否继续合作或支持。",
       "highlights": [],
-      "updatedAt": "2026-03-21T13:14:27.398Z"
+      "updatedAt": "2026-03-21T13:20:54.812Z"
     },
     {
       "slug": "about",
@@ -137,7 +137,7 @@
     "secondaryCtaLabel": "委托合作",
     "secondaryCtaHref": "/commission",
     "bannerBadge": "个人创作站",
-    "bannerHeadline": "持续发布音乐、软件、游戏与动画作品。",
+    "bannerHeadline": "持续发布音乐与动画作品。",
     "bannerDescription": "你可以在这里浏览作品、了解委托内容，也可以通过私信和支持页找到我。",
     "bannerImageUrl": "uploads/site-banner-1774097478963-85b64f15-375e-4530-93be-ef247e8b6f69.png",
     "avatarImageUrl": "uploads/site-avatar-1774098189269-a32368d5-28ab-4cd6-b21c-5a0f7757db6c.png",
@@ -314,6 +314,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T13:18:45.731Z"
+    "updatedAt": "2026-03-21T13:20:54.817Z"
   }
 }
