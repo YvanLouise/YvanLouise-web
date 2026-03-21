@@ -67,6 +67,7 @@ const EMPTY_WORK: Partial<Work> = {
   detailSections: [],
   platform: "",
   status: "",
+  publishedAt: "",
   coverUrl: "",
   demoUrl: "",
   repoUrl: ""
@@ -406,6 +407,7 @@ export function AdminDashboardPage(): JSX.Element {
   async function saveWork(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
 
+    const publishedAt = (workDraft.publishedAt ?? "").trim();
     const payload: Partial<Work> = {
       title: (workDraft.title ?? "").trim() || "未命名作品",
       type: (workDraft.type as WorkType | undefined) ?? "software",
@@ -420,6 +422,7 @@ export function AdminDashboardPage(): JSX.Element {
       detailSections: workDraft.detailSections ?? [],
       platform: (workDraft.platform ?? "").trim() || undefined,
       status: (workDraft.status ?? "").trim() || undefined,
+      ...(publishedAt ? { publishedAt } : {}),
       coverUrl: (workDraft.coverUrl ?? "").trim(),
       demoUrl: (workDraft.demoUrl ?? "").trim() || undefined,
       repoUrl: (workDraft.repoUrl ?? "").trim() || undefined
@@ -798,6 +801,10 @@ export function AdminDashboardPage(): JSX.Element {
                     <input value={workDraft.status ?? ""} onChange={(event) => updateWorkDraft({ status: event.target.value })} placeholder="例如 已发布 / 持续迭代中" />
                   </label>
                   <label>
+                    发布时间
+                    <input type="date" value={workDraft.publishedAt ?? ""} onChange={(event) => updateWorkDraft({ publishedAt: event.target.value })} />
+                  </label>
+                  <label>
                     封面图地址
                     <input value={workDraft.coverUrl ?? ""} onChange={(event) => updateWorkDraft({ coverUrl: event.target.value })} placeholder="可留空，前台会显示默认封面" />
                   </label>
@@ -981,6 +988,7 @@ export function AdminDashboardPage(): JSX.Element {
     </main>
   );
 }
+
 
 
 
