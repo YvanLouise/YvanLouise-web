@@ -22,12 +22,13 @@ import {
 import { Message, PageContent, Review, SiteSettings, SocialLink, Work, WorkDetailSection, WorkType } from "../../types";
 import { AboutPage } from "../AboutPage";
 import { CommissionPage } from "../CommissionPage";
+import { ContactPage } from "../ContactPage";
 import { HomePage } from "../HomePage";
 import { SupportPage } from "../SupportPage";
 import { useAuth } from "../../context/AuthContext";
 
 type TabKey = "overview" | "content" | "works" | "messages" | "reviews" | "settings" | "preview";
-type EditablePageSlug = "home" | "about" | "commission" | "support";
+type EditablePageSlug = "home" | "about" | "commission" | "support" | "contact";
 type SettingsImageField = "bannerImageUrl" | "avatarImageUrl";
 const STORAGE_KEYS = {
   activeTab: "yl-admin-active-tab",
@@ -48,7 +49,8 @@ const EDITABLE_PAGES: Array<{ slug: EditablePageSlug; label: string }> = [
   { slug: "home", label: "首页" },
   { slug: "about", label: "关于" },
   { slug: "commission", label: "委托" },
-  { slug: "support", label: "支持" }
+  { slug: "support", label: "支持" },
+  { slug: "contact", label: "联系" }
 ];
 
 const EMPTY_WORK: Partial<Work> = {
@@ -529,11 +531,19 @@ export function AdminDashboardPage(): JSX.Element {
         uploadedUrls.push(uploaded.url);
       }
 
+      const nextGalleryImages = [...(workDraft.galleryImages ?? []), ...uploadedUrls];
       setWorkDraft((prev) => ({
         ...prev,
-        galleryImages: [...(prev.galleryImages ?? []), ...uploadedUrls]
+        galleryImages: nextGalleryImages
       }));
-      setStatus(`已加入 ${uploadedUrls.length} 张图到当前作品图集。`);
+
+      if (editingWorkId) {
+        const updated = await updateAdminWork(editingWorkId, { galleryImages: nextGalleryImages });
+        await refreshWorksState(updated.id);
+        setStatus(`已上传并保存 ${uploadedUrls.length} 张图到《${updated.title}》图集。`);
+      } else {
+        setStatus(`已加入 ${uploadedUrls.length} 张图到当前草稿图集，创建新作品时还需要再点一次保存。`);
+      }
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "图集上传失败。");
     } finally {
@@ -565,7 +575,11 @@ export function AdminDashboardPage(): JSX.Element {
       return <CommissionPage mode="edit" contentOverride={selectedPage} onContentChange={(patch) => updatePageDraft("commission", patch)} />;
     }
 
-    return <SupportPage mode="edit" contentOverride={selectedPage} onContentChange={(patch) => updatePageDraft("support", patch)} />;
+    if (pageSlug === "support") {
+      return <SupportPage mode="edit" contentOverride={selectedPage} onContentChange={(patch) => updatePageDraft("support", patch)} />;
+    }
+
+    return <ContactPage mode="edit" contentOverride={selectedPage} onContentChange={(patch) => updatePageDraft("contact", patch)} />;
   }
 
   return (
@@ -967,6 +981,7 @@ export function AdminDashboardPage(): JSX.Element {
     </main>
   );
 }
+
 
 
 

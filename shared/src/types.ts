@@ -1,4 +1,4 @@
-export type WorkType = "music" | "software" | "game" | "animation";
+﻿export type WorkType = "music" | "software" | "game" | "animation";
 
 export interface WorkDetailSection {
   title: string;
@@ -111,6 +111,7 @@ export interface SiteUiText {
     resultTabLabel: string;
     interactionTabLabel: string;
     noInteractionText: string;
+    contactButtonLabel: string;
   };
   contact: {
     heroTitle: string;
@@ -267,4 +268,5 @@ export interface SiteContentSnapshot {
   pages: PageContent[];
   siteSettings: SiteSettings;
 }
+
 

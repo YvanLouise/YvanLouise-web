@@ -1,6 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { ReviewForm } from "../components/shared/ReviewForm";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 import { sampleWorks } from "../data/sampleData";
 import { getWorkById } from "../lib/api";
@@ -42,7 +41,7 @@ export function WorkDetailPage(): JSX.Element {
     }
 
     return Array.from(
-      new Set([work.coverUrl, ...work.galleryImages].map((item) => item.trim()).filter(Boolean))
+      new Set([work.coverUrl, ...work.galleryImages].map((item) => resolveMediaUrl(item)).filter(Boolean))
     );
   }, [work]);
 
@@ -237,14 +236,14 @@ export function WorkDetailPage(): JSX.Element {
           <article className="panel stack">
             <h2 style={{ margin: 0 }}>{copy.feedbackTitle}</h2>
             <p className="meta" style={{ margin: 0 }}>{copy.feedbackDescription}</p>
+            <div className="cta-row">
+              <Link className="btn btn-secondary" to="/contact">{copy.contactButtonLabel}</Link>
+            </div>
           </article>
         </aside>
-      </section>
-
-      <section className="section">
-        <ReviewForm workId={work.id} />
       </section>
     </>
   );
 }
+
 

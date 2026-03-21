@@ -111,6 +111,7 @@ export interface SiteUiText {
     resultTabLabel: string;
     interactionTabLabel: string;
     noInteractionText: string;
+    contactButtonLabel: string;
   };
   contact: {
     heroTitle: string;
@@ -265,3 +266,4 @@ export interface SiteStore {
 
   getAdminByUsername(username: string): Promise<AdminUser | null>;
 }
+
