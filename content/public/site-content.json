@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:16:42.557Z",
+  "generatedAt": "2026-03-21T17:17:38.861Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -425,7 +425,7 @@
         "resultTabLabel": "最终成果",
         "interactionTabLabel": "交互亮点",
         "noInteractionText": "这个项目暂时还没有填写交互亮点。",
-        "contactButtonLabel": "?????"
+        "contactButtonLabel": "请私信联系"
       },
       "contact": {
         "heroTitle": "给我发一条私信",
@@ -482,6 +482,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T17:10:23.546Z"
+    "updatedAt": "2026-03-21T17:17:38.860Z"
   }
 }
