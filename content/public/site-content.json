@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:52:29.002Z",
+  "generatedAt": "2026-03-21T16:53:21.664Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -126,41 +126,24 @@
     },
     {
       "id": "w-animation-01",
-      "title": "脉冲帧",
-      "type": "animation",
-      "summary": "围绕音乐节拍与镜头切换节奏制作的动画短片。",
-      "detailIntro": "这个项目把原创音乐、画面节奏和镜头调度紧密绑定，强调视觉打击感和整体呼吸感。",
-      "background": "我希望做一组更强调声音和画面同步关系的动画作品，测试镜头节奏与情绪推进的结合方式。",
-      "process": "先在 Figma 中整理分镜，再在 After Effects 中按照脚本和节拍完成动态设计与镜头切换。",
-      "result": "作品可以用于活动宣传、片头设计、动态海报和个人作品集展示。",
-      "featureList": [
-        "节奏明确的镜头切换",
-        "原创音乐驱动画面变化",
-        "适合宣传片与片头场景"
-      ],
-      "interactionPoints": [
-        "可展示关键画面图集",
-        "适合补充创作说明与分镜草图",
-        "便于扩展成系列短片"
-      ],
+      "title": "秋天的梯度中文特别版/秋のグラディエント",
+      "type": "music",
+      "summary": "",
+      "detailIntro": "",
+      "background": "",
+      "process": "",
+      "result": "",
+      "featureList": [],
+      "interactionPoints": [],
       "galleryImages": [],
-      "detailSections": [
-        {
-          "title": "视觉语言",
-          "body": "通过高对比色块、发光边缘和快速位移，形成鲜明的节拍反馈。"
-        },
-        {
-          "title": "交付方向",
-          "body": "可扩展到宣传动画、动态海报、片头片尾与演出屏幕视觉。"
-        }
-      ],
+      "detailSections": [],
       "platform": "短片 / 宣传视觉 / 演出屏幕",
-      "status": "已完成",
+      "status": "已发布",
       "coverUrl": "uploads/work-cover-w-animation-01-1774101643370-ebe9e15d-9894-4226-8d9d-011ee925204e.png",
-      "demoUrl": "https://example.com/animation/pulse-frame",
+      "demoUrl": "https://www.bilibili.com/video/BV1jikGBvExk/?spm_id_from=333.1387.upload.video_card.click",
       "publishedAt": "2026-02-12",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T16:32:50.824Z"
+      "updatedAt": "2026-03-21T16:53:21.664Z"
     }
   ],
   "pages": [
