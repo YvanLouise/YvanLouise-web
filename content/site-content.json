@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T17:28:42.720Z",
+  "generatedAt": "2026-03-21T17:29:41.483Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -77,13 +77,13 @@
       "interactionPoints": [],
       "galleryImages": [],
       "detailSections": [],
-      "platform": "Windows / Web Demo",
+      "platform": "网易云音乐/bilibili",
       "status": "公开版已发布",
       "coverUrl": "uploads/work-cover-w-game-01-1774101489700-5c9326ec-6f0d-47f0-a7cf-a1fe3d298974.png",
       "demoUrl": "https://www.bilibili.com/video/BV1XzcAzjEnm/?spm_id_from=333.1387.upload.video_card.click&vd_source=7d3435e0340d9a6f3be31ee2d51ad629",
       "publishedAt": "2026-02-02",
       "createdAt": "2026-03-21T13:25:09.673Z",
-      "updatedAt": "2026-03-21T16:51:23.485Z"
+      "updatedAt": "2026-03-21T17:29:41.483Z"
     },
     {
       "id": "w-animation-01",
