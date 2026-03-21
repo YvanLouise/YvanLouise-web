@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T13:18:45.732Z",
+  "generatedAt": "2026-03-21T13:19:16.571Z",
   "works": [
     {
       "id": "f73368c6-1ed0-46bd-be6d-44109047948f",
@@ -75,11 +75,11 @@
       "detailSections": [],
       "platform": "网易云音乐 / 视频项目",
       "status": "已发布",
-      "coverUrl": "",
+      "coverUrl": "uploads/work-cover-w-music-01-1774099153595-477a8308-d8ce-4b43-8668-6dcdc5ee956f.png",
       "demoUrl": "https://example.com/music/neon-echoes",
       "publishedAt": "2025-12-15",
       "createdAt": "2026-03-21T13:12:36.389Z",
-      "updatedAt": "2026-03-21T13:18:32.547Z"
+      "updatedAt": "2026-03-21T13:19:16.570Z"
     },
     {
       "id": "w-game-01",
