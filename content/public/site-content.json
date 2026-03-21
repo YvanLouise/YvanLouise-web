@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-21T16:46:20.696Z",
+  "generatedAt": "2026-03-21T16:47:59.975Z",
   "works": [
     {
       "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
@@ -285,6 +285,14 @@
     ],
     "musicPreviewClips": [
       {
+        "id": "0db8eace-5b1c-4236-8f7f-23f9d85dcd43",
+        "label": "YvanLouise - 大地に咲く旋律中文版",
+        "sourceUrl": "uploads/music-preview-1774111585914-8e559cf3-e8fa-48e1-8de5-9efd765d1187.flac",
+        "sourceName": "YvanLouise - 大地に咲く旋律中文版.flac",
+        "startTime": 159,
+        "endTime": 199
+      },
+      {
         "id": "619bdadb-686e-408a-a3eb-31f76b127117",
         "label": "审判终焉/最後の審判",
         "sourceUrl": "uploads/music-preview-1774111528283-d265dc92-2d7c-4d0f-8857-1bc9562c89a8.flac",
@@ -485,6 +493,6 @@
         "buttonLabel": "返回首页"
       }
     },
-    "updatedAt": "2026-03-21T16:46:20.695Z"
+    "updatedAt": "2026-03-21T16:47:59.975Z"
   }
 }
