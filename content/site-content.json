@@ -1,6 +1,28 @@
 {
-  "generatedAt": "2026-03-21T14:00:45.642Z",
+  "generatedAt": "2026-03-21T14:04:40.255Z",
   "works": [
+    {
+      "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
+      "title": "TileMapCreator",
+      "type": "software",
+      "summary": "一个没什么用的瓦片地图制作网站",
+      "detailIntro": "",
+      "background": "",
+      "process": "",
+      "result": "",
+      "featureList": [],
+      "interactionPoints": [],
+      "galleryImages": [],
+      "detailSections": [],
+      "platform": "web",
+      "status": "开发中",
+      "coverUrl": "",
+      "demoUrl": "https://yvanlouise.github.io/TileMapCreator/",
+      "repoUrl": "https://github.com/YvanLouise/TileMapCreator",
+      "publishedAt": "2026-03-21",
+      "createdAt": "2026-03-21T14:04:40.255Z",
+      "updatedAt": "2026-03-21T14:04:40.255Z"
+    },
     {
       "id": "f73368c6-1ed0-46bd-be6d-44109047948f",
       "title": "少女与黄金龙的故事",
