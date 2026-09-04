@@ -38,6 +38,6 @@ Private data, logs, build outputs, and local-only stores must not enter the publ
 - Run `npm test` for request, cache, search, audio and publishing-path regression tests.
 - Run `npm run ci` for tests and all three production builds.
 - Public production builds always use static content, even when a local `.env` sets an API URL.
-- `VITE_BASE_PATH=/` builds for a root/custom domain; `VITE_BASE_PATH=/YvanLouise-web/` builds for the GitHub project URL. The deployment workflow chooses this from the existing custom-domain configuration.
+- `VITE_BASE_PATH=/` builds for a root/custom domain; `VITE_BASE_PATH=/YvanLouise-web/` builds for the GitHub project URL. The deployment workflow reads `base_path` from `actions/configure-pages`, including domains configured directly in Pages settings.
 - For local root-path preview in PowerShell: `$env:VITE_BASE_PATH='/'; npm run build:public-site`, then `npm --workspace public-site run preview`.
 - Work filters use `type`, `q` and `sort` URL parameters. Audio is loaded only after an explicit play action.
