@@ -38,21 +38,27 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      - name: Test public site utilities
+        run: npm test
 
       - name: Write public-site env
         env:
           PUBLIC_SITE_ADMIN_URL: ${{ secrets.PUBLIC_SITE_ADMIN_URL }}
           REPO_NAME: ${{ github.event.repository.name }}
+          PUBLIC_SITE_CUSTOM_DOMAIN: ${{ secrets.PUBLIC_SITE_CUSTOM_DOMAIN }}
         run: |
           echo "VITE_SITE_RUNTIME=public" > public-site/.env.production
           if [ -n "$PUBLIC_SITE_ADMIN_URL" ]; then
             echo "VITE_ADMIN_SITE_URL=$PUBLIC_SITE_ADMIN_URL" >> public-site/.env.production
-          else
-            echo "VITE_ADMIN_SITE_URL=https://yl-a-side.netlify.app" >> public-site/.env.production
           fi
           echo "VITE_REPOSITORY_BASE=/$REPO_NAME/" >> public-site/.env.production
-          echo "VITE_BASE_PATH=/" >> public-site/.env.production
+          if [ -n "$PUBLIC_SITE_CUSTOM_DOMAIN" ]; then
+            echo "VITE_BASE_PATH=/" >> public-site/.env.production
+          else
+            echo "VITE_BASE_PATH=/$REPO_NAME/" >> public-site/.env.production
+          fi
 
       - name: Build public site
         run: npm run build:public-site

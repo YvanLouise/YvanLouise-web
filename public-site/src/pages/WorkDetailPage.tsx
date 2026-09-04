@@ -17,23 +17,31 @@ export function WorkDetailPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<DetailTabId>("background");
   const [activeImage, setActiveImage] = useState(0);
+  const [retry, setRetry] = useState(0);
+  const [shareStatus, setShareStatus] = useState("");
 
   useEffect(() => {
+    let mounted = true;
+    setWork(readCachedWorkById(workId));
+    setError(null);
     if (!workId) {
       return;
     }
 
     void getWorkById(workId)
       .then((response) => {
+        if (!mounted) return;
         setWork(response);
         setError(null);
         setActiveImage(0);
         setActiveTab("background");
       })
       .catch((err) => {
+        if (!mounted) return;
         setError(err instanceof Error ? err.message : copy.notFoundDescription);
       });
-  }, [copy.notFoundDescription, workId]);
+    return () => { mounted = false; };
+  }, [copy.notFoundDescription, workId, retry]);
 
   const gallery = useMemo(() => {
     if (!work) {
@@ -101,6 +109,7 @@ export function WorkDetailPage(): JSX.Element {
       <section className="status-card stack">
         <h1>{copy.notFoundTitle}</h1>
         <p>{error ?? copy.notFoundDescription}</p>
+        <button className="btn btn-primary" type="button" onClick={() => setRetry((value) => value + 1)}>重新加载</button>
         <Link className="btn btn-secondary" to="/works">
           {copy.backToWorksLabel}
         </Link>
@@ -124,6 +133,13 @@ export function WorkDetailPage(): JSX.Element {
 
   return (
     <>
+      <nav className="detail-breadcrumb" aria-label="面包屑导航">
+        <Link to="/works">{copy.backToWorksLabel}</Link><span aria-hidden="true"> / </span><span>{work.title}</span>
+        <button className="btn btn-secondary" type="button" onClick={() => {
+          if (!navigator.clipboard) { setShareStatus("请复制浏览器地址栏中的链接。"); return; }
+          void navigator.clipboard.writeText(window.location.href).then(() => setShareStatus("链接已复制"), () => setShareStatus("复制失败，请复制浏览器地址栏中的链接。"));
+        }}>复制作品链接</button><span role="status">{shareStatus}</span>
+      </nav>
       <section className="hero work-detail-hero">
         <div className="stack">
           <span className="badge">{getWorkTypeLabel(work.type, uiText)}</span>
@@ -169,12 +185,13 @@ export function WorkDetailPage(): JSX.Element {
                 src={gallery[activeImage] ?? resolveWorkCoverUrl(work.coverUrl)}
                 alt={`${work.title} 详情图 ${activeImage + 1}`}
                 className="work-detail-hero-image"
+                decoding="async"
               />
               {gallery.length > 1 ? (
-                <div className="work-gallery-strip" role="tablist" aria-label="作品图集切换">
+                <div className="work-gallery-strip" role="group" aria-label="作品图集切换">
                   {gallery.map((image, index) => (
-                    <button key={`${image}-${index}`} type="button" className={index === activeImage ? "active" : ""} onClick={() => setActiveImage(index)}>
-                      <img src={image} alt={`${work.title} 缩略图 ${index + 1}`} />
+                    <button key={`${image}-${index}`} type="button" aria-pressed={index === activeImage} className={index === activeImage ? "active" : ""} onClick={() => setActiveImage(index)}>
+                      <img src={image} alt={`${work.title} 缩略图 ${index + 1}`} loading="lazy" decoding="async" />
                     </button>
                   ))}
                 </div>
@@ -184,9 +201,9 @@ export function WorkDetailPage(): JSX.Element {
 
           {detailTabs.length ? (
             <article className="panel stack">
-              <div className="work-tab-row" role="tablist" aria-label="作品详情标签">
+              <div className="work-tab-row" role="group" aria-label="作品详情标签">
                 {detailTabs.map((tab) => (
-                  <button key={tab.id} type="button" className={activeTab === tab.id ? "active" : ""} onClick={() => setActiveTab(tab.id)}>
+                  <button key={tab.id} type="button" aria-pressed={activeTab === tab.id} className={activeTab === tab.id ? "active" : ""} onClick={() => setActiveTab(tab.id)}>
                     {tab.label}
                   </button>
                 ))}

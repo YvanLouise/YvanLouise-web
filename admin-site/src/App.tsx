@@ -1,8 +1,10 @@
 ﻿import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
+import { lazy, Suspense } from "react";
 import { useAuth } from "./context/AuthContext";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
-import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
+
+const AdminDashboardPage = lazy(() => import("./pages/admin/AdminDashboardPage").then((module) => ({ default: module.AdminDashboardPage })));
 
 function ProtectedRoute({ children }: { children: JSX.Element }): JSX.Element {
   const auth = useAuth();
@@ -36,7 +38,7 @@ export function App(): JSX.Element {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<RootRoute />} />
         <Route path="/login" element={<AdminLoginPage />} />
-        <Route path="/dashboard" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><Suspense fallback={<div className="status-card">正在载入后台...</div>}><AdminDashboardPage /></Suspense></ProtectedRoute>} />
         <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
         <Route path="/admin/login" element={<Navigate to="/login" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />

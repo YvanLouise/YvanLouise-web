@@ -20,3 +20,8 @@ backend/data/*
 
 **/.env.local
 **/.env.production.local
+
+# Local-only helper scripts. Keep them on the developer machine, not in the public repo.
+update-github.bat
+update-github-safe.bat
+start-website.bat

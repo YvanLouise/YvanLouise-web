@@ -15,7 +15,19 @@ const LEGACY_KEYS = [
 ];
 
 function canUseStorage(): boolean {
-  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  try {
+    return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+  } catch {
+    return false;
+  }
+}
+
+function matchesShape(value: unknown, template: unknown): boolean {
+  if (Array.isArray(template)) return Array.isArray(value) && (template.length === 0 || value.every((item) => matchesShape(item, template[0])));
+  if (template && typeof template === "object") {
+    return !!value && typeof value === "object" && !Array.isArray(value) && Object.entries(template).every(([key, child]) => matchesShape((value as Record<string, unknown>)[key], child));
+  }
+  return typeof value === typeof template;
 }
 
 function clearLegacyCache(): void {
@@ -66,7 +78,8 @@ export function createHydrationSafeSiteSettings(): SiteSettings {
 }
 
 export function readCachedSiteSettings(): SiteSettings | null {
-  return readJson<SiteSettings>(SETTINGS_KEY);
+  const value = readJson<SiteSettings>(SETTINGS_KEY);
+  return matchesShape(value, sampleSettings) ? value : null;
 }
 
 export function writeCachedSiteSettings(settings: SiteSettings): void {
@@ -74,7 +87,9 @@ export function writeCachedSiteSettings(settings: SiteSettings): void {
 }
 
 export function readCachedWorks(): Work[] | null {
-  return readJson<Work[]>(WORKS_KEY);
+  const value = readJson<Work[]>(WORKS_KEY);
+  const shape = { id: "", title: "", type: "", summary: "", detailIntro: "", coverUrl: "", publishedAt: "", background: "", process: "", result: "", featureList: [""], galleryImages: [""], interactionPoints: [""], detailSections: [{ title: "", body: "" }] };
+  return Array.isArray(value) && value.every((work) => matchesShape(work, shape)) ? value : null;
 }
 
 export function writeCachedWorks(works: Work[]): void {
@@ -97,12 +112,14 @@ export function mergeCachedWork(work: Work): void {
 }
 
 function readCachedPageMap(): Record<string, PageContent> {
-  return readJson<Record<string, PageContent>>(PAGES_KEY) ?? {};
+  const value = readJson<Record<string, PageContent>>(PAGES_KEY);
+  return value && typeof value === "object" && !Array.isArray(value) ? value : {};
 }
 
 export function readCachedPage(slug: string): PageContent | null {
   const pages = readCachedPageMap();
-  return pages[slug] ?? null;
+  const page = Object.prototype.hasOwnProperty.call(pages, slug) ? pages[slug] : null;
+  return page && matchesShape(page, { slug: "", title: "", hero: "", body: "", highlights: [""] }) ? page : null;
 }
 
 export function writeCachedPage(page: PageContent): void {

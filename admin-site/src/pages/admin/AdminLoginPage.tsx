@@ -8,6 +8,7 @@ export function AdminLoginPage(): JSX.Element {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (!loading && isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
@@ -15,6 +16,7 @@ export function AdminLoginPage(): JSX.Element {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
+    if (submitting) return;
     setSubmitting(true);
     setError(null);
 
@@ -49,6 +51,7 @@ export function AdminLoginPage(): JSX.Element {
               placeholder="admin"
               required
               autoComplete="username"
+              disabled={submitting}
             />
           </label>
 
@@ -56,24 +59,26 @@ export function AdminLoginPage(): JSX.Element {
             密码
             <input
               id="admin-password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
               autoComplete="current-password"
+              disabled={submitting}
             />
           </label>
 
+          <button type="button" className="btn btn-secondary" aria-pressed={showPassword} onClick={() => setShowPassword((value) => !value)}>{showPassword ? "隐藏密码" : "显示密码"}</button>
           <button type="submit" className="btn btn-primary" disabled={submitting}>
             {submitting ? "登录中..." : "进入开发者后台"}
           </button>
         </form>
 
         <p className="meta" style={{ margin: 0 }}>
-          生产环境使用 Netlify Functions 的单管理员登录；如果你仍在本地旧后端模式调试，这里也会继续兼容本地账号密码。
+          管理后台仅在本机使用。请先启动本地 API 服务，再使用本地配置的管理员账号登录。
         </p>
 
-        {error ? <p className="notice error">{error}</p> : null}
+        {error ? <p className="notice error" role="alert">{error}</p> : null}
       </section>
     </main>
   );

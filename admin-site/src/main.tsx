@@ -10,7 +10,7 @@ import "./styles/main.css";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MotionConfig reducedMotion="user">
-      <BrowserRouter>
+      <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
         <AuthProvider>
           <App />
         </AuthProvider>

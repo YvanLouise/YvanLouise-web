@@ -10,7 +10,13 @@ export function WorkCard({ work }: { work: Work }): JSX.Element {
 
   return (
     <article className="card">
-      <img src={resolveWorkCoverUrl(work.coverUrl)} alt={`${work.title} 封面图`} style={{ aspectRatio: "16 / 10", objectFit: "cover" }} />
+      <img
+        src={resolveWorkCoverUrl(work.coverUrl)}
+        alt={`${work.title} 封面图`}
+        loading="lazy"
+        decoding="async"
+        style={{ aspectRatio: "16 / 10", objectFit: "cover" }}
+      />
       <div className="card-body stack">
         <span className="badge">{getWorkTypeLabel(work.type, uiText)}</span>
         <h3 style={{ margin: 0 }}>{work.title}</h3>

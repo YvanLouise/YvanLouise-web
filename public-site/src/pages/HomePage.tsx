@@ -41,7 +41,7 @@ export function HomePage(): JSX.Element {
     <>
       <section className="hero-banner panel">
         {showBannerImage ? (
-          <img className="hero-banner-media" src={bannerImageUrl} alt="首页横幅图" onError={() => setBannerFailed(true)} />
+          <img className="hero-banner-media" src={bannerImageUrl} alt="首页横幅图" decoding="async" onError={() => setBannerFailed(true)} />
         ) : (
           <div className="hero-banner-media hero-banner-placeholder" aria-hidden="true" />
         )}
@@ -76,7 +76,7 @@ export function HomePage(): JSX.Element {
         <aside className="profile-card panel compact-profile-card">
           <div className="profile-banner-surface">
             {showBannerImage ? (
-              <img className="profile-banner-image" src={bannerImageUrl} alt="个人名片横幅图" onError={() => setBannerFailed(true)} />
+              <img className="profile-banner-image" src={bannerImageUrl} alt="个人名片横幅图" loading="lazy" decoding="async" onError={() => setBannerFailed(true)} />
             ) : (
               <div className="editable-image-placeholder" aria-hidden="true" />
             )}
@@ -85,7 +85,7 @@ export function HomePage(): JSX.Element {
 
           <div className={`profile-avatar ${showAvatarImage ? "profile-avatar-has-image" : ""}`}>
             {showAvatarImage ? (
-              <img className="profile-avatar-image" src={avatarImageUrl} alt={`${settings.siteTitle} 的头像`} onError={() => setAvatarFailed(true)} />
+              <img className="profile-avatar-image" src={avatarImageUrl} alt={`${settings.siteTitle} 的头像`} decoding="async" onError={() => setAvatarFailed(true)} />
             ) : (
               <span className="profile-avatar-fallback" aria-hidden="true" />
             )}

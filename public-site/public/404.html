@@ -17,8 +17,8 @@
           return next;
         }
 
-        var rawRepoBase = "%VITE_REPOSITORY_BASE%";
-        if (!rawRepoBase || rawRepoBase.indexOf("%VITE_") === 0) {
+        var rawRepoBase = "__REPOSITORY_BASE__";
+        if (!rawRepoBase || rawRepoBase.indexOf("__") === 0) {
           rawRepoBase = "/YvanLouise-web/";
         }
 

@@ -1,0 +1,17 @@
+.works-tools { display: flex; flex-wrap: wrap; gap: 1rem; align-items: end; }
+.works-tools label { flex: 1 1 12rem; min-width: 0; gap: .5rem; }
+.works-tools label:first-child { flex-grow: 3; }
+.works-tools input, .works-tools select, .music-preview-panel select { width: 100%; min-width: 0; }
+.music-preview-panel input[type="range"] { width: 100%; padding: 0; accent-color: var(--accent, #ae7186); cursor: pointer; }
+.audio-volume { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.audio-volume input[type="range"] { width: min(12rem, 100%); }
+.detail-breadcrumb { display: flex; gap: .65rem; align-items: center; flex-wrap: wrap; margin-top: 1rem; overflow-wrap: anywhere; }
+:focus-visible { outline: 3px solid var(--accent-2); outline-offset: 4px; }
+.page-main:focus { outline: none; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+@media (max-width: 600px) {
+  .page-main, .nav-inner, .footer-inner { width: calc(100% - 2rem); }
+  .works-tools { align-items: stretch; }
+  .works-tools label { flex-basis: 100%; }
+  .music-preview-panel .cta-row > button { flex: 1 1 8rem; }
+}

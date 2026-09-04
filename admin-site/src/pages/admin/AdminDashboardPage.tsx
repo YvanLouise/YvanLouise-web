@@ -6,6 +6,7 @@ import { MusicClipLibraryEditor } from "../../components/admin/MusicClipLibraryE
 import { getSamplePage, mergePagesWithSamples, samplePages, sampleSettings } from "../../data/sampleData";
 import { resolveWorkCoverUrl } from "../../lib/workMedia";
 import { resolveFeaturedWorks } from "@shared/lib/featuredWorks";
+import { normalizeSiteContent, toSiteContentFile } from "@shared/lib/contentSnapshot";
 import {
   createAdminWork,
   deleteAdminWork,
@@ -19,7 +20,7 @@ import {
   updateAdminWork,
   uploadAdminAsset
 } from "../../lib/api";
-import { Message, PageContent, Review, SiteSettings, SocialLink, Work, WorkDetailSection, WorkType } from "../../types";
+import { Message, PageContent, Review, SiteContentFile, SiteContentSnapshot, SiteSettings, SocialLink, Work, WorkDetailSection, WorkType } from "../../types";
 import { AboutPage } from "../AboutPage";
 import { CommissionPage } from "../CommissionPage";
 import { ContactPage } from "../ContactPage";
@@ -27,7 +28,7 @@ import { HomePage } from "../HomePage";
 import { SupportPage } from "../SupportPage";
 import { useAuth } from "../../context/AuthContext";
 
-type TabKey = "overview" | "content" | "works" | "messages" | "reviews" | "settings" | "preview";
+type TabKey = "overview" | "content" | "works" | "sync" | "messages" | "reviews" | "settings" | "preview";
 type EditablePageSlug = "home" | "about" | "commission" | "support" | "contact";
 type SettingsImageField = "bannerImageUrl" | "avatarImageUrl";
 const STORAGE_KEYS = {
@@ -39,6 +40,7 @@ const TABS: Array<{ key: TabKey; label: string }> = [
   { key: "overview", label: "总览" },
   { key: "content", label: "页内编辑" },
   { key: "works", label: "作品管理" },
+  { key: "sync", label: "同步检测" },
   { key: "messages", label: "私信" },
   { key: "reviews", label: "评论" },
   { key: "settings", label: "全局设置" },
@@ -138,6 +140,91 @@ function getTypeLabel(type: WorkType): string {
 }
 
 const MAX_FEATURED_WORKS = 6;
+function resolveOnlineSiteUrl(): string {
+  const configured = (import.meta.env.VITE_ONLINE_SITE_URL as string | undefined)?.trim();
+  if (configured) {
+    return configured.replace(/\/+$/, "");
+  }
+
+  const publicSiteUrl = (import.meta.env.VITE_PUBLIC_SITE_URL as string | undefined)?.trim();
+  if (publicSiteUrl && !/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i.test(publicSiteUrl)) {
+    return publicSiteUrl.replace(/\/+$/, "");
+  }
+
+  return "https://yvanlouise.xyz";
+}
+
+const PUBLIC_SITE_URL = resolveOnlineSiteUrl();
+
+interface SyncAssetIssue {
+  path: string;
+  reason: string;
+}
+
+interface SyncCheckResult {
+  checkedAt: string;
+  onlineUrl: string;
+  contentMatches: boolean;
+  localGeneratedAt?: string;
+  onlineGeneratedAt?: string;
+  localAssetCount: number;
+  missingOnlineAssets: SyncAssetIssue[];
+}
+
+function normalizeForComparison(snapshot: SiteContentSnapshot): unknown {
+  const content = toSiteContentFile(snapshot);
+
+  return {
+    works: content.works,
+    pages: content.pages,
+    siteSettings: content.siteSettings,
+    featuredWorkIds: content.featuredWorkIds,
+    uiText: content.uiText
+  };
+}
+
+function createLocalSnapshot(works: Work[], pages: PageContent[], settings: SiteSettings): SiteContentSnapshot {
+  return {
+    works,
+    pages: mergePagesWithSamples(pages),
+    siteSettings: settings
+  };
+}
+
+function collectAssetPaths(snapshot: SiteContentSnapshot): string[] {
+  const paths = new Set<string>();
+  const add = (value: string | undefined): void => {
+    if (!value) {
+      return;
+    }
+
+    const trimmed = value.trim().replace(/^\/+/, "");
+    if (trimmed.startsWith("uploads/")) {
+      paths.add(trimmed);
+    }
+  };
+
+  add(snapshot.siteSettings.bannerImageUrl);
+  add(snapshot.siteSettings.avatarImageUrl);
+  snapshot.siteSettings.musicPreviewClips.forEach((clip) => add(clip.sourceUrl));
+  snapshot.works.forEach((work) => {
+    add(work.coverUrl);
+    work.galleryImages.forEach(add);
+  });
+
+  return Array.from(paths).sort((first, second) => first.localeCompare(second));
+}
+
+async function verifyOnlineAsset(baseUrl: string, assetPath: string): Promise<SyncAssetIssue | null> {
+  const url = `${baseUrl}/${assetPath}`;
+
+  try {
+    const response = await fetch(`${url}?t=${Date.now()}`, { method: "HEAD", cache: "no-store" });
+    return response.ok ? null : { path: assetPath, reason: `HTTP ${response.status}` };
+  } catch (error) {
+    return { path: assetPath, reason: error instanceof Error ? error.message : "无法访问线上资源" };
+  }
+}
 
 function readSessionValue(key: string): string | null {
   if (typeof window === "undefined") {
@@ -182,6 +269,8 @@ export function AdminDashboardPage(): JSX.Element {
   const [settings, setSettings] = useState<SiteSettings>(sampleSettings);
   const [settingsDraft, setSettingsDraft] = useState<SiteSettings>(sampleSettings);
   const [status, setStatus] = useState<string | null>(null);
+  const [syncChecking, setSyncChecking] = useState(false);
+  const [syncResult, setSyncResult] = useState<SyncCheckResult | null>(null);
   const [pageSlug, setPageSlug] = useState<EditablePageSlug>(() => normalizePageSlug(readSessionValue(STORAGE_KEYS.pageSlug) ?? "home"));
   const [workDraft, setWorkDraft] = useState<Partial<Work>>(EMPTY_WORK);
   const [editingWorkId, setEditingWorkId] = useState<string | null>(() => readSessionValue(STORAGE_KEYS.editingWorkId));
@@ -299,6 +388,43 @@ export function AdminDashboardPage(): JSX.Element {
     }
 
     return latest;
+  }
+
+  async function checkPublicSiteSync(): Promise<void> {
+    setSyncChecking(true);
+    setStatus(null);
+
+    try {
+      const onlineUrl = `${PUBLIC_SITE_URL}/site-content.json`;
+      const response = await fetch(`${onlineUrl}?t=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`线上内容读取失败：HTTP ${response.status}`);
+      }
+
+      const onlineSnapshot = normalizeSiteContent((await response.json()) as SiteContentFile);
+      const localSnapshot = createLocalSnapshot(works, pages, settings);
+      const contentMatches = JSON.stringify(normalizeForComparison(localSnapshot)) === JSON.stringify(normalizeForComparison(onlineSnapshot));
+      const localAssetPaths = collectAssetPaths(localSnapshot);
+      const assetResults = await Promise.all(localAssetPaths.map((assetPath) => verifyOnlineAsset(PUBLIC_SITE_URL, assetPath)));
+      const missingOnlineAssets = assetResults.filter((item): item is SyncAssetIssue => item !== null);
+
+      setSyncResult({
+        checkedAt: new Date().toLocaleString("zh-CN"),
+        onlineUrl,
+        contentMatches,
+        localGeneratedAt: localSnapshot.generatedAt,
+        onlineGeneratedAt: onlineSnapshot.generatedAt,
+        localAssetCount: localAssetPaths.length,
+        missingOnlineAssets
+      });
+
+      setStatus(contentMatches && missingOnlineAssets.length === 0 ? "线上网站已与本地公开内容同步。" : "检测完成：线上网站与本地数据存在差异。");
+    } catch (error) {
+      setSyncResult(null);
+      setStatus(error instanceof Error ? error.message : "同步检测失败。");
+    } finally {
+      setSyncChecking(false);
+    }
   }
 
   async function persistPageDraft(slug: EditablePageSlug): Promise<void> {
@@ -840,6 +966,72 @@ export function AdminDashboardPage(): JSX.Element {
                   <button type="submit" className="btn btn-primary">{editingWorkId ? "保存修改" : "创建作品"}</button>
                 </form>
               </article>
+            </section>
+          ) : null}
+
+          {activeTab === "sync" ? (
+            <section className="stack">
+              <section className="panel stack">
+                <div className="row" style={{ justifyContent: "space-between", alignItems: "center", gap: "1rem" }}>
+                  <div>
+                    <h3 style={{ margin: 0 }}>线上同步检测</h3>
+                    <p className="meta" style={{ margin: "0.35rem 0 0" }}>检测地址：{PUBLIC_SITE_URL}</p>
+                  </div>
+                  <button type="button" className="btn btn-primary" onClick={() => void checkPublicSiteSync()} disabled={syncChecking}>
+                    {syncChecking ? "检测中..." : "开始检测"}
+                  </button>
+                </div>
+                <p className="meta" style={{ margin: 0 }}>检测只读取线上网站，不会修改本地内容、线上内容或资源文件。</p>
+              </section>
+
+              {syncResult ? (
+                <section className="admin-grid">
+                  <article className="panel stack">
+                    <h3 style={{ margin: 0 }}>内容快照</h3>
+                    <strong style={{ fontSize: "1.4rem" }}>{syncResult.contentMatches ? "一致" : "不一致"}</strong>
+                    <p className="meta" style={{ margin: 0 }}>检测时间：{syncResult.checkedAt}</p>
+                  </article>
+                  <article className="panel stack">
+                    <h3 style={{ margin: 0 }}>公开资源</h3>
+                    <strong style={{ fontSize: "1.4rem" }}>{syncResult.missingOnlineAssets.length ? `${syncResult.missingOnlineAssets.length} 个异常` : "可访问"}</strong>
+                    <p className="meta" style={{ margin: 0 }}>本地引用资源：{syncResult.localAssetCount} 个</p>
+                  </article>
+                  <article className="panel stack">
+                    <h3 style={{ margin: 0 }}>线上内容地址</h3>
+                    <a href={syncResult.onlineUrl} target="_blank" rel="noreferrer">{syncResult.onlineUrl}</a>
+                    <p className="meta" style={{ margin: 0 }}>线上生成时间：{syncResult.onlineGeneratedAt ?? "未提供"}</p>
+                  </article>
+                </section>
+              ) : null}
+
+              {syncResult && !syncResult.contentMatches ? (
+                <section className="panel stack">
+                  <h3 style={{ margin: 0 }}>内容未同步</h3>
+                  <p className="meta" style={{ margin: 0 }}>本地已保存内容和线上 `site-content.json` 不一致。通常需要把本地改动推到 GitHub，并等待 GitHub Pages 部署完成。</p>
+                </section>
+              ) : null}
+
+              {syncResult?.missingOnlineAssets.length ? (
+                <section className="panel stack">
+                  <h3 style={{ margin: 0 }}>线上资源异常</h3>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>资源路径</th>
+                        <th>状态</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {syncResult.missingOnlineAssets.map((asset) => (
+                        <tr key={asset.path}>
+                          <td>{asset.path}</td>
+                          <td>{asset.reason}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </section>
+              ) : null}
             </section>
           ) : null}
 

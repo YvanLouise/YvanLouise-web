@@ -3,6 +3,7 @@ import { promisify } from "node:util";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { config } from "../config.js";
+import { normalizePublicPath } from "./publicPaths.js";
 
 const execFileAsync = promisify(execFile);
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
@@ -24,13 +25,8 @@ function formatTimestamp(date = new Date()): string {
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }
 
-function normalizeGitPath(filePath: string): string {
-  const trimmed = filePath.trim().replace(/^\.?[\\/]+/, "");
-  return trimmed.split(path.sep).join("/");
-}
-
 async function runGit(args: string[]): Promise<string> {
-  const { stdout, stderr } = await execFileAsync("git", args, {
+  const { stdout, stderr } = await execFileAsync("git", ["--literal-pathspecs", ...args], {
     cwd: repoRoot,
     windowsHide: true
   });
@@ -108,7 +104,7 @@ export function schedulePublicSitePublish(trigger: PublicSitePublishTrigger): vo
     return;
   }
 
-  const normalizedPaths = trigger.paths.map(normalizeGitPath).filter(Boolean);
+  const normalizedPaths = trigger.paths.map(normalizePublicPath).filter((filePath): filePath is string => filePath !== null);
   if (!normalizedPaths.length) {
     return;
   }

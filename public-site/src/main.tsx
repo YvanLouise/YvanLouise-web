@@ -5,6 +5,7 @@ import { MotionConfig } from "framer-motion";
 import { App } from "./App";
 import "@shared/styles/tokens.css";
 import "@shared/styles/main.css";
+import "./enhancements.css";
 
 function normalizeBasePath(value: string): string {
   if (!value) {
@@ -40,7 +41,7 @@ function resolveRuntimeBasename(): string {
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <MotionConfig reducedMotion="user">
-      <BrowserRouter basename={resolveRuntimeBasename()}>
+      <BrowserRouter basename={resolveRuntimeBasename()} future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
         <App />
       </BrowserRouter>
     </MotionConfig>

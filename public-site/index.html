@@ -3,16 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="__ASSET_BASE__" />
     <meta name="description" content="Yvan Louise 个人网站：音乐、软件、游戏与动画作品展示，支持委托合作与创作支持。" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <title>Yvan Louise | 个人网站</title>
     <script>
       (function () {
         var params = new URLSearchParams(window.location.search);
         var redirect = params.get("p");
-        if (!redirect) {
-          return;
-        }
 
         function normalizeBasePath(value) {
           var next = value || "/";
@@ -25,13 +22,16 @@
           return next;
         }
 
-        var rawRepoBase = "%VITE_REPOSITORY_BASE%";
-        if (!rawRepoBase || rawRepoBase.indexOf("%VITE_") === 0) {
+        var rawRepoBase = "__REPOSITORY_BASE__";
+        if (!rawRepoBase || rawRepoBase.indexOf("__") === 0) {
           rawRepoBase = "/YvanLouise-web/";
         }
 
         var repoBase = normalizeBasePath(rawRepoBase);
         var basePath = /\.github\.io$/i.test(window.location.hostname) ? repoBase : "/";
+        var base = document.querySelector("base");
+        base.href = basePath;
+        if (!redirect || redirect.indexOf("//") === 0 || redirect.indexOf("\\") !== -1) return;
 
         if (redirect.charAt(0) !== "/") {
           redirect = "/" + redirect;
@@ -41,9 +41,13 @@
           ? redirect
           : basePath.replace(/\/$/, "") + redirect;
 
-        window.history.replaceState(null, "", target);
+        var resolved = new URL(target, window.location.origin);
+        if (resolved.origin === window.location.origin && resolved.pathname.indexOf(basePath) === 0) {
+          window.history.replaceState(null, "", resolved.pathname + resolved.search + resolved.hash);
+        }
       })();
     </script>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
   </head>
   <body>
     <div id="root"></div>

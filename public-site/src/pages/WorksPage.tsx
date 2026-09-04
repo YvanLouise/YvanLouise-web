@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { filterWorks, parseWorkFilter, workTypes, WorkSort } from "@shared/lib/workSearch";
 import { MusicPreviewPanel } from "@shared/components/shared/MusicPreviewPanel";
 import { useSiteSettings } from "@shared/context/SiteSettingsContext";
 import { getWorks } from "@shared/lib/api";
@@ -11,7 +12,18 @@ import { Work, WorkType } from "@shared/types";
 export function WorksPage(): JSX.Element {
   const settings = useSiteSettings();
   const [works, setWorks] = useState<Work[]>(() => readCachedWorks() ?? []);
-  const [filter, setFilter] = useState<"all" | WorkType>("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filter = parseWorkFilter(searchParams.get("type"));
+  const query = searchParams.get("q") ?? "";
+  const sort: WorkSort = searchParams.get("sort") === "title" ? "title" : searchParams.get("sort") === "oldest" ? "oldest" : "newest";
+  function updateSearch(key: string, value: string, replace = false): void {
+    setSearchParams((previous) => {
+      const next = new URLSearchParams(previous);
+      if (!value || value === "all" || value === "newest") next.delete(key);
+      else next.set(key, value);
+      return next;
+    }, { replace });
+  }
   const [hasResolvedWorks, setHasResolvedWorks] = useState<boolean>(() => readCachedWorks() !== null);
 
   useEffect(() => {
@@ -50,7 +62,9 @@ export function WorksPage(): JSX.Element {
     [filter]
   );
 
-  const hasVisibleWorks = visibleTypes.some((type) => works.some((work) => work.type === type));
+  const matchingWorks = useMemo(() => filterWorks(works, filter, query, sort), [works, filter, query, sort]);
+  const groups = useMemo(() => Object.fromEntries(workTypes.map((type) => [type, matchingWorks.filter((work) => work.type === type)])) as Record<WorkType, Work[]>, [matchingWorks]);
+  const hasVisibleWorks = matchingWorks.length > 0;
 
   return (
     <>
@@ -61,28 +75,46 @@ export function WorksPage(): JSX.Element {
       </section>
 
       <section className="section panel works-summary-panel">
-        <div className="tag-filter" role="tablist" aria-label="作品分类筛选">
+        <div className="tag-filter" role="group" aria-label="作品分类筛选">
           {filters.map((item) => (
-            <button key={item.id} className={filter === item.id ? "active" : ""} type="button" onClick={() => setFilter(item.id)}>
+            <button key={item.id} className={filter === item.id ? "active" : ""} type="button" aria-pressed={filter === item.id} onClick={() => updateSearch("type", item.id)}>
               {item.label}
             </button>
           ))}
         </div>
+        <div className="works-tools">
+          <label className="stack" htmlFor="work-search">搜索作品
+            <input id="work-search" type="search" placeholder="标题、关键词、平台…" value={query} maxLength={200} onChange={(event) => updateSearch("q", event.target.value, true)} />
+          </label>
+          <label className="stack" htmlFor="work-sort">排序
+            <select id="work-sort" value={sort} onChange={(event) => updateSearch("sort", event.target.value)}>
+              <option value="newest">最新发布</option><option value="oldest">最早发布</option><option value="title">作品名称</option>
+            </select>
+          </label>
+          {query || filter !== "all" ? <button type="button" className="btn btn-secondary" onClick={() => setSearchParams({})}>重置筛选</button> : null}
+        </div>
+        <p className="meta" role="status">{hasResolvedWorks ? `找到 ${matchingWorks.length} 个作品` : "正在加载作品…"}</p>
         <p className="meta" style={{ margin: 0 }}>
           {filters.find((item) => item.id === filter)?.summary}
         </p>
       </section>
 
       <section className="section works-board">
+        {!hasResolvedWorks && works.length === 0 ? (
+          <section className="panel status-card" aria-live="polite">
+            作品加载中...
+          </section>
+        ) : null}
+
         {hasResolvedWorks && !hasVisibleWorks ? (
           <section className="panel stack">
-            <h2 style={{ margin: 0 }}>{copy.emptyTitle}</h2>
-            <p className="meta" style={{ margin: 0 }}>{copy.emptyDescription}</p>
+            <h2 style={{ margin: 0 }}>{query ? "没有匹配的作品" : copy.emptyTitle}</h2>
+            <p className="meta" style={{ margin: 0 }}>{query ? "试试更短的关键词，或重置筛选查看全部作品。" : copy.emptyDescription}</p>
           </section>
         ) : null}
 
         {visibleTypes.map((type) => {
-          const groupWorks = works.filter((work) => work.type === type);
+          const groupWorks = groups[type];
           const currentCategory = categoryCopy[type];
 
           if (groupWorks.length === 0) {
@@ -105,7 +137,7 @@ export function WorksPage(): JSX.Element {
               <div className="category-list">
                 {groupWorks.map((work) => (
                   <article className="work-list-item panel" key={work.id}>
-                    <img className="work-list-cover" src={resolveWorkCoverUrl(work.coverUrl)} alt={`${work.title} 封面图`} />
+                    <img className="work-list-cover" src={resolveWorkCoverUrl(work.coverUrl)} alt={`${work.title} 封面图`} loading="lazy" decoding="async" />
 
                     <div className="work-list-content">
                       <div className="work-list-head">

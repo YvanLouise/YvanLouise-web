@@ -3,6 +3,9 @@
 function resolveAdminSiteUrl(): string {
   const configured = import.meta.env.VITE_ADMIN_SITE_URL as string | undefined;
 
+  const isLocal = typeof window !== "undefined" && ["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname);
+  if (!isLocal) return "";
+
   if (configured) {
     try {
       const current = typeof window !== "undefined" ? new URL(window.location.href) : undefined;
@@ -30,7 +33,7 @@ export function LegacyAdminRedirectPage(): JSX.Element {
   const adminSiteUrl = useMemo(() => resolveAdminSiteUrl(), []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (adminSiteUrl) {
       window.location.replace(adminSiteUrl);
     }
   }, [adminSiteUrl]);
@@ -39,12 +42,12 @@ export function LegacyAdminRedirectPage(): JSX.Element {
     <main className="login-page">
       <section className="panel login-card stack">
         <span className="badge">站点已拆分</span>
-        <h1 style={{ margin: 0 }}>开发者后台已经迁移到独立站点</h1>
+        <h1 style={{ margin: 0 }}>管理后台仅在本机运行</h1>
         <p className="meta" style={{ margin: 0 }}>
-          系统正在把你跳转到新的开发者站。如果浏览器没有自动跳转，请点击下面的按钮继续。
+          {adminSiteUrl ? "正在打开本地管理后台，请先确认开发服务已启动。" : "公开网站不提供管理员登录。网站所有者请在本机启动管理后台进行编辑和发布。"}
         </p>
-        <a className="btn btn-primary" href={adminSiteUrl}>
-          前往开发者站
+        <a className="btn btn-primary" href={adminSiteUrl || new URL(".", document.baseURI).pathname}>
+          {adminSiteUrl ? "打开本地后台" : "返回首页"}
         </a>
       </section>
     </main>
