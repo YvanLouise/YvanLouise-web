@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 import fs from "node:fs";
 import path from "node:path";
+import { localLauncherPlugin } from "../scripts/local-launcher-plugin";
 
 const sharedSrc = fileURLToPath(new URL("../shared/src", import.meta.url));
 const contentDir = fileURLToPath(new URL("../content", import.meta.url));
@@ -34,7 +35,7 @@ export default defineConfig(({ mode }) => {
   const assetBase = (env.VITE_BASE_PATH || "/").replace(/[^a-zA-Z0-9_./-]/g, "");
 
   return {
-    plugins: [react(), copyAppPublicFiles(repoBase, assetBase)],
+    plugins: [react(), copyAppPublicFiles(repoBase, assetBase), localLauncherPlugin("public-site", path.dirname(contentDir), env.VITE_API_BASE_URL?.trim() || "")],
     define: mode === "production" ? {
       "import.meta.env.VITE_API_BASE_URL": JSON.stringify(""),
       "import.meta.env.VITE_SITE_RUNTIME": JSON.stringify("public")

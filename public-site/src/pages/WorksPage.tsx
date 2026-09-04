@@ -160,7 +160,7 @@ export function WorksPage(): JSX.Element {
                       </div>
 
                       <div className="work-list-actions">
-                        <Link className="btn btn-primary" to={`/works/${work.id}`}>
+                        <Link className="btn btn-primary" to={`/works/${encodeURIComponent(work.id)}`} state={{ returnTo: `/works${searchParams.size ? `?${searchParams}` : ""}` }}>
                           {copy.detailButtonLabel}
                         </Link>
                         {work.demoUrl ? (

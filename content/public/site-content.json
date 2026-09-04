@@ -1,27 +1,53 @@
 {
-  "generatedAt": "2026-08-22T11:31:12.334Z",
+  "generatedAt": "2026-09-04T18:01:47.656Z",
   "works": [
     {
-      "id": "8e3713d6-bc03-4c29-9271-f3930173d5c0",
-      "title": "TileMapCreator",
+      "id": "image-tile-splitter",
+      "title": "图块分离工具 · Image Tile Splitter",
       "type": "software",
-      "summary": "一个没什么用的瓦片地图制作网站",
-      "detailIntro": "",
-      "background": "",
+      "summary": "上传一张素材图，自动识别由透明区域隔开的独立图块，逐个预览并导出，减少重复手动裁剪。",
+      "detailIntro": "我为处理 AI 生成漫画和素材图开发的 Web 工具。适合拆分透明背景中的角色、道具、表情包和图标，也可用于已经处理好透明间隔的漫画页。",
+      "background": "处理 AI 生成漫画和素材图时，一张图片里经常包含多个需要单独使用的元素。逐个裁剪、导出，再重复同样的操作，会花掉不少时间。\n因此我开发了这个图块分离工具：利用元素之间的透明区域，找出互不相连的非透明区域，将整张素材图拆成可以单独预览和导出的图块。",
       "process": "",
-      "result": "",
-      "featureList": [],
-      "interactionPoints": [],
+      "result": "当图片中的元素被透明像素隔开、彼此互不接触时，工具可以自动识别独立图块，并支持导出单个图块或全部图块。原本反复进行的手动裁剪，可以简化为上传、识别、预览和导出。",
+      "featureList": [
+        "自动识别互不相连的非透明区域",
+        "独立图块逐个预览与选择",
+        "单个图块导出与全部批量导出",
+        "适用于透明背景 PNG 素材图",
+        "支持已处理透明间隔的漫画格拆分"
+      ],
+      "interactionPoints": [
+        "上传素材图后，自动识别其中的独立图块。",
+        "在识别结果中点选图块，逐个查看需要保留的元素。",
+        "按需导出单个图块，或一次导出全部图块。"
+      ],
       "galleryImages": [],
-      "detailSections": [],
-      "platform": "web",
-      "status": "开发中",
-      "coverUrl": "uploads/work-cover-8e3713d6-bc03-4c29-9271-f3930173d5c0-1774101888005-7122b5a8-c300-49d5-84bb-a42071be0b6e.png",
-      "demoUrl": "https://yvanlouise.github.io/TileMapCreator/",
-      "repoUrl": "https://github.com/YvanLouise/TileMapCreator",
-      "publishedAt": "2026-03-21",
-      "createdAt": "2026-03-21T14:04:40.255Z",
-      "updatedAt": "2026-03-21T14:04:48.015Z"
+      "detailSections": [
+        {
+          "title": "透明背景素材图",
+          "body": "一张 PNG 中可以包含多个角色、道具、表情包或图标。只要各元素之间由透明区域隔开，工具就能将它们识别为独立图块，方便后续单独使用。"
+        },
+        {
+          "title": "漫画格拆分的使用条件",
+          "body": "漫画格自动识别仍不完善。建议先手动或借助其他工具，将漫画格之间的空隙处理为透明，再进行拆分；当各格之间明确断开时，工具可以把它们作为独立图块识别和导出。"
+        },
+        {
+          "title": "更新记录",
+          "body": "2026 年 7 月 27 日：优化了色度抠图功能的使用体验与抠图算法。"
+        },
+        {
+          "title": "开发介绍原文",
+          "body": "2026 年 5 月 5 日发表于 B 站《一个图块分离工具》。原文与后续更新：https://www.bilibili.com/opus/1198867046136283140"
+        }
+      ],
+      "platform": "Web / 浏览器",
+      "status": "已发布",
+      "coverUrl": "uploads/image-tile-splitter-icon.png",
+      "demoUrl": "https://yvanlouise.github.io/Image-Tile-Splitter/",
+      "publishedAt": "2026-05-05",
+      "createdAt": "2026-09-04T17:58:04.000Z",
+      "updatedAt": "2026-09-04T17:58:04.000Z"
     },
     {
       "id": "f73368c6-1ed0-46bd-be6d-44109047948f",

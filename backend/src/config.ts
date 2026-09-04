@@ -1,5 +1,7 @@
 ﻿import dotenv from "dotenv";
 
+import { defaultLocalAdminOrigins } from "./middleware/localAdmin.js";
+
 dotenv.config();
 
 export type AssetStorageMode = "local" | "r2";
@@ -49,6 +51,8 @@ const isProduction = nodeEnv === "production";
 export const config = {
   nodeEnv,
   isProduction,
+  localAdminMode: !isProduction,
+  localAdminOrigins: process.env.LOCAL_ADMIN_ORIGINS?.split(",").map((origin) => origin.trim()).filter(Boolean) ?? defaultLocalAdminOrigins,
   port: Number(process.env.PORT ?? "4000"),
   jwtSecret: process.env.JWT_SECRET ?? "replace-this-secret",
   corsOrigins: parseCorsOrigins(process.env.CORS_ORIGIN),

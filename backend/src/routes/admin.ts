@@ -1,5 +1,7 @@
 ﻿import bcrypt from "bcryptjs";
 import { Router } from "express";
+import { config } from "../config.js";
+import { createLocalAdminGuard } from "../middleware/localAdmin.js";
 import { z } from "zod";
 import { saveUploadedAsset } from "../lib/assetStorage.js";
 import { schedulePublicSitePublish } from "../lib/publicSitePublisher.js";
@@ -107,8 +109,13 @@ const settingsSchema = z.object({
 
 export function createAdminRouter(store: SiteStore): Router {
   const router = Router();
+  if (config.localAdminMode) router.use(createLocalAdminGuard(config.localAdminOrigins));
 
   router.post("/login", async (req, res, next) => {
+    if (config.localAdminMode) {
+      res.json({ message: "本地后台无需登录。" });
+      return;
+    }
     try {
       const payload = loginSchema.parse(req.body);
       const user = await store.getAdminByUsername(payload.username);
@@ -143,6 +150,10 @@ export function createAdminRouter(store: SiteStore): Router {
   });
 
   router.get("/me", (req, res) => {
+    if (config.localAdminMode) {
+      res.json({ authenticated: true, username: "本机管理员", mode: "local" });
+      return;
+    }
     const token = req.cookies?.admin_token as string | undefined;
     const payload = token ? parseAdminToken(token) : null;
 

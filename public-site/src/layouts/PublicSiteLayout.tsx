@@ -15,6 +15,7 @@ export function PublicSiteLayout({ children, embedded = false }: PublicSiteLayou
   const [settings, setSettings] = useState<SiteSettings>(() => readCachedSiteSettings() ?? createHydrationSafeSiteSettings());
   const { pathname } = useLocation();
   useEffect(() => {
+    if (pathname.startsWith("/works/")) return;
     const names: Record<string, string> = { "/": "首页", "/about": "关于", "/works": "作品", "/commission": "委托", "/support": "支持", "/contact": "联系" };
     document.title = `${names[pathname] ?? (pathname.startsWith("/works/") ? "作品详情" : "页面")} | ${settings.siteTitle}`;
   }, [pathname, settings.siteTitle]);

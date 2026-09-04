@@ -11,7 +11,7 @@
   WorkDetailSection,
   WorkType
 } from "../types";
-import { getSamplePage, mergePagesWithSamples, samplePages, sampleWorks } from "../data/sampleData";
+import { getSamplePage, mergePagesWithSamples, sampleWorks } from "../data/sampleData";
 import {
   createHydrationSafeSiteSettings,
   mergeCachedWork,
@@ -23,7 +23,7 @@ import {
   writeCachedSiteSettings,
   writeCachedWorks
 } from "./siteCache";
-import { clearAdminContentCache, getStaticContentSnapshot, getStaticSiteSettings, loadAdminContent, loadPublicContent, saveAdminContent } from "./apiContent";
+import { clearAdminContentCache, loadAdminContent, loadPublicContent, saveAdminContent } from "./apiContent";
 import { LEGACY_BACKEND_MODE } from "./apiEnvironment";
 import { ApiError } from "./apiError";
 import { adminFunctionRequest, legacyRequest, publicFunctionRequest } from "./apiRequests";
@@ -331,39 +331,26 @@ export async function getAdminMe(): Promise<{ authenticated: boolean; username?:
 
 export async function getAdminMessages(): Promise<Message[]> {
   if (LEGACY_BACKEND_MODE) {
-    return legacyRequest<Message[]>("/api/admin/messages", {}, () => []);
+    return legacyRequest<Message[]>("/api/admin/messages");
   }
 
-  try {
-    return await adminFunctionRequest<Message[]>("/admin-messages");
-  } catch {
-    return [];
-  }
+  return adminFunctionRequest<Message[]>("/admin-messages");
 }
 
 export async function getAdminReviews(): Promise<Review[]> {
   if (LEGACY_BACKEND_MODE) {
-    return legacyRequest<Review[]>("/api/admin/reviews", {}, () => []);
+    return legacyRequest<Review[]>("/api/admin/reviews");
   }
 
-  try {
-    return await adminFunctionRequest<Review[]>("/admin-reviews");
-  } catch {
-    return [];
-  }
+  return adminFunctionRequest<Review[]>("/admin-reviews");
 }
 
 export async function getAdminWorks(): Promise<Work[]> {
   if (LEGACY_BACKEND_MODE) {
-    return legacyRequest<Work[]>("/api/admin/works", {}, () => sampleWorks);
+    return legacyRequest<Work[]>("/api/admin/works");
   }
 
-  try {
-    const snapshot = await loadAdminContent();
-    return snapshot.works;
-  } catch {
-    return getStaticContentSnapshot().works;
-  }
+  return (await loadAdminContent()).works;
 }
 
 export async function createAdminWork(payload: Partial<Work>): Promise<Work> {
@@ -434,16 +421,11 @@ export async function deleteAdminWork(workId: string): Promise<void> {
 
 export async function getAdminPages(): Promise<PageContent[]> {
   if (LEGACY_BACKEND_MODE) {
-    const pages = await legacyRequest<PageContent[]>("/api/admin/pages", {}, () => samplePages);
+    const pages = await legacyRequest<PageContent[]>("/api/admin/pages");
     return mergePagesWithSamples(pages);
   }
 
-  try {
-    const snapshot = await loadAdminContent();
-    return mergePagesWithSamples(snapshot.pages);
-  } catch {
-    return mergePagesWithSamples(getStaticContentSnapshot().pages);
-  }
+  return mergePagesWithSamples((await loadAdminContent()).pages);
 }
 
 export async function updateAdminPage(slug: string, payload: Partial<PageContent>): Promise<PageContent> {
@@ -483,15 +465,10 @@ export async function updateAdminPage(slug: string, payload: Partial<PageContent
 
 export async function getAdminSiteSettings(): Promise<SiteSettings> {
   if (LEGACY_BACKEND_MODE) {
-    return legacyRequest<SiteSettings>("/api/admin/site-settings", {}, () => createHydrationSafeSiteSettings());
+    return legacyRequest<SiteSettings>("/api/admin/site-settings");
   }
 
-  try {
-    const snapshot = await loadAdminContent();
-    return snapshot.siteSettings;
-  } catch {
-    return getStaticSiteSettings();
-  }
+  return (await loadAdminContent()).siteSettings;
 }
 
 export async function updateAdminSiteSettings(payload: SiteSettings): Promise<SiteSettings> {
@@ -514,6 +491,8 @@ export async function updateAdminSiteSettings(payload: SiteSettings): Promise<Si
 }
 
 export async function uploadAdminAsset(file: File, slot: string): Promise<{ url: string; fileName: string }> {
+  ensureUploadWithinLimit(file);
+  if (!file.size || !/^(image|audio)\//.test(file.type)) throw new Error("请选择非空的图片或音频文件。");
   if (LEGACY_BACKEND_MODE) {
     const contentBase64 = await new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
@@ -540,8 +519,6 @@ export async function uploadAdminAsset(file: File, slot: string): Promise<{ url:
       })
     });
   }
-
-  ensureUploadWithinLimit(file);
 
   const signature = await adminFunctionRequest<{
     cloudName: string;

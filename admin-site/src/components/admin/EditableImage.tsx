@@ -60,6 +60,7 @@ export function EditableImage({ enabled = false, label, slot, onUploaded, childr
     try {
       setIsUploading(true);
       setError(null);
+      if (!file.type.startsWith("image/")) throw new Error("请选择图片文件。");
       const uploaded = await uploadAdminAsset(file, slot);
       await onUploaded(uploaded.url);
       setMenuPosition(null);
@@ -80,7 +81,7 @@ export function EditableImage({ enabled = false, label, slot, onUploaded, childr
         onContextMenu: (event) => {
           event.preventDefault();
           event.stopPropagation();
-          setMenuPosition({ x: event.clientX, y: event.clientY });
+          setMenuPosition({ x: Math.max(8, Math.min(event.clientX, window.innerWidth - 260)), y: Math.max(8, Math.min(event.clientY, window.innerHeight - 190)) });
           setError(null);
         },
         title: `${label}，右键可从本地替换图片`
@@ -90,6 +91,8 @@ export function EditableImage({ enabled = false, label, slot, onUploaded, childr
   return (
     <>
       {children(bindProps, { isUploading })}
+      {enabled ? <button type="button" className="mini-btn editable-image-trigger" disabled={isUploading} onClick={openFilePicker} aria-label={`替换${label}`}>{isUploading ? "上传中…" : "替换图片"}</button> : null}
+      {error ? <p className="notice error" role="alert">{error}</p> : null}
 
       <input ref={inputRef} type="file" accept="image/*" hidden onChange={(event) => void handleFileSelect(event)} />
 
@@ -108,7 +111,6 @@ export function EditableImage({ enabled = false, label, slot, onUploaded, childr
             {isUploading ? "上传中..." : "从本地替换图片"}
           </button>
           <p className="meta" style={{ margin: 0 }}>替换后会自动保存到当前站点数据。</p>
-          {error ? <p className="notice error" style={{ margin: 0 }}>{error}</p> : null}
         </div>
       ) : null}
     </>

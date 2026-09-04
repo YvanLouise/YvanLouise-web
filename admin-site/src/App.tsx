@@ -1,48 +1,16 @@
-﻿import { Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
 import { lazy, Suspense } from "react";
-import { useAuth } from "./context/AuthContext";
-import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { PageErrorBoundary } from "@shared/components/shared/PageErrorBoundary";
 
 const AdminDashboardPage = lazy(() => import("./pages/admin/AdminDashboardPage").then((module) => ({ default: module.AdminDashboardPage })));
 
-function ProtectedRoute({ children }: { children: JSX.Element }): JSX.Element {
-  const auth = useAuth();
-
-  if (auth.loading) {
-    return <div className="status-card">正在检查后台权限...</div>;
-  }
-
-  if (!auth.isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-}
-
-function RootRoute(): JSX.Element {
-  const auth = useAuth();
-
-  if (auth.loading) {
-    return <div className="status-card">正在载入后台...</div>;
-  }
-
-  return <Navigate to={auth.isAuthenticated ? "/dashboard" : "/login"} replace />;
-}
-
 export function App(): JSX.Element {
-  const location = useLocation();
-
-  return (
-    <AnimatePresence mode="wait" initial={false}>
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<RootRoute />} />
-        <Route path="/login" element={<AdminLoginPage />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Suspense fallback={<div className="status-card">正在载入后台...</div>}><AdminDashboardPage /></Suspense></ProtectedRoute>} />
-        <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
-        <Route path="/admin/login" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+  return <PageErrorBoundary>
+    <Suspense fallback={<div className="status-card">正在载入后台...</div>}>
+      <Routes>
+        <Route path="/dashboard" element={<AdminDashboardPage />} />
+        <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
-    </AnimatePresence>
-  );
+    </Suspense>
+  </PageErrorBoundary>;
 }

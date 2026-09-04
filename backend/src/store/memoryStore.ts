@@ -509,7 +509,7 @@ export class MemorySiteStore implements SiteStore {
     this.admin = {
       id: randomUUID(),
       username: config.adminUsername,
-      passwordHash: bcrypt.hashSync(config.adminPassword, 10),
+      passwordHash: config.localAdminMode ? "" : bcrypt.hashSync(config.adminPassword, 10),
       createdAt: nowIso()
     };
 

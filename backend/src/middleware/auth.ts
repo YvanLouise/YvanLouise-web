@@ -1,6 +1,9 @@
 ﻿import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { config } from "../config.js";
+import { createLocalAdminGuard } from "./localAdmin.js";
+
+const localAdminGuard = createLocalAdminGuard(config.localAdminOrigins);
 
 export interface AdminAuthPayload {
   userId: string;
@@ -24,6 +27,10 @@ export function parseAdminToken(token: string): AdminAuthPayload | null {
 }
 
 export function requireAdmin(req: AuthedRequest, res: Response, next: NextFunction): void {
+  if (config.localAdminMode) {
+    localAdminGuard(req, res, next);
+    return;
+  }
   const token = req.cookies?.admin_token as string | undefined;
   if (!token) {
     res.status(401).json({ message: "未授权访问" });

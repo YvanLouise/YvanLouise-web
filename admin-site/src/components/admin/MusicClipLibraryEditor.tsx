@@ -2,6 +2,7 @@
 import { uploadAdminAsset } from "../../lib/api";
 import { resolveMediaUrl } from "../../lib/workMedia";
 import { MusicPreviewClip } from "../../types";
+import { clipBounds, ensureAudioReady } from "@shared/lib/audioPlayback";
 
 const MAX_AUDIO_UPLOAD_BYTES = 50 * 1024 * 1024;
 
@@ -34,17 +35,21 @@ function formatMegabytes(value: number): string {
 interface MusicClipLibraryEditorProps {
   savedClips: MusicPreviewClip[];
   draftClips: MusicPreviewClip[];
-  onDraftClipsChange: (clips: MusicPreviewClip[]) => void;
   onPersistClips: (clips: MusicPreviewClip[]) => Promise<void>;
+  onDirtyChange?: (dirty: boolean) => void;
 }
 
 export function MusicClipLibraryEditor({
   savedClips,
   draftClips,
-  onDraftClipsChange,
-  onPersistClips
+  onPersistClips,
+  onDirtyChange
 }: MusicClipLibraryEditorProps): JSX.Element {
-  const [clipDraft, setClipDraft] = useState<MusicPreviewClip>(createEmptyClip());
+  const [clipDraft, setClipDraft] = useState<MusicPreviewClip>(createEmptyClip);
+  const baselineRef = useRef(clipDraft);
+  const [saving, setSaving] = useState(false);
+  const [previewing, setPreviewing] = useState(false);
+  const previewAbortRef = useRef<AbortController | null>(null);
   const [editingClipId, setEditingClipId] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
   const [uploading, setUploading] = useState(false);
@@ -53,17 +58,28 @@ export function MusicClipLibraryEditor({
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewTimerRef = useRef<number | null>(null);
 
-  const maxRange = useMemo(() => Math.max(duration, clipDraft.endTime, 30), [clipDraft.endTime, duration]);
+  const maxRange = duration || Math.max(clipDraft.endTime, 30);
+  const dirty = JSON.stringify(clipDraft) !== JSON.stringify(baselineRef.current);
+  useEffect(() => { onDirtyChange?.(dirty || uploading || saving); }, [dirty, uploading, saving, onDirtyChange]);
+  useEffect(() => {
+    setDuration(0);
+    previewAbortRef.current?.abort();
+    if (previewTimerRef.current) window.clearInterval(previewTimerRef.current);
+    setPreviewing(false);
+  }, [clipDraft.sourceUrl]);
 
   useEffect(() => {
     if (!draftClips.length && editingClipId) {
       setEditingClipId(null);
-      setClipDraft(createEmptyClip());
+      const empty = createEmptyClip();
+      baselineRef.current = empty;
+      setClipDraft(empty);
     }
   }, [draftClips, editingClipId]);
 
   useEffect(() => {
     return () => {
+      previewAbortRef.current?.abort();
       if (previewTimerRef.current) {
         window.clearInterval(previewTimerRef.current);
       }
@@ -71,8 +87,11 @@ export function MusicClipLibraryEditor({
   }, []);
 
   function resetDraft(): void {
+    if (dirty && !window.confirm("放弃当前音乐片段的未保存修改？")) return;
     setEditingClipId(null);
-    setClipDraft(createEmptyClip());
+    const empty = createEmptyClip();
+    baselineRef.current = empty;
+    setClipDraft(empty);
     setDuration(0);
     setStatus(null);
     if (audioRef.current) {
@@ -81,6 +100,8 @@ export function MusicClipLibraryEditor({
   }
 
   function startEditClip(clip: MusicPreviewClip): void {
+    if (dirty && !window.confirm("当前片段有未保存修改，确定切换？")) return;
+    baselineRef.current = clip;
     setEditingClipId(clip.id);
     setClipDraft({ ...clip });
     setStatus(`正在编辑片段：${clip.label}`);
@@ -142,7 +163,7 @@ export function MusicClipLibraryEditor({
     });
   }
 
-  function previewCurrentClip(): void {
+  async function previewCurrentClip(): Promise<void> {
     const audio = audioRef.current;
     if (!audio || !clipDraft.sourceUrl) {
       setStatus("请先上传一段音频，再试听截取片段。");
@@ -154,24 +175,36 @@ export function MusicClipLibraryEditor({
       previewTimerRef.current = null;
     }
 
-    const safeStart = clamp(clipDraft.startTime, 0, maxRange);
-    const safeEnd = Math.max(clipDraft.endTime, safeStart + 0.2);
-    audio.currentTime = safeStart;
-    void audio.play();
+    previewAbortRef.current?.abort();
+    const controller = new AbortController();
+    previewAbortRef.current = controller;
+    setPreviewing(true);
+    try {
+    await ensureAudioReady(audio, resolveMediaUrl(clipDraft.sourceUrl), controller.signal);
+    const bounds = clipBounds(clipDraft.startTime, clipDraft.endTime, audio.duration);
+    audio.currentTime = bounds.start;
+    await audio.play();
+    if (controller.signal.aborted) { audio.pause(); return; }
     setStatus(`正在预听：${clipDraft.label || clipDraft.sourceName || "未命名片段"}`);
 
     previewTimerRef.current = window.setInterval(() => {
-      if (audio.currentTime >= safeEnd) {
+      if (audio.currentTime >= bounds.end || audio.paused) {
         audio.pause();
         if (previewTimerRef.current) {
           window.clearInterval(previewTimerRef.current);
           previewTimerRef.current = null;
         }
+        setPreviewing(false);
       }
     }, 80);
+    } catch (error) {
+      if (!controller.signal.aborted) setStatus(error instanceof Error ? error.message : "预听失败，请检查音频来源。");
+      setPreviewing(false);
+    }
   }
 
   async function saveClip(): Promise<void> {
+    if (saving || uploading) return;
     const normalizedClip: MusicPreviewClip = {
       ...clipDraft,
       label: clipDraft.label.trim(),
@@ -186,8 +219,8 @@ export function MusicClipLibraryEditor({
       return;
     }
 
-    if (normalizedClip.endTime <= normalizedClip.startTime) {
-      setStatus("片段结束时间必须大于开始时间。");
+    if (![normalizedClip.startTime, normalizedClip.endTime].every(Number.isFinite) || normalizedClip.startTime < 0 || normalizedClip.endTime <= normalizedClip.startTime || (duration > 0 && normalizedClip.endTime > duration)) {
+      setStatus("请选择有效的起止时间，结束时间不能超出音频时长。");
       return;
     }
 
@@ -195,35 +228,40 @@ export function MusicClipLibraryEditor({
       ? draftClips.map((clip) => (clip.id === normalizedClip.id ? normalizedClip : clip))
       : [normalizedClip, ...draftClips];
 
-    onDraftClipsChange(nextClips);
-
     try {
+      setSaving(true);
       await onPersistClips(nextClips);
+      baselineRef.current = normalizedClip;
       setEditingClipId(normalizedClip.id);
       setClipDraft(normalizedClip);
       setStatus(`片段库已保存：${normalizedClip.label}`);
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "片段库保存失败。");
-    }
+    } finally { setSaving(false); }
   }
 
   async function removeClip(clipId: string): Promise<void> {
+    if (saving || uploading || !window.confirm("确定从片段库删除该片段？原音频文件会保留。")) return;
     const nextClips = draftClips.filter((clip) => clip.id !== clipId);
-    onDraftClipsChange(nextClips);
 
     try {
+      setSaving(true);
       await onPersistClips(nextClips);
       if (editingClipId === clipId) {
-        resetDraft();
+        const empty = createEmptyClip();
+        baselineRef.current = empty;
+        setClipDraft(empty);
+        setEditingClipId(null);
       }
       setStatus("已从片段库移除该片段。");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "删除片段失败。");
-    }
+    } finally { setSaving(false); }
   }
 
   return (
     <section className="panel stack">
+      <fieldset className="admin-content-fieldset stack" disabled={uploading || saving}>
       <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
         <div className="stack" style={{ gap: "0.35rem" }}>
           <h3 style={{ margin: 0 }}>音乐片段库</h3>
@@ -324,7 +362,7 @@ export function MusicClipLibraryEditor({
               max={maxRange}
               step="0.1"
               value={Math.min(clipDraft.startTime, maxRange)}
-              onChange={(event) => updateClipDraft({ startTime: Math.min(Number(event.target.value), clipDraft.endTime - 0.2) })}
+              onChange={(event) => updateClipDraft({ startTime: Math.max(0, Math.min(Number(event.target.value), clipDraft.endTime - 0.2)) })}
             />
           </label>
           <label>
@@ -342,7 +380,7 @@ export function MusicClipLibraryEditor({
           <div className="row">
             <button type="button" className="btn btn-secondary" onClick={() => useCurrentTimeAs("startTime")}>用当前播放位置设为起点</button>
             <button type="button" className="btn btn-secondary" onClick={() => useCurrentTimeAs("endTime")}>用当前播放位置设为终点</button>
-            <button type="button" className="btn btn-secondary" onClick={previewCurrentClip}>预听截取片段</button>
+            <button type="button" className="btn btn-secondary" disabled={previewing} onClick={() => void previewCurrentClip()}>{previewing ? "预听中…" : "预听截取片段"}</button>
           </div>
 
           <p className="meta" style={{ margin: 0 }}>
@@ -350,9 +388,10 @@ export function MusicClipLibraryEditor({
           </p>
 
           <button type="button" className="btn btn-primary" onClick={() => void saveClip()}>保存到片段库</button>
-          {status ? <p className="notice">{status}</p> : null}
+          {status ? <p className="notice" role="status">{status}</p> : null}
         </article>
       </div>
+      </fieldset>
     </section>
   );
 }

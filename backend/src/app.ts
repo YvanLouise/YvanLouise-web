@@ -9,18 +9,22 @@ import { errorHandler, notFoundHandler } from "./middleware/error.js";
 import { createAdminRouter } from "./routes/admin.js";
 import { createPublicRouter } from "./routes/public.js";
 import { getStore } from "./store/index.js";
+import { fileURLToPath } from "node:url";
+import { createLocalAdminGuard, isLoopbackOrigin } from "./middleware/localAdmin.js";
 
 function resolveAllowedOrigin(origin: string | undefined): string | null {
   if (!origin) {
     return config.corsOrigins[0] ?? null;
   }
 
-  return config.corsOrigins.includes(origin) ? origin : null;
+  return config.corsOrigins.includes(origin) || (config.localAdminMode && isLoopbackOrigin(origin) && config.localAdminOrigins.includes(origin)) ? origin : null;
 }
 
 export function createApp() {
   const app = express();
   const store = getStore();
+
+  if (config.localAdminMode) app.use("/api/admin", createLocalAdminGuard(config.localAdminOrigins));
 
   app.use(
     helmet({
@@ -63,7 +67,8 @@ export function createApp() {
       ok: true,
       at: new Date().toISOString(),
       env: config.nodeEnv,
-      storage: config.assetStorageMode
+      storage: config.assetStorageMode,
+      ...(config.localAdminMode ? { service: "backend", workspace: fileURLToPath(new URL("../../", import.meta.url)), localAdmin: true, protocol: 1 } : {})
     });
   });
 

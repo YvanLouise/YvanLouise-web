@@ -11,6 +11,7 @@ npm-debug.log*
 *.tsbuildinfo
 .codex-temp/
 .playwright-cli/
+.local-admin/
 frontend/
 backend/uploads/*
 !backend/uploads/.gitkeep

@@ -74,6 +74,19 @@ npm run ci
 2. 提交到 GitHub
 3. 由 GitHub Actions 自动重新部署公开站
 
+Windows 下可直接双击 `update-github.bat`（`update-github-safe.bat` 保留为兼容入口）。上传器会先刷新远端状态、阻止落后分支和重复实例，检查敏感配置与超大文件，运行 `npm run ci`，确认文件未在检查期间变化后再提交并推送。推送失败不会丢失本地提交。
+
+命令行可用选项：
+
+```text
+update-github.bat --check
+update-github.bat --message "Update work details"
+update-github.bat --yes
+update-github.bat --skip-tests
+```
+
+`--check` 只查看本地状态，不联网、不提交；`--yes` 跳过上传确认；`--skip-tests` 仅用于明确不需要完整构建验证的场景。
+
 ## 项目状态说明
 
 这个仓库保留了一些历史路线和实验性模块，例如：

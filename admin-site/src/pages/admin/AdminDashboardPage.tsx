@@ -1,8 +1,9 @@
 ﻿import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import { EditableImage } from "../../components/admin/EditableImage";
-import { MobilePreviewWorkbench } from "../../components/admin/MobilePreviewWorkbench";
-import { MusicClipLibraryEditor } from "../../components/admin/MusicClipLibraryEditor";
+import { filterAdminWorks, mergeSaved, parseSocialLinksText, parseUiText, parseWorkText, workTextFields } from "../../lib/editorState";
+import { resolvePublicSiteUrl } from "../../lib/publicSite";
+import { requestJson } from "@shared/lib/requestJson";
 import { getSamplePage, mergePagesWithSamples, samplePages, sampleSettings } from "../../data/sampleData";
 import { resolveWorkCoverUrl } from "../../lib/workMedia";
 import { resolveFeaturedWorks } from "@shared/lib/featuredWorks";
@@ -20,13 +21,14 @@ import {
   updateAdminWork,
   uploadAdminAsset
 } from "../../lib/api";
-import { Message, PageContent, Review, SiteContentFile, SiteContentSnapshot, SiteSettings, SocialLink, Work, WorkDetailSection, WorkType } from "../../types";
-import { AboutPage } from "../AboutPage";
-import { CommissionPage } from "../CommissionPage";
-import { ContactPage } from "../ContactPage";
-import { HomePage } from "../HomePage";
-import { SupportPage } from "../SupportPage";
-import { useAuth } from "../../context/AuthContext";
+import { Message, PageContent, Review, SiteContentFile, SiteContentSnapshot, SiteSettings, SocialLink, Work, WorkType } from "../../types";
+const AboutPage = lazy(() => import("../AboutPage").then(m => ({ default: m.AboutPage })));
+const CommissionPage = lazy(() => import("../CommissionPage").then(m => ({ default: m.CommissionPage })));
+const ContactPage = lazy(() => import("../ContactPage").then(m => ({ default: m.ContactPage })));
+const HomePage = lazy(() => import("../HomePage").then(m => ({ default: m.HomePage })));
+const SupportPage = lazy(() => import("../SupportPage").then(m => ({ default: m.SupportPage })));
+const MobilePreviewWorkbench = lazy(() => import("../../components/admin/MobilePreviewWorkbench").then(m => ({ default: m.MobilePreviewWorkbench })));
+const MusicClipLibraryEditor = lazy(() => import("../../components/admin/MusicClipLibraryEditor").then(m => ({ default: m.MusicClipLibraryEditor })));
 
 type TabKey = "overview" | "content" | "works" | "sync" | "messages" | "reviews" | "settings" | "preview";
 type EditablePageSlug = "home" | "about" | "commission" | "support" | "contact";
@@ -89,50 +91,6 @@ function normalizePageSlug(slug: string): EditablePageSlug {
 
 function serializeSocialLinks(value: SocialLink[]): string {
   return value.map((item) => `${item.label}|${item.url}`).join("\n");
-}
-
-function parseSocialLinks(value: string): SocialLink[] {
-  return value
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line) => {
-      const [label, url] = line.split("|");
-      return { label: (label ?? "").trim(), url: (url ?? "").trim() };
-    })
-    .filter((item) => item.label && item.url);
-}
-
-function serializeLineList(values: string[] | undefined): string {
-  return (values ?? []).join("\n");
-}
-
-function parseLineList(value: string): string[] {
-  return value
-    .split("\n")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-function serializeDetailSections(sections: WorkDetailSection[] | undefined): string {
-  return (sections ?? [])
-    .map((section) => `${section.title}\n${section.body}`)
-    .join("\n\n");
-}
-
-function parseDetailSections(value: string): WorkDetailSection[] {
-  return value
-    .split(/\n\s*\n/g)
-    .map((block) => block.trim())
-    .filter(Boolean)
-    .map((block) => {
-      const [title, ...bodyLines] = block.split("\n");
-      return {
-        title: (title ?? "").trim(),
-        body: bodyLines.join("\n").trim()
-      };
-    })
-    .filter((item) => item.title && item.body);
 }
 
 function getTypeLabel(type: WorkType): string {
@@ -219,7 +177,7 @@ async function verifyOnlineAsset(baseUrl: string, assetPath: string): Promise<Sy
   const url = `${baseUrl}/${assetPath}`;
 
   try {
-    const response = await fetch(`${url}?t=${Date.now()}`, { method: "HEAD", cache: "no-store" });
+    const response = await fetch(`${url}?t=${Date.now()}`, { method: "HEAD", cache: "no-store", signal: AbortSignal.timeout(8000) });
     return response.ok ? null : { path: assetPath, reason: `HTTP ${response.status}` };
   } catch (error) {
     return { path: assetPath, reason: error instanceof Error ? error.message : "无法访问线上资源" };
@@ -255,12 +213,23 @@ function writeSessionValue(key: string, value: string | null): void {
 }
 
 export function AdminDashboardPage(): JSX.Element {
-  const { username, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<TabKey>(() => {
     const stored = readSessionValue(STORAGE_KEYS.activeTab);
     return TABS.some((tab) => tab.key === stored) ? (stored as TabKey) : "overview";
   });
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const busyRef = useRef(false);
+  const [workQuery, setWorkQuery] = useState("");
+  const [workType, setWorkType] = useState("all");
+  const [workSort, setWorkSort] = useState("default");
+  const [workText, setWorkText] = useState(() => workTextFields(EMPTY_WORK));
+  const [musicDirty, setMusicDirty] = useState(false);
+  const workFormRef = useRef<HTMLFormElement>(null);
+  const settingsFormRef = useRef<HTMLFormElement>(null);
+  const workEditorRef = useRef<HTMLElement>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [works, setWorks] = useState<Work[]>([]);
@@ -268,7 +237,8 @@ export function AdminDashboardPage(): JSX.Element {
   const [pageDrafts, setPageDrafts] = useState<PageContent[]>(mergePagesWithSamples(samplePages));
   const [settings, setSettings] = useState<SiteSettings>(sampleSettings);
   const [settingsDraft, setSettingsDraft] = useState<SiteSettings>(sampleSettings);
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatusText] = useState<string | null>(null);
+  const [statusKind, setStatusKind] = useState<"info" | "error">("info");
   const [syncChecking, setSyncChecking] = useState(false);
   const [syncResult, setSyncResult] = useState<SyncCheckResult | null>(null);
   const [pageSlug, setPageSlug] = useState<EditablePageSlug>(() => normalizePageSlug(readSessionValue(STORAGE_KEYS.pageSlug) ?? "home"));
@@ -278,10 +248,19 @@ export function AdminDashboardPage(): JSX.Element {
   const [uiTextJson, setUiTextJson] = useState<string>(JSON.stringify(sampleSettings.uiText, null, 2));
   const galleryInputRef = useRef<HTMLInputElement | null>(null);
   const [galleryUploading, setGalleryUploading] = useState(false);
+  const latestEditorRef = useRef({ settings, editingWorkId, works });
+  latestEditorRef.current = { settings, editingWorkId, works };
+
+  function setStatus(value: string | null, kind: "info" | "error" = "info"): void {
+    setStatusText(value);
+    setStatusKind(kind);
+  }
 
   useEffect(() => {
+    let cancelled = false;
     async function load(): Promise<void> {
       setLoading(true);
+      setLoadError(null);
 
       try {
         const [messagesData, reviewsData, worksData, pagesData, settingsData] = await Promise.all([
@@ -292,6 +271,7 @@ export function AdminDashboardPage(): JSX.Element {
           getAdminSiteSettings()
         ]);
 
+        if (cancelled) return;
         const mergedPages = mergePagesWithSamples(pagesData);
         setMessages(messagesData);
         setReviews(reviewsData);
@@ -307,29 +287,23 @@ export function AdminDashboardPage(): JSX.Element {
           const matchedWork = worksData.find((item) => item.id === editingWorkId);
           if (matchedWork) {
             setWorkDraft({ ...matchedWork });
+            setWorkText(workTextFields(matchedWork));
           } else {
             setEditingWorkId(null);
             setWorkDraft({ ...EMPTY_WORK });
+            setWorkText(workTextFields(EMPTY_WORK));
           }
         }
-        if (editingWorkId) {
-          const matchedWork = worksData.find((item) => item.id === editingWorkId);
-          if (matchedWork) {
-            setWorkDraft({ ...matchedWork });
-          } else {
-            setEditingWorkId(null);
-            setWorkDraft({ ...EMPTY_WORK });
-          }
-        }
-      } catch {
-        setStatus("当前使用的是演示数据，但编辑和预览仍然可用。");
+      } catch (error) {
+        if (!cancelled) setLoadError(error instanceof Error ? error.message : "无法读取后台数据。");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
     void load();
-  }, []);
+    return () => { cancelled = true; };
+  }, [loadAttempt]);
   useEffect(() => {
     writeSessionValue(STORAGE_KEYS.activeTab, activeTab);
   }, [activeTab]);
@@ -340,11 +314,66 @@ export function AdminDashboardPage(): JSX.Element {
     writeSessionValue(STORAGE_KEYS.editingWorkId, editingWorkId);
   }, [editingWorkId]);
   const featuredWorks = useMemo(
-    () => resolveFeaturedWorks(works, settingsDraft.featuredWorkIds, MAX_FEATURED_WORKS),
+    () => settingsDraft.featuredWorkIds.map(id => works.find(work => work.id === id)).filter((work): work is Work => Boolean(work)),
     [works, settingsDraft.featuredWorkIds]
   );
+  const previewFeaturedWorks = useMemo(() => resolveFeaturedWorks(works, settingsDraft.featuredWorkIds, MAX_FEATURED_WORKS), [works, settingsDraft.featuredWorkIds]);
   const selectedPage = pageDrafts.find((item) => item.slug === pageSlug) ?? getSamplePage(pageSlug);
   const workCountText = useMemo(() => `${works.length} 个作品`, [works.length]);
+  const baselineWork = works.find(work => work.id === editingWorkId) ?? EMPTY_WORK;
+  const workDirty = JSON.stringify(workDraft) !== JSON.stringify(baselineWork) || JSON.stringify(workText) !== JSON.stringify(workTextFields(baselineWork));
+  const settingsDirty = JSON.stringify(settingsDraft) !== JSON.stringify(settings) || uiTextJson !== JSON.stringify(settings.uiText, null, 2) || socialLinksText !== serializeSocialLinks(settings.socialLinks);
+  const dirtyPages = pageDrafts.filter(page => JSON.stringify(page) !== JSON.stringify(pages.find(saved => saved.slug === page.slug)));
+  const hasUnsavedChanges = workDirty || settingsDirty || dirtyPages.length > 0 || musicDirty;
+  const visibleWorks = useMemo(() => filterAdminWorks(works, workQuery, workType, workSort), [works, workQuery, workType, workSort]);
+
+  useEffect(() => {
+    if (!hasUnsavedChanges && !busy && !galleryUploading) return;
+    const warn = (event: BeforeUnloadEvent): void => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [hasUnsavedChanges, busy, galleryUploading]);
+
+  useEffect(() => {
+    const save = (event: KeyboardEvent): void => {
+      if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "s") return;
+      event.preventDefault();
+      if (busyRef.current || loading || loadError || galleryUploading) return;
+      if (activeTab === "works") workFormRef.current?.requestSubmit();
+      else if (activeTab === "settings") settingsFormRef.current?.requestSubmit();
+      else if (activeTab === "content") void saveInteractivePage();
+    };
+    window.addEventListener("keydown", save);
+    return () => window.removeEventListener("keydown", save);
+  });
+
+  async function mutate(action: () => Promise<void>): Promise<void> {
+    if (busyRef.current || loading || loadError) throw new Error("请等待当前操作完成或重新连接后台。");
+    busyRef.current = true;
+    setBusy(true);
+    setStatus(null);
+    try { await action(); setSyncResult(null); }
+    finally { busyRef.current = false; setBusy(false); }
+  }
+
+  function selectTab(tab: TabKey): void {
+    if (busy || galleryUploading) return;
+    if (activeTab === "settings" && tab !== "settings" && musicDirty && !window.confirm("音乐片段还有未保存的编辑，离开将丢失该片段草稿。继续吗？")) return;
+    if (tab !== "settings") setMusicDirty(false);
+    if (tab !== activeTab) setStatus(null);
+    setActiveTab(tab);
+  }
+
+  function exportContent(): void {
+    const file = new Blob([JSON.stringify(toSiteContentFile(createLocalSnapshot(works, pages, settings)), null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `site-content-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setStatus("已导出已保存的公开内容，不含私信、评论或未保存草稿。");
+  }
 
   function updatePageDraft(slug: EditablePageSlug, patch: Partial<PageContent>): void {
     setPageDrafts((prev) => prev.map((item) => (item.slug === slug ? { ...item, ...patch } : item)));
@@ -365,47 +394,20 @@ export function AdminDashboardPage(): JSX.Element {
     setUiTextJson(JSON.stringify(nextSettings.uiText, null, 2));
   }
 
-  async function refreshSettingsState(): Promise<SiteSettings> {
-    const latest = await getAdminSiteSettings();
-    applySettingsState(latest);
-    return latest;
-  }
-
-  async function refreshWorksState(preferredWorkId?: string | null): Promise<Work[]> {
-    const latest = await getAdminWorks();
-    setWorks(latest);
-
-    const targetWorkId = preferredWorkId ?? editingWorkId;
-    if (targetWorkId) {
-      const matched = latest.find((item) => item.id === targetWorkId);
-      if (matched) {
-        setEditingWorkId(matched.id);
-        setWorkDraft(matched);
-      } else {
-        setEditingWorkId(null);
-        setWorkDraft({ ...EMPTY_WORK });
-      }
-    }
-
-    return latest;
-  }
-
   async function checkPublicSiteSync(): Promise<void> {
     setSyncChecking(true);
     setStatus(null);
 
     try {
       const onlineUrl = `${PUBLIC_SITE_URL}/site-content.json`;
-      const response = await fetch(`${onlineUrl}?t=${Date.now()}`, { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error(`线上内容读取失败：HTTP ${response.status}`);
-      }
-
-      const onlineSnapshot = normalizeSiteContent((await response.json()) as SiteContentFile);
+      const onlineSnapshot = normalizeSiteContent(await requestJson<SiteContentFile>(`${onlineUrl}?t=${Date.now()}`, { cache: "no-store" }));
       const localSnapshot = createLocalSnapshot(works, pages, settings);
       const contentMatches = JSON.stringify(normalizeForComparison(localSnapshot)) === JSON.stringify(normalizeForComparison(onlineSnapshot));
       const localAssetPaths = collectAssetPaths(localSnapshot);
-      const assetResults = await Promise.all(localAssetPaths.map((assetPath) => verifyOnlineAsset(PUBLIC_SITE_URL, assetPath)));
+      const assetResults: Array<SyncAssetIssue | null> = [];
+      for (let offset = 0; offset < localAssetPaths.length; offset += 4) {
+        assetResults.push(...await Promise.all(localAssetPaths.slice(offset, offset + 4).map(assetPath => verifyOnlineAsset(PUBLIC_SITE_URL, assetPath))));
+      }
       const missingOnlineAssets = assetResults.filter((item): item is SyncAssetIssue => item !== null);
 
       setSyncResult({
@@ -421,7 +423,7 @@ export function AdminDashboardPage(): JSX.Element {
       setStatus(contentMatches && missingOnlineAssets.length === 0 ? "线上网站已与本地公开内容同步。" : "检测完成：线上网站与本地数据存在差异。");
     } catch (error) {
       setSyncResult(null);
-      setStatus(error instanceof Error ? error.message : "同步检测失败。");
+      setStatus(error instanceof Error ? error.message : "同步检测失败。", "error");
     } finally {
       setSyncChecking(false);
     }
@@ -437,7 +439,7 @@ export function AdminDashboardPage(): JSX.Element {
     });
 
     setPages((prev) => replacePage(prev, updated));
-    setPageDrafts((prev) => replacePage(prev, updated));
+    setPageDrafts((prev) => prev.map(page => page.slug === slug ? mergeSaved(page, draft, updated) : page));
   }
 
   async function persistSettingsDraft(nextSettings: SiteSettings): Promise<void> {
@@ -445,21 +447,21 @@ export function AdminDashboardPage(): JSX.Element {
     applySettingsState(updated);
   }
 
+  async function persistSettingsPatch(patch: Partial<SiteSettings>): Promise<void> {
+    const baseline = latestEditorRef.current.settings;
+    const updated = await updateAdminSiteSettings({ ...baseline, ...patch });
+    setSettings(updated);
+    setSettingsDraft(current => ({ ...mergeSaved(current, baseline, updated), ...patch }));
+  }
+
   async function persistFeaturedWorkIds(nextIds: string[], successMessage: string): Promise<void> {
-    const nextSettings: SiteSettings = {
-      ...settingsDraft,
-      featuredWorkIds: nextIds
-    };
-
-    setSettingsDraft(nextSettings);
-
     try {
-      const updated = await updateAdminSiteSettings(nextSettings);
-      applySettingsState(updated);
-      setStatus(successMessage);
+      await mutate(async () => {
+        await persistSettingsPatch({ featuredWorkIds: nextIds });
+        setStatus(successMessage);
+      });
     } catch (error) {
-      void refreshSettingsState().catch(() => undefined);
-      setStatus(error instanceof Error ? error.message : "精选作品保存失败，请稍后再试。");
+      setStatus(error instanceof Error ? error.message : "精选作品保存失败，请稍后再试。", "error");
     }
   }
 
@@ -493,19 +495,19 @@ export function AdminDashboardPage(): JSX.Element {
 
   async function saveInteractivePage(): Promise<void> {
     try {
-      await persistPageDraft(pageSlug);
-
-      if (pageSlug === "home") {
-        await persistSettingsDraft(settingsDraft);
-      }
-
-      setStatus("当前页面已保存。");
+      await mutate(async () => {
+        const nextSettings = pageSlug === "home" ? { ...settingsDraft, socialLinks: parseSocialLinksText(socialLinksText, true), uiText: parseUiText(uiTextJson, sampleSettings.uiText) } : null;
+        await persistPageDraft(pageSlug);
+        if (nextSettings) await persistSettingsDraft(nextSettings);
+        setStatus("当前页面已保存到本地；线上状态请在同步检测中确认。");
+      });
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "保存失败。");
+      setStatus(error instanceof Error ? error.message : "保存失败。", "error");
     }
   }
 
   function resetCurrentDraft(): void {
+    if (!window.confirm("放弃当前页面的未保存修改，恢复到最近保存的版本？")) return;
     const savedPage = pages.find((item) => item.slug === pageSlug) ?? getSamplePage(pageSlug);
     setPageDrafts((prev) => replacePage(prev, savedPage));
 
@@ -519,15 +521,20 @@ export function AdminDashboardPage(): JSX.Element {
   }
 
   function startEditWork(work?: Work): void {
+    if (busy || galleryUploading) return;
+    if (workDirty && !window.confirm("当前作品有未保存修改，切换将丢失这些修改。继续吗？")) return;
+    setWorkText(workTextFields(work ?? EMPTY_WORK));
     if (!work) {
       setEditingWorkId(null);
       setWorkDraft({ ...EMPTY_WORK });
+      workEditorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       setStatus("已切换到新作品草稿，可以先保存骨架再慢慢补内容。");
       return;
     }
 
     setEditingWorkId(work.id);
     setWorkDraft({ ...work });
+    workEditorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
   async function saveWork(event: FormEvent<HTMLFormElement>): Promise<void> {
@@ -546,104 +553,84 @@ export function AdminDashboardPage(): JSX.Element {
       interactionPoints: workDraft.interactionPoints ?? [],
       galleryImages: workDraft.galleryImages ?? [],
       detailSections: workDraft.detailSections ?? [],
-      platform: (workDraft.platform ?? "").trim() || undefined,
-      status: (workDraft.status ?? "").trim() || undefined,
+      platform: (workDraft.platform ?? "").trim(),
+      status: (workDraft.status ?? "").trim(),
       ...(publishedAt ? { publishedAt } : {}),
       coverUrl: (workDraft.coverUrl ?? "").trim(),
-      demoUrl: (workDraft.demoUrl ?? "").trim() || undefined,
-      repoUrl: (workDraft.repoUrl ?? "").trim() || undefined
+      demoUrl: (workDraft.demoUrl ?? "").trim(),
+      repoUrl: (workDraft.repoUrl ?? "").trim()
     };
 
     try {
-      if (editingWorkId) {
-        const updated = await updateAdminWork(editingWorkId, payload);
-        await refreshWorksState(updated.id);
-        setStatus("作品已更新。");
-      } else {
-        const created = await createAdminWork(payload);
-        await refreshWorksState(created.id);
-        setStatus("新作品已创建。");
-      }
+      await mutate(async () => {
+        Object.assign(payload, parseWorkText(workText));
+        const updated = editingWorkId ? await updateAdminWork(editingWorkId, payload) : await createAdminWork(payload);
+        setWorks(current => current.some(work => work.id === updated.id) ? current.map(work => work.id === updated.id ? updated : work) : [updated, ...current]);
+        setEditingWorkId(updated.id);
+        setWorkDraft(updated);
+        setWorkText(workTextFields(updated));
+        setStatus(editingWorkId ? "作品已更新到本地。" : "新作品已创建。草稿中的素材已一并保存。");
+      });
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "保存失败。");
+      setStatus(error instanceof Error ? error.message : "保存失败。", "error");
     }
   }
 
   async function removeWork(workId: string): Promise<void> {
+    const title = works.find(work => work.id === workId)?.title ?? workId;
+    if (!window.confirm(`确定删除《${title}》？此操作不能撤销，上传文件不会被删除。${editingWorkId === workId && workDirty ? "当前作品的未保存草稿也将丢失。" : ""}`)) return;
     try {
-      await deleteAdminWork(workId);
-
-      const previousFeaturedIds = settingsDraft.featuredWorkIds ?? [];
-      const nextFeaturedIds = previousFeaturedIds.filter((id) => id !== workId);
-      if (nextFeaturedIds.length !== previousFeaturedIds.length) {
-        const updatedSettings = await updateAdminSiteSettings({
-          ...settingsDraft,
-          featuredWorkIds: nextFeaturedIds
-        });
-        applySettingsState(updatedSettings);
-      }
-
-      await refreshWorksState(editingWorkId === workId ? null : editingWorkId);
-      setWorks((prev) => prev.filter((item) => item.id !== workId));
-
-      if (editingWorkId === workId) {
-        setEditingWorkId(null);
-        setWorkDraft({ ...EMPTY_WORK });
-      }
-
-      setStatus(nextFeaturedIds.length !== previousFeaturedIds.length ? "作品已删除，并已同步移出首页精选。" : "作品已删除。");
+      await mutate(async () => {
+        await deleteAdminWork(workId);
+        setWorks(prev => prev.filter(item => item.id !== workId));
+        if (editingWorkId === workId) {
+          setEditingWorkId(null);
+          setWorkDraft({ ...EMPTY_WORK });
+          setWorkText(workTextFields(EMPTY_WORK));
+        }
+        if (settings.featuredWorkIds.includes(workId)) {
+          try { await persistSettingsPatch({ featuredWorkIds: settings.featuredWorkIds.filter(id => id !== workId) }); }
+          catch { setStatus("作品已删除，但精选设置更新失败，请重试调整精选列表。", "error"); return; }
+        }
+        setStatus("作品已删除，并已移出首页精选。原上传文件保留。");
+      });
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "删除失败。");
+      setStatus(error instanceof Error ? error.message : "删除失败。", "error");
     }
   }
 
   async function persistMusicPreviewClips(nextClips: SiteSettings["musicPreviewClips"]): Promise<void> {
-    const updated = await updateAdminSiteSettings({
-      ...settingsDraft,
-      musicPreviewClips: nextClips
-    });
-    applySettingsState(updated);
+    await mutate(() => persistSettingsPatch({ musicPreviewClips: nextClips }));
   }
   async function saveSettings(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
 
     try {
-      const parsedUiText = JSON.parse(uiTextJson) as SiteSettings["uiText"];
-      await persistSettingsDraft({ ...settingsDraft, uiText: parsedUiText });
-      setStatus("站点设置已更新。");
+      await mutate(async () => {
+        const parsedUiText = parseUiText(uiTextJson, sampleSettings.uiText);
+        await persistSettingsDraft({ ...settingsDraft, socialLinks: parseSocialLinksText(socialLinksText, true), uiText: parsedUiText });
+        setStatus("站点设置已更新到本地。音乐片段需单独保存到片段库。");
+      });
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "更新失败，请检查界面文案 JSON 是否有效。");
+      setStatus(error instanceof Error ? error.message : "更新失败，请检查界面文案 JSON 是否有效。", "error");
     }
   }
 
   async function handleSettingsImageUpload(field: SettingsImageField, url: string): Promise<void> {
-    const nextSettings = { ...settingsDraft, [field]: url };
-    setSettingsDraft(nextSettings);
-
-    try {
-      await persistSettingsDraft(nextSettings);
-      await refreshSettingsState();
+    await mutate(async () => {
+      await persistSettingsPatch({ [field]: url });
       setStatus(field === "bannerImageUrl" ? "横幅图片已更新。" : "头像图片已更新。");
-    } catch (error) {
-      void refreshSettingsState().catch(() => undefined);
-      setStatus(error instanceof Error ? error.message : "图片更新失败，请稍后再试。");
-    }
+    });
   }
 
   async function handleWorkCoverUpload(workId: string, url: string): Promise<void> {
-    setWorks((prev) => prev.map((item) => (item.id === workId ? { ...item, coverUrl: url } : item)));
-    if (editingWorkId === workId) {
-      setWorkDraft((prev) => ({ ...prev, coverUrl: url }));
-    }
-
-    try {
+    await mutate(async () => {
+      const baseline = latestEditorRef.current.works.find(work => work.id === workId);
       const updated = await updateAdminWork(workId, { coverUrl: url });
-      await refreshWorksState(updated.id);
+      setWorks(prev => prev.map(item => item.id === workId ? updated : item));
+      if (latestEditorRef.current.editingWorkId === workId) setWorkDraft(prev => ({ ...mergeSaved(prev, baseline ?? prev, updated), coverUrl: url }));
       setStatus(`作品封面已更新：${updated.title}`);
-    } catch (error) {
-      void refreshWorksState(workId).catch(() => undefined);
-      setStatus(error instanceof Error ? error.message : "作品封面更新失败，请稍后再试。");
-    }
+    });
   }
 
   async function handleGalleryUpload(event: ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -654,27 +641,15 @@ export function AdminDashboardPage(): JSX.Element {
 
     try {
       setGalleryUploading(true);
-      const uploadedUrls: string[] = [];
+      if (workText.galleryImages.split("\n").filter(line => line.trim()).length + files.length > 20) throw new Error("每个作品最多 20 张图集图片。");
       for (const file of files) {
+        if (!file.type.startsWith("image/")) throw new Error(`请选择图片文件：${file.name}`);
         const uploaded = await uploadAdminAsset(file, `work-gallery-${editingWorkId ?? "draft"}`);
-        uploadedUrls.push(uploaded.url);
+        setWorkText(prev => ({ ...prev, galleryImages: `${prev.galleryImages.trim()}\n${uploaded.url}`.trim() }));
       }
-
-      const nextGalleryImages = [...(workDraft.galleryImages ?? []), ...uploadedUrls];
-      setWorkDraft((prev) => ({
-        ...prev,
-        galleryImages: nextGalleryImages
-      }));
-
-      if (editingWorkId) {
-        const updated = await updateAdminWork(editingWorkId, { galleryImages: nextGalleryImages });
-        await refreshWorksState(updated.id);
-        setStatus(`已上传并保存 ${uploadedUrls.length} 张图到《${updated.title}》图集。`);
-      } else {
-        setStatus(`已加入 ${uploadedUrls.length} 张图到当前草稿图集，创建新作品时还需要再点一次保存。`);
-      }
+      setStatus(`已将 ${files.length} 张图加入草稿，请保存作品后生效。`);
     } catch (error) {
-      setStatus(error instanceof Error ? error.message : "图集上传失败。");
+      setStatus(`${error instanceof Error ? error.message : "图集上传失败。"} 已成功上传的图片保留在草稿中。`, "error");
     } finally {
       setGalleryUploading(false);
       event.target.value = "";
@@ -688,7 +663,7 @@ export function AdminDashboardPage(): JSX.Element {
           mode="edit"
           contentOverride={selectedPage}
           settingsOverride={settingsDraft}
-          worksOverride={featuredWorks}
+          worksOverride={previewFeaturedWorks}
           onContentChange={(patch) => updatePageDraft("home", patch)}
           onSettingsChange={updateSettingsDraft}
           onSettingsImageUpload={handleSettingsImageUpload}
@@ -716,32 +691,43 @@ export function AdminDashboardPage(): JSX.Element {
       <div className="admin-layout">
         <aside className="admin-sidebar" aria-label="后台导航">
           <span className="badge">开发者模式</span>
-          <h2 style={{ margin: "0.8rem 0 0" }}>你好，{username ?? "管理员"}</h2>
-          <p className="meta">现在首页横幅文案可直接改，作品支持长文案、图集、交互亮点与首页精选设置。</p>
+          <h2 style={{ margin: "0.8rem 0 0" }}>本地管理后台</h2>
+          <p className="meta">管理内容、整理作品与验证发布。修改保存在本地，线上状态单独检测。</p>
 
           <nav className="admin-nav">
             {TABS.map((tab) => (
-              <button type="button" key={tab.key} className={activeTab === tab.key ? "active" : ""} onClick={() => setActiveTab(tab.key)}>
+              <button type="button" key={tab.key} className={activeTab === tab.key ? "active" : ""} aria-current={activeTab === tab.key ? "page" : undefined} disabled={busy || galleryUploading} onClick={() => selectTab(tab.key)}>
                 {tab.label}
               </button>
             ))}
           </nav>
 
           <div className="stack" style={{ marginTop: "1rem" }}>
-            <button className="btn btn-primary" type="button" onClick={() => void logout()}>退出后台</button>
+            <span className="meta">仅本机访问 · 无需账号密码</span>
           </div>
         </aside>
 
         <section className="admin-panel">
           <div className="admin-toolbar">
-            <h1 style={{ margin: 0 }}>网站管理</h1>
-            <span className="meta">{loading ? "加载中..." : "已同步"}</span>
+            <div><p className="meta" style={{ margin: "0 0 0.35rem" }}>开发者工作台</p><h1 style={{ margin: 0 }}>{TABS.find(tab => tab.key === activeTab)?.label}</h1></div>
+            <span className={`badge ${hasUnsavedChanges ? "draft-badge" : ""}`} role="status">{loading ? "连接后台中…" : loadError ? "连接失败" : busy || galleryUploading ? "正在处理…" : hasUnsavedChanges ? "有未保存修改" : "本地内容已载入"}</span>
           </div>
 
-          {status ? <p className="notice">{status}</p> : null}
+          {status ? <p className={`notice admin-notice ${statusKind === "error" ? "error" : ""}`} role={statusKind === "error" ? "alert" : "status"}>{status}<button className="mini-btn" type="button" onClick={() => setStatus(null)} aria-label="关闭提示">×</button></p> : null}
+          {loading ? <p className="notice" role="status">正在读取真实后台数据，请稍候…</p> : null}
+          {loadError ? <section className="panel stack" role="alert"><h3>无法连接本地后台</h3><p>{loadError}</p><p className="meta">请运行 start-admin-site.bat。数据未载入前已暂停编辑，避免将示例内容覆盖到真实网站。</p><button type="button" className="btn btn-primary" onClick={() => setLoadAttempt(value => value + 1)}>重新连接</button></section> : null}
+          {!loading && !loadError && hasUnsavedChanges ? <div className="admin-draft-summary" role="status">未保存：{[workDirty ? "作品草稿" : "", dirtyPages.length ? `${dirtyPages.length} 个页面` : "", settingsDirty ? "全局设置" : "", musicDirty ? "音乐片段" : ""].filter(Boolean).join("、")}。切换栏目会保留页面、作品与设置草稿；Ctrl / ⌘ + S 保存当前编辑区。</div> : null}
+          <fieldset className="admin-content-fieldset" disabled={busy || galleryUploading} hidden={loading || Boolean(loadError)} aria-busy={busy || galleryUploading}>
+          <Suspense fallback={<p className="notice" role="status">正在加载编辑器…</p>}>
 
           {activeTab === "overview" ? (
             <section className="admin-grid">
+              <article className="panel stack admin-quick-actions">
+                <h3 style={{ margin: 0 }}>开始工作</h3>
+                <p className="meta">保存内容后，可打开公开站检查效果；导出备份仅包含已保存的公开内容。</p>
+                <div className="row"><button type="button" className="btn btn-primary" onClick={() => selectTab("works")}>管理作品</button><button type="button" className="btn btn-secondary" onClick={() => selectTab("content")}>编辑页面</button><button type="button" className="btn btn-secondary" onClick={exportContent}>导出内容备份</button><a className="btn btn-secondary" href={resolvePublicSiteUrl()} target="_blank" rel="noreferrer">打开本地公开站</a></div>
+                <p className="meta">公开站未启动时，请运行 start-public-site.bat；保存成功不代表线上部署完成。</p>
+              </article>
               <article className="panel stack">
                 <h3 style={{ margin: 0 }}>作品总数</h3>
                 <strong style={{ fontSize: "2rem" }}>{works.length}</strong>
@@ -780,11 +766,11 @@ export function AdminDashboardPage(): JSX.Element {
 
                   <div className="row">
                     <button type="button" className="btn btn-primary" onClick={() => void saveInteractivePage()}>保存当前页面</button>
-                    <button type="button" className="btn btn-secondary" onClick={resetCurrentDraft}>恢复草稿</button>
+                    <button type="button" className="btn btn-secondary" onClick={resetCurrentDraft}>放弃当前页修改</button>
                   </div>
                 </div>
 
-                <p className="meta" style={{ margin: 0 }}>首页横幅标签、标题和说明现在都能在预览区内直接修改，图片仍支持右键替换。</p>
+                <p className="meta" style={{ margin: 0 }}>文字修改后需保存；图片可点击“替换图片”或右键更换，图片单独保存，不覆盖文字草稿。</p>
               </div>
 
               <div className="studio-shell">{renderInteractiveCanvas()}</div>
@@ -798,7 +784,13 @@ export function AdminDashboardPage(): JSX.Element {
                   <h3 style={{ margin: 0 }}>作品列表</h3>
                   <button className="btn btn-secondary" type="button" onClick={() => startEditWork(undefined)}>新建作品</button>
                 </div>
-                <p className="meta" style={{ margin: 0 }}>封面图可右键替换，详情图集请在右侧编辑器内上传并组织。</p>
+                <p className="meta" style={{ margin: 0 }}>封面可直接替换；图集加入编辑器草稿后，点击保存作品统一提交。</p>
+                <div className="admin-work-filters">
+                  <label>搜索作品<input type="search" value={workQuery} onChange={event => setWorkQuery(event.target.value)} placeholder="标题、摘要、平台或状态" /></label>
+                  <label>筛选分类<select value={workType} onChange={event => setWorkType(event.target.value)}><option value="all">全部分类</option><option value="music">音乐</option><option value="software">软件</option><option value="game">游戏</option><option value="animation">动画</option></select></label>
+                  <label>排序<select value={workSort} onChange={event => setWorkSort(event.target.value)}><option value="default">默认顺序</option><option value="date">最新发布</option><option value="title">标题</option></select></label>
+                </div>
+                <p className="meta" role="status">显示 {visibleWorks.length} / {works.length} 个作品</p>
                 <div className="panel stack" style={{ gap: "0.8rem" }}>
                   <div className="row" style={{ justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem" }}>
                     <strong>首页精选作品</strong>
@@ -836,17 +828,20 @@ export function AdminDashboardPage(): JSX.Element {
                   )}
                 </div>
                 <div className="stack">
-                  {works.map((work) => (
-                    <article key={work.id} className="panel work-admin-item">
+                  {!visibleWorks.length ? <div className="admin-empty"><h4>{works.length ? "没有匹配的作品" : "还没有作品"}</h4><p>{works.length ? "试试其他关键词或分类。" : "点击新建作品，开始整理你的第一个项目。"}</p>{works.length ? <button type="button" className="btn btn-secondary" onClick={() => { setWorkQuery(""); setWorkType("all"); }}>清除筛选</button> : null}</div> : null}
+                  {visibleWorks.map((work) => (
+                    <article key={work.id} className={`panel work-admin-item ${editingWorkId === work.id ? "is-editing" : ""}`}>
                       <div className="admin-work-row">
+                        <div className="admin-cover-editor">
                         <EditableImage enabled label={`${work.title} 封面图`} slot={`work-cover-${work.id}`} onUploaded={(url) => handleWorkCoverUpload(work.id, url)}>
                           {(bindProps, state) => (
                             <div className="admin-work-thumb" onContextMenu={bindProps.onContextMenu} title={bindProps.title}>
-                              <img className="admin-work-thumb-image" src={resolveWorkCoverUrl(work.coverUrl)} alt={`${work.title} 封面图`} />
+                              {work.coverUrl ? <img className="admin-work-thumb-image" src={resolveWorkCoverUrl(work.coverUrl)} alt={`${work.title} 封面图`} loading="lazy" decoding="async" /> : <div className="admin-work-placeholder" role="img" aria-label={`${work.title} 暂无封面`}>暂无封面</div>}
                               <span className="admin-work-thumb-badge">{state.isUploading ? "上传中..." : "右键换封面"}</span>
                             </div>
                           )}
                         </EditableImage>
+                        </div>
 
                         <div className="admin-work-meta stack">
                           <div>
@@ -863,7 +858,7 @@ export function AdminDashboardPage(): JSX.Element {
                             <span>{work.galleryImages.length} 张图集</span>
                           </div>
                           <div className="row">
-                            <button type="button" className="btn btn-secondary" onClick={() => startEditWork(work)}>编辑</button>
+                            <button type="button" className="btn btn-secondary" onClick={() => startEditWork(work)}>{editingWorkId === work.id ? "重新载入" : "编辑"}</button>
                             <button type="button" className="btn btn-secondary" onClick={() => void toggleFeaturedWork(work)}>{settingsDraft.featuredWorkIds.includes(work.id) ? "取消精选" : "设为精选"}</button>
                             <button type="button" className="btn btn-secondary" onClick={() => void removeWork(work.id)}>删除</button>
                           </div>
@@ -874,7 +869,7 @@ export function AdminDashboardPage(): JSX.Element {
                 </div>
               </article>
 
-              <article className="panel stack">
+              <article className="panel stack admin-work-editor" ref={workEditorRef}>
                 <div className="row" style={{ justifyContent: "space-between", alignItems: "center" }}>
                   <h3 style={{ margin: 0 }}>{editingWorkId ? "编辑作品" : "创建作品"}</h3>
                   <button type="button" className="btn btn-secondary" onClick={() => galleryInputRef.current?.click()} disabled={galleryUploading}>
@@ -884,10 +879,10 @@ export function AdminDashboardPage(): JSX.Element {
 
                 <input ref={galleryInputRef} type="file" accept="image/*" multiple hidden onChange={(event) => void handleGalleryUpload(event)} />
 
-                <form key={editingWorkId ?? "new-work"} className="form-grid" onSubmit={(event) => void saveWork(event)}>
+                <form ref={workFormRef} id="admin-work-form" key={editingWorkId ?? "new-work"} className="form-grid" onSubmit={(event) => void saveWork(event)}>
                   <label>
                     标题
-                    <input value={workDraft.title ?? ""} onChange={(event) => updateWorkDraft({ title: event.target.value })} placeholder="可留空，将自动命名为未命名作品" />
+                    <input maxLength={140} value={workDraft.title ?? ""} onChange={(event) => updateWorkDraft({ title: event.target.value })} placeholder="可留空，将自动命名为未命名作品" />
                   </label>
                   <label>
                     分类
@@ -900,7 +895,7 @@ export function AdminDashboardPage(): JSX.Element {
                   </label>
                   <label>
                     摘要
-                    <textarea value={workDraft.summary ?? ""} onChange={(event) => updateWorkDraft({ summary: event.target.value })} />
+                    <textarea maxLength={300} value={workDraft.summary ?? ""} onChange={(event) => updateWorkDraft({ summary: event.target.value })} />
                   </label>
                   <label>
                     详情导语
@@ -944,26 +939,26 @@ export function AdminDashboardPage(): JSX.Element {
                   </label>
                   <label>
                     功能亮点（每行一条）
-                    <textarea value={serializeLineList(workDraft.featureList)} onChange={(event) => updateWorkDraft({ featureList: parseLineList(event.target.value) })} rows={5} />
+                    <textarea value={workText.featureList} onChange={event => setWorkText(prev => ({ ...prev, featureList: event.target.value }))} rows={5} />
                   </label>
                   <label>
                     交互亮点（每行一条）
-                    <textarea value={serializeLineList(workDraft.interactionPoints)} onChange={(event) => updateWorkDraft({ interactionPoints: parseLineList(event.target.value) })} rows={5} />
+                    <textarea value={workText.interactionPoints} onChange={event => setWorkText(prev => ({ ...prev, interactionPoints: event.target.value }))} rows={5} />
                   </label>
                   <label>
                     图集图片地址（每行一条，可先上传再自动写入）
-                    <textarea value={serializeLineList(workDraft.galleryImages)} onChange={(event) => updateWorkDraft({ galleryImages: parseLineList(event.target.value) })} rows={6} />
+                    <textarea value={workText.galleryImages} onChange={event => setWorkText(prev => ({ ...prev, galleryImages: event.target.value }))} rows={6} />
                   </label>
                   <label>
                     详情补充区块
                     <textarea
-                      value={serializeDetailSections(workDraft.detailSections)}
-                      onChange={(event) => updateWorkDraft({ detailSections: parseDetailSections(event.target.value) })}
+                      value={workText.detailSections}
+                      onChange={event => setWorkText(prev => ({ ...prev, detailSections: event.target.value }))}
                       rows={8}
                       placeholder={"每个区块格式：第一行写标题，下面写正文；区块与区块之间空一行。"}
                     />
                   </label>
-                  <button type="submit" className="btn btn-primary">{editingWorkId ? "保存修改" : "创建作品"}</button>
+                  <div className="admin-save-bar"><span className="meta">{workDirty ? "作品有未保存修改" : "作品草稿未更改"}</span><button type="submit" className="btn btn-primary">{busy ? "保存中…" : editingWorkId ? "保存修改" : "创建作品"}</button></div>
                 </form>
               </article>
             </section>
@@ -1038,6 +1033,7 @@ export function AdminDashboardPage(): JSX.Element {
           {activeTab === "messages" ? (
             <section className="panel stack">
               <h3 style={{ margin: 0 }}>私信列表</h3>
+              {!messages.length ? <p className="admin-empty">暂无私信。这里只显示后台实际收到的消息。</p> : null}
               <table className="table">
                 <thead>
                   <tr>
@@ -1066,6 +1062,7 @@ export function AdminDashboardPage(): JSX.Element {
           {activeTab === "reviews" ? (
             <section className="panel stack">
               <h3 style={{ margin: 0 }}>评分与评论</h3>
+              {!reviews.length ? <p className="admin-empty">暂无评论，收到反馈后会显示在这里。</p> : null}
               <table className="table">
                 <thead>
                   <tr>
@@ -1080,7 +1077,7 @@ export function AdminDashboardPage(): JSX.Element {
                   {reviews.map((review) => (
                     <tr key={review.id}>
                       <td>{new Date(review.createdAt).toLocaleString("zh-CN")}</td>
-                      <td>{review.workId}</td>
+                      <td>{works.find(work => work.id === review.workId)?.title ?? `已删除作品 (${review.workId})`}</td>
                       <td>{review.rating}</td>
                       <td>{review.visitorName ?? "匿名"}</td>
                       <td>{review.comment}</td>
@@ -1096,7 +1093,7 @@ export function AdminDashboardPage(): JSX.Element {
               <section className="panel stack">
                 <h3 style={{ margin: 0 }}>站点设置</h3>
                 <p className="meta" style={{ margin: 0 }}>这里可以集中维护横幅文案、站点标题、按钮和社交链接。</p>
-                <form className="form-grid" onSubmit={(event) => void saveSettings(event)}>
+                <form ref={settingsFormRef} className="form-grid" onSubmit={(event) => void saveSettings(event)}>
                   <label>
                     站点标题
                     <input value={settingsDraft.siteTitle} onChange={(event) => updateSettingsDraft({ siteTitle: event.target.value })} required />
@@ -1140,7 +1137,7 @@ export function AdminDashboardPage(): JSX.Element {
                       onChange={(event) => {
                         const value = event.target.value;
                         setSocialLinksText(value);
-                        updateSettingsDraft({ socialLinks: parseSocialLinks(value) });
+                        updateSettingsDraft({ socialLinks: parseSocialLinksText(value) });
                       }}
                     />
                   </label>
@@ -1161,20 +1158,22 @@ export function AdminDashboardPage(): JSX.Element {
                       spellCheck={false}
                     />
                   </label>
-                  <button type="submit" className="btn btn-primary">保存站点设置</button>
+                  <div className="admin-save-bar"><span className="meta">{settingsDirty ? "设置有未保存修改" : "设置未更改"}</span><button type="submit" className="btn btn-primary">{busy ? "保存中…" : "保存站点设置"}</button></div>
                 </form>
               </section>
 
               <MusicClipLibraryEditor
                 savedClips={settings.musicPreviewClips}
                 draftClips={settingsDraft.musicPreviewClips}
-                onDraftClipsChange={(clips) => updateSettingsDraft({ musicPreviewClips: clips })}
                 onPersistClips={persistMusicPreviewClips}
+                onDirtyChange={setMusicDirty}
               />
             </section>
           ) : null}
 
           {activeTab === "preview" ? <MobilePreviewWorkbench /> : null}
+          </Suspense>
+          </fieldset>
         </section>
       </div>
     </main>
