@@ -1,6 +1,6 @@
 import { LEGACY_API_BASE, LEGACY_BACKEND_MODE, PUBLIC_CONTENT_BASE, STATIC_CONTENT_URL, STATIC_PUBLIC_SITE_MODE } from "@shared/lib/apiEnvironment";
 import { ApiError } from "@shared/lib/apiError";
-import { isWorkDetail } from "@shared/lib/workDetail";
+import { workDetailCollection } from "@shared/lib/workDetail";
 import { requestJson } from "@shared/lib/requestJson";
 import { writeCachedWorks } from "@shared/lib/siteCache";
 import type { SiteContentFile, Work } from "@shared/types";
@@ -17,9 +17,8 @@ export async function loadWorkDetail(workId: string, signal: AbortSignal): Promi
     if (!body || !Array.isArray(body.works)) throw new Error("作品数据格式异常，请稍后重试。");
     works = body.works;
   }
-  if (!Array.isArray(works) || !works.every(isWorkDetail)) throw new Error("作品数据格式异常，请稍后重试。");
-  writeCachedWorks(works);
-  const work = works.find(item => item.id === workId);
+  const { work, works: validWorks } = workDetailCollection(works, workId);
+  writeCachedWorks(validWorks);
   if (!work) throw new ApiError("该作品可能已下架，或链接已失效。", 404);
-  return { work, works };
+  return { work, works: validWorks };
 }

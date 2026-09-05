@@ -18,6 +18,13 @@ export function safeWorkLink(value?: string): string | undefined {
   } catch { return undefined; }
 }
 
+export function workDetailCollection(value: unknown, workId: string): { work?: Work; works: Work[] } {
+  if (!Array.isArray(value)) throw new Error("作品数据格式异常，请稍后重试。");
+  const candidate = value.find(item => item && typeof item === "object" && item.id === workId);
+  if (candidate && !isWorkDetail(candidate)) throw new Error("当前作品数据不完整，请稍后重试。");
+  return { work: candidate, works: value.filter(isWorkDetail) };
+}
+
 export function workGallerySources(work: Work): string[] {
   return [...new Set([work.coverUrl, ...work.galleryImages].map(value => value.trim())
     .filter(value => /^\/?uploads\//i.test(value) || /^data:image\/(png|jpeg|gif|webp);base64,/i.test(value) || Boolean(safeWorkLink(value))))];
@@ -39,4 +46,21 @@ export function displayWorkDate(value: string): string | null {
   const date = new Date(`${value}T00:00:00Z`);
   if (!Number.isFinite(date.getTime()) || date.toISOString().slice(0, 10) !== value) return null;
   return new Intl.DateTimeFormat("zh-CN", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" }).format(date);
+}
+
+export function workReadingMinutes(work: Work): number {
+  const text = [work.detailIntro, work.background, work.process, work.result,
+    ...work.featureList, ...work.interactionPoints, ...work.detailSections.map(section => section.body)].join(" ");
+  const characters = text.replace(/\s/g, "").length;
+  return characters ? Math.max(1, Math.ceil(characters / 400)) : 0;
+}
+
+export function workTextParts(text: string): { text: string; href?: string }[] {
+  return text.split(/(https?:\/\/[^\s<>\u3000-\u303f\uff00-\uffef]+)/gi).filter(Boolean).flatMap(part => {
+    if (!/^https?:\/\//i.test(part)) return [{ text: part }];
+    const url = part.replace(/[.,;:!?]+$/, "");
+    const href = safeWorkLink(url);
+    if (!href) return [{ text: part }];
+    return [{ text: url, href }, ...(url.length < part.length ? [{ text: part.slice(url.length) }] : [])];
+  });
 }
