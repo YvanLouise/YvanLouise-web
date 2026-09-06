@@ -84,7 +84,7 @@ export function WorkDetailPage(): JSX.Element {
   const activeTab = tabs.find(tab => tab.id === params.get("section")) ?? tabs[0];
   const sections = useMemo(() => work?.detailSections.filter(section => hasText(section.title) && hasText(section.body)) ?? [], [work]);
   const outline = useMemo(() => [
-    { id: "work-content", label: "作品图集" },
+    { id: "work-content", label: "封面与图集" },
     ...(featureItems.length ? [{ id: "work-features", label: copy.featureTitle }] : []),
     ...(tabs.length ? [{ id: "work-story", label: "创作与体验" }] : []),
     ...sections.map((section, index) => ({ id: `work-section-${index + 1}`, label: section.title })),
@@ -135,15 +135,13 @@ export function WorkDetailPage(): JSX.Element {
   const repoUrl = safeWorkLink(work.repoUrl);
   const publishedDate = displayWorkDate(work.publishedAt);
   const readingMinutes = workReadingMinutes(work);
-  const demoLabel = work.type === "music" ? "聆听作品" : work.type === "animation" ? "观看作品" : work.type === "game" ? "体验游戏" : copy.demoLabel;
+  const demoLabel = work.type === "music" ? "观看歌曲视频" : work.type === "animation" ? "观看完整正片" : work.type === "game" ? "体验游戏" : copy.demoLabel;
   const contentLink = `${location.pathname}${location.search}#work-content`;
   const sideInfo = [
     hasText(work.platform) ? { label: copy.platformLabel, value: work.platform!.trim() } : null,
     hasText(work.status) ? { label: copy.statusLabel, value: work.status!.trim() } : null,
-    gallery.length ? { label: copy.galleryLabel, value: `${gallery.length} 张` } : null,
-    featureItems.length ? { label: copy.featuresLabel, value: `${featureItems.length} 项` } : null
   ].filter((item): item is { label: string; value: string } => item !== null);
-  const hasSideCard = sideInfo.length > 0 || demoUrl || repoUrl;
+  const hasSideCard = gallery.length > 0 || sideInfo.length > 0 || demoUrl || repoUrl;
 
   return <div className="work-detail-page" id="work-top">
     <nav className="detail-breadcrumb" aria-label="面包屑导航"><Link to="/">首页</Link><span aria-hidden="true">/</span><Link to={returnTo}>{returnTo === "/works" ? copy.backToWorksLabel : "返回筛选结果"}</Link><span aria-hidden="true">/</span><span aria-current="page">{work.title}</span></nav>
@@ -163,6 +161,7 @@ export function WorkDetailPage(): JSX.Element {
         {manualLink ? <label className="detail-manual-link">作品链接<input readOnly value={manualLink} onFocus={event => event.currentTarget.select()} /></label> : null}
       </div>
       {hasSideCard ? <aside className="panel work-detail-sidecard stack" aria-label="作品信息">
+        {gallery[0] ? <Link className="detail-hero-cover" to={contentLink} state={location.state} replace aria-label={`查看${work.title}封面与图集`}><WorkCover key={gallery[0]} src={gallery[0]} title={work.title} /></Link> : null}
         <div className="gallery-toolbar"><h2>作品信息</h2><span className="detail-eyebrow">OVERVIEW</span></div>
         <dl className="work-detail-sidegrid">{sideInfo.map(item => <div key={item.label}><dt className="meta">{item.label}</dt><dd>{item.value}</dd></div>)}</dl>
         {demoUrl || repoUrl ? <div className="detail-resource-links">{demoUrl ? <a href={demoUrl} target="_blank" rel="noopener noreferrer"><span className="meta">作品发布于</span><strong>{new URL(demoUrl).hostname} ↗</strong><span className="sr-only">（在新窗口打开）</span></a> : null}{repoUrl ? <a href={repoUrl} target="_blank" rel="noopener noreferrer"><strong>{copy.repoLabel} ↗</strong><span className="sr-only">（在新窗口打开）</span></a> : null}</div> : null}
@@ -186,7 +185,7 @@ export function WorkDetailPage(): JSX.Element {
             {tabs.map(tab => <button key={tab.id} id={`tab-${tab.id}`} role="tab" type="button" aria-selected={activeTab.id === tab.id} aria-controls={`panel-${tab.id}`} tabIndex={activeTab.id === tab.id ? 0 : -1} className={activeTab.id === tab.id ? "active" : ""} onClick={() => selectTab(tab.id)}>{tab.label}</button>)}
           </div>
           {tabs.map(tab => <div key={tab.id} id={`panel-${tab.id}`} role="tabpanel" hidden={activeTab.id !== tab.id} aria-labelledby={`tab-${tab.id}`} tabIndex={0} className="work-detail-copy">{tab.id === "interaction" ? <ol className="detail-step-list">{interactionItems.map(item => <li key={item}><WorkDetailText text={item} /></li>)}</ol> : <WorkDetailText text={tab.content} />}</div>)}
-        </article> : !sections.length ? <article className="panel"><h2>关于这个作品</h2><p className="meta">更多制作细节正在整理中，欢迎通过联系入口交流。</p></article> : null}
+        </article> : null}
         {sections.length ? <section className="detail-section-grid" aria-label="更多作品细节">{sections.map((section, index) => <article id={`work-section-${index + 1}`} tabIndex={-1} className="panel stack detail-anchor detail-article" key={`${section.title}-${index}`}><span className="detail-eyebrow">DETAIL / {String(index + 1).padStart(2, "0")}</span><h2>{section.title}</h2><WorkDetailText text={section.body} /></article>)}</section> : null}
       </div>
       <aside className="work-detail-sidebar stack">

@@ -155,8 +155,6 @@ export function WorksPage(): JSX.Element {
                       <div className="work-list-meta">
                         {work.platform ? <span>{work.platform}</span> : null}
                         {work.status ? <span>{work.status}</span> : null}
-                        {work.featureList.length ? <span>{work.featureList.length} 个亮点</span> : null}
-                        {work.galleryImages.length ? <span>{work.galleryImages.length} 张图集</span> : null}
                       </div>
 
                       <div className="work-list-actions">
@@ -165,7 +163,7 @@ export function WorksPage(): JSX.Element {
                         </Link>
                         {work.demoUrl ? (
                           <a className="btn btn-secondary" href={work.demoUrl} target="_blank" rel="noreferrer">
-                            {copy.demoButtonLabel}
+                            {work.type === "music" ? "观看歌曲视频 ↗" : work.type === "animation" ? "观看正片 ↗" : copy.demoButtonLabel}
                           </a>
                         ) : null}
                       </div>
